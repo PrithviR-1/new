@@ -75,6 +75,7 @@
             background: var(--sky-night);
             transition: background var(--transition-speed) var(--ease-out-expo);
             z-index: 1;
+            isolation: isolate;
         }
 
         /* --- HIGH-FIDELITY CARTOON SUN ENGINE --- */
@@ -93,7 +94,7 @@
             justify-content: center;
         }
 
-        .sun-on-top { z-index: 101 !important; }
+        .sun-on-top { z-index: 2 !important; }
 
         /* The stylized triangle rays */
         .sun-ray-layer {
@@ -214,7 +215,7 @@
         .cloud-container {
             position: absolute;
             inset: 0;
-            z-index: 3;
+            z-index: 4;
             perspective: 1200px;
             opacity: 1;
             transform: translate3d(0, 0, 0);
@@ -2172,12 +2173,12 @@
 
             if (snoozeBtnEl) {
                 snoozeBtnEl.onclick = () => {
+                    const snoozeWheelEl = document.getElementById('alarm-snooze-minutes');
+                    const snoozeMinutes = Math.max(1, Math.min(59, parseInt((snoozeWheelEl && snoozeWheelEl.value) || '5', 10) || 5));
+
                     stopBeep();
                     _stopAllBeeps();
                     _closeAlarmOverlay();
-
-                    const snoozeWheelEl = document.getElementById('alarm-snooze-minutes');
-                    const snoozeMinutes = Math.max(1, Math.min(59, parseInt((snoozeWheelEl && snoozeWheelEl.value) || '5', 10) || 5));
                     _snoozeAlarm(index, snoozeMinutes);
 
                     try {
