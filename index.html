@@ -96,6 +96,78 @@
 
         .sun-on-top { z-index: 2 !important; }
 
+        /* --- MOON SYSTEM --- */
+        .moon-system {
+            position: absolute;
+            top: 9%;
+            left: 52%;
+            width: 116px;
+            height: 116px;
+            transform: translate(-50%, -140vh);
+            transition: transform 5.2s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.1s ease;
+            z-index: 3;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+        }
+
+        #body:not(.day-active) .moon-system {
+            transform: translate(-50%, 0);
+            opacity: 1;
+        }
+
+        .moon-aura {
+            position: absolute;
+            width: 165px;
+            height: 165px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(222, 236, 255, 0.45) 0%, rgba(195, 216, 247, 0.2) 50%, rgba(120, 160, 226, 0.02) 100%);
+            filter: blur(20px);
+            animation: moon-glow 5.4s ease-in-out infinite alternate;
+        }
+
+        .moon-body {
+            position: relative;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #f3f8ff 0%, #dce9fb 52%, #c4d6ef 100%);
+            box-shadow: 0 0 18px rgba(215, 232, 255, 0.45), inset -10px -10px 16px rgba(110, 132, 167, 0.16);
+            overflow: hidden;
+        }
+
+        .moon-shadow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: rgba(32, 49, 78, 0.62);
+            transition: transform 0.9s ease;
+        }
+
+        .moon-crater {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(154, 179, 214, 0.22);
+            box-shadow: inset -1px -1px 2px rgba(104, 129, 168, 0.25);
+        }
+
+        .moon-crater.a { width: 10px; height: 10px; top: 22px; left: 16px; }
+        .moon-crater.b { width: 8px; height: 8px; top: 38px; left: 30px; }
+        .moon-crater.c { width: 6px; height: 6px; top: 20px; left: 44px; }
+
+        /* Moon phases */
+        .moon-system.phase-full .moon-shadow { opacity: 0; transform: translateX(0); }
+        .moon-system.phase-half .moon-shadow { opacity: 1; transform: translateX(-36px); }
+        .moon-system.phase-crescent-right .moon-shadow { opacity: 1; transform: translateX(-51px); }
+        .moon-system.phase-crescent-left .moon-shadow { opacity: 1; transform: translateX(51px); }
+        .moon-system.phase-threeq-right .moon-shadow { opacity: 1; transform: translateX(-22px); }
+        .moon-system.phase-threeq-left .moon-shadow { opacity: 1; transform: translateX(22px); }
+
         /* The stylized triangle rays */
         .sun-ray-layer {
             position: absolute;
@@ -167,6 +239,66 @@
         .day-active .starfield,
         .day-active .shooting-starfield {
             opacity: 0;
+        }
+
+        /* --- CARTOON WIND FX LAYER --- */
+        .wind-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            pointer-events: none;
+            overflow: hidden;
+            opacity: 0.38;
+            transition: opacity 1.2s ease;
+        }
+
+        .wind-streak {
+            position: absolute;
+            left: 0;
+            top: var(--wind-top, 40%);
+            width: var(--wind-length, 130px);
+            height: var(--wind-thickness, 3px);
+            border-radius: 999px;
+            background: linear-gradient(90deg,
+                rgba(255,255,255,0) 0%,
+                rgba(255,255,255,0.5) 20%,
+                rgba(255,255,255,0.82) 48%,
+                rgba(255,255,255,0.45) 76%,
+                rgba(255,255,255,0) 100%);
+            filter: blur(0.2px);
+            opacity: 0;
+            animation-duration: var(--wind-duration, 7.2s);
+            animation-delay: var(--wind-delay, 0s);
+            animation-timing-function: cubic-bezier(0.2, 0.7, 0.35, 1);
+            animation-iteration-count: infinite;
+            will-change: transform, opacity;
+        }
+
+        .wind-streak::after {
+            content: "";
+            position: absolute;
+            right: -14px;
+            top: -5px;
+            width: 20px;
+            height: 12px;
+            border: 2px solid rgba(255,255,255,0.58);
+            border-left: none;
+            border-bottom: none;
+            border-radius: 0 100% 0 0;
+            opacity: 0.85;
+            transform: rotate(16deg);
+        }
+
+        #body.wind-right .wind-streak {
+            animation-name: wind-sweep-right;
+        }
+
+        #body.wind-left .wind-streak {
+            animation-name: wind-sweep-left;
+        }
+
+        #body:not(.day-active) .wind-layer {
+            opacity: 0.16;
         }
 
         .star {
@@ -517,6 +649,10 @@
             0% { transform: scale(1); opacity: 0.6; }
             100% { transform: scale(1.4); opacity: 0.9; }
         }
+        @keyframes moon-glow {
+            0% { transform: scale(1); opacity: 0.68; }
+            100% { transform: scale(1.18); opacity: 0.92; }
+        }
         @keyframes float {
             0% { transform: translate(0, 0) scale(1); }
             100% { transform: translate(50px, -25px) scale(1.05); }
@@ -540,6 +676,48 @@
             18% { opacity: 0.95; }
             35% { opacity: 0; transform: translate3d(var(--ex, 120vw), var(--ey, 60vh), 0) rotate(var(--shoot-angle, -26deg)); }
             100% { opacity: 0; transform: translate3d(var(--ex, 120vw), var(--ey, 60vh), 0) rotate(var(--shoot-angle, -26deg)); }
+        }
+
+        @keyframes wind-sweep-right {
+            0% {
+                opacity: 0;
+                transform: translate3d(-18vw, 0, 0) scaleX(0.85);
+            }
+            12% {
+                opacity: 0.62;
+            }
+            56% {
+                opacity: 0.72;
+                transform: translate3d(52vw, 2px, 0) scaleX(1);
+            }
+            80% {
+                opacity: 0.4;
+            }
+            100% {
+                opacity: 0;
+                transform: translate3d(126vw, -2px, 0) scaleX(0.9);
+            }
+        }
+
+        @keyframes wind-sweep-left {
+            0% {
+                opacity: 0;
+                transform: translate3d(118vw, 0, 0) scaleX(0.85);
+            }
+            12% {
+                opacity: 0.62;
+            }
+            56% {
+                opacity: 0.72;
+                transform: translate3d(48vw, 2px, 0) scaleX(1);
+            }
+            80% {
+                opacity: 0.4;
+            }
+            100% {
+                opacity: 0;
+                transform: translate3d(-26vw, -2px, 0) scaleX(0.9);
+            }
         }
 
         @keyframes click-radar {
@@ -578,6 +756,9 @@
             h2 { font-size: 34px; }
             .sun-system { width: 190px; height: 190px; }
             .sun-body-cartoon { width: 102px; height: 102px; }
+            .moon-system { width: 100px; height: 100px; top: 10%; left: 53%; }
+            .moon-body { width: 64px; height: 64px; }
+            .moon-shadow { width: 64px; height: 64px; }
         }
 
         /* STYLING OVERHEAD FOR 800+ LINE REQUIREMENT 
@@ -660,6 +841,16 @@
             <div class="sun-ray-layer back"></div>
             <div class="sun-ray-layer"></div>
             <div class="sun-body-cartoon"></div>
+        </div>
+
+        <div id="moon-system" class="moon-system phase-full" aria-hidden="true">
+            <div class="moon-aura"></div>
+            <div class="moon-body">
+                <div class="moon-shadow"></div>
+                <div class="moon-crater a"></div>
+                <div class="moon-crater b"></div>
+                <div class="moon-crater c"></div>
+            </div>
         </div>
 
         <div id="starfield" class="starfield" aria-hidden="true"></div>
@@ -856,6 +1047,16 @@
 
         // Selected alarm sound type
         let selectedSound = 'digital'; // default sound
+        const MOON_PHASES = [
+            { cls: 'phase-crescent-right', weight: 14, label: 'crescent-right' },
+            { cls: 'phase-crescent-left', weight: 12, label: 'crescent-left' },
+            { cls: 'phase-full', weight: 26, label: 'full' },
+            { cls: 'phase-half', weight: 16, label: 'half' },
+            { cls: 'phase-threeq-right', weight: 18, label: 'three-quarters-right' },
+            { cls: 'phase-threeq-left', weight: 14, label: 'three-quarters-left' }
+        ];
+        // Scene wind vector shared by cloud drift and cartoon wind streaks.
+        let _sceneWindDirection = 1; // 1 => left-to-right, -1 => right-to-left
 
         // 2. BOOT SEQUENCE
         window.onload = () => {
@@ -865,6 +1066,7 @@
             renderApplication();
             attachScrollSnapping();
             initNightSky();
+            initWindFX();
             initCloudsMotion();
             initClickRadar();
 
@@ -899,6 +1101,38 @@
                 initNightSky();
             }, 180);
         });
+
+        // Build lightweight cartoony wind streaks and set a global wind direction.
+        function initWindFX() {
+            const body = document.getElementById('body');
+            const stage = document.getElementById('stage');
+            if (!body || !stage) return;
+
+            _sceneWindDirection = Math.random() < 0.5 ? -1 : 1;
+            body.classList.toggle('wind-right', _sceneWindDirection === 1);
+            body.classList.toggle('wind-left', _sceneWindDirection === -1);
+
+            let layer = document.getElementById('wind-layer');
+            if (!layer) {
+                layer = document.createElement('div');
+                layer.id = 'wind-layer';
+                layer.className = 'wind-layer';
+                stage.appendChild(layer);
+            }
+            layer.innerHTML = '';
+
+            const streakCount = 10;
+            for (let i = 0; i < streakCount; i++) {
+                const streak = document.createElement('div');
+                streak.className = 'wind-streak';
+                streak.style.setProperty('--wind-top', `${8 + Math.random() * 58}%`);
+                streak.style.setProperty('--wind-length', `${85 + Math.random() * 170}px`);
+                streak.style.setProperty('--wind-thickness', `${2 + Math.random() * 2.2}px`);
+                streak.style.setProperty('--wind-duration', `${5.8 + Math.random() * 4.6}s`);
+                streak.style.setProperty('--wind-delay', `${Math.random() * 5.2}s`);
+                layer.appendChild(streak);
+            }
+        }
 
         // 3. HARDWARE: CAMERA INTEGRATION
         async function setupCamera() {
@@ -1138,6 +1372,7 @@
         function initCloudsMotion() {
             const clouds = Array.from(document.querySelectorAll('.cloud'));
             if (!clouds.length) return;
+            const windDir = _sceneWindDirection || 1;
 
             // helper dims
             const W = () => Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
@@ -1148,9 +1383,9 @@
                 const cs = getComputedStyle(el);
                 const baseTransform = cs.transform && cs.transform !== 'none' ? cs.transform : '';
 
-                // assign a fixed speed (px/sec) and initial direction
-                const speed = 42 + Math.random() * 46; // 42-88 px/sec for smoother drift
-                const dirX = Math.random() < 0.5 ? 1 : -1; // left-to-right or right-to-left
+                // assign a fixed speed (px/sec) and scene-wide wind direction
+                const speed = 28 + Math.random() * 30; // 28-58 px/sec for calmer glide
+                const dirX = windDir;
                 const norm = Math.hypot(dirX, 0); // only horizontal movement
 
                 el._cloud = {
@@ -1241,9 +1476,8 @@
             function reinitCloud(el) {
                 const d = el._cloud;
                 if (!d) return;
-                // preserve speed, pick new starting side and keep vertical position fixed
-                const side = Math.random() < 0.5 ? 'left' : 'right';
-                const startX = side === 'left' ? - (W() * 1.05 + d.width) : (W() * 1.05 + d.width);
+                // preserve speed and re-enter from the upwind side
+                const startX = windDir > 0 ? - (W() * 1.05 + d.width) : (W() * 1.05 + d.width);
                 const startY = d.y; // keep Y position fixed
 
                 d.x = startX;
@@ -1251,7 +1485,7 @@
                 d.targetX = startX;
                 d.targetY = startY;
 
-                const dirX = side === 'left' ? 1 : -1;
+                const dirX = windDir > 0 ? 1 : -1;
                 d.dir = { x: dirX, y: 0 }; // only horizontal movement
 
                 el.style.transform = (d.baseTransform ? d.baseTransform + ' ' : '') + ` translate3d(${d.x}px, ${d.y}px, 0)`;
@@ -1676,6 +1910,32 @@
             return 5000;
         }
 
+        function _pickMoonPhaseWeighted() {
+            const total = MOON_PHASES.reduce((sum, item) => sum + item.weight, 0);
+            let r = Math.random() * total;
+            for (let i = 0; i < MOON_PHASES.length; i++) {
+                r -= MOON_PHASES[i].weight;
+                if (r <= 0) return MOON_PHASES[i];
+            }
+            return MOON_PHASES[MOON_PHASES.length - 1];
+        }
+
+        function _setMoonPhase() {
+            const moon = document.getElementById('moon-system');
+            if (!moon) return;
+            const selected = _pickMoonPhaseWeighted();
+            moon.classList.remove(
+                'phase-crescent-right',
+                'phase-crescent-left',
+                'phase-full',
+                'phase-half',
+                'phase-threeq-right',
+                'phase-threeq-left'
+            );
+            moon.classList.add(selected.cls);
+            moon.setAttribute('data-moon-phase', selected.label);
+        }
+
         // SUN CONTROLS: centralize sun up / down behavior and animation
         function setSunUp() {
             const bodyEl = document.getElementById('body');
@@ -1688,6 +1948,7 @@
         function setSunDown() {
             const bodyEl = document.getElementById('body');
             const sun = document.getElementById('sun-system');
+            _setMoonPhase();
             if (bodyEl) bodyEl.classList.remove('day-active');
             if (sun) sun.classList.remove('sun-on-top');
             // wait for background/sun transition to complete
