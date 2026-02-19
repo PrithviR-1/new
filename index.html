@@ -629,6 +629,10 @@
         }
         .btn-add:hover { filter: brightness(1.2); transform: translateY(-2px); }
 
+        #set-alarm-btn.alarm-confirm-glow {
+            animation: alarm-confirm-glow 720ms cubic-bezier(0.22, 0.9, 0.3, 1) 1;
+        }
+
         input[type="text"] {
             flex: 1;
             background: rgba(255,255,255,0.08);
@@ -732,6 +736,21 @@
             100% {
                 opacity: 0;
                 transform: translate(-50%, -50%) scale(6.8);
+            }
+        }
+
+        @keyframes alarm-confirm-glow {
+            0% {
+                filter: brightness(1);
+                box-shadow: 0 0 0 rgba(48, 209, 88, 0), 0 6px 14px rgba(0, 122, 255, 0.25);
+            }
+            40% {
+                filter: brightness(1.08);
+                box-shadow: 0 0 0 1px rgba(48, 209, 88, 0.22), 0 0 26px rgba(48, 209, 88, 0.58), 0 0 44px rgba(48, 209, 88, 0.28);
+            }
+            100% {
+                filter: brightness(1);
+                box-shadow: 0 0 0 rgba(48, 209, 88, 0), 0 6px 14px rgba(0, 122, 255, 0.25);
             }
         }
 
@@ -953,7 +972,7 @@
                         <div></div><div>AM</div><div>PM</div><div></div>
                     </div>
                 </div>
-                <button class="btn-add" style="width:100%; height: 64px; font-size: 17px;" onclick="addAlarm()">Set New Alarm</button>
+                <button id="set-alarm-btn" class="btn-add" style="width:100%; height: 64px; font-size: 17px;" onclick="addAlarm()">Set New Alarm</button>
             </section>
 
             <div class="divider-glass"></div>
@@ -1027,12 +1046,157 @@
          */
 
         // 1. STATE MANAGEMENT
-        let tasks = [
+        const APP_STATE_STORAGE_KEY = 'atmospherePro.appState.v1';
+        const DEFAULT_SOUND_ID = 'sunrise-chimes';
+        const BASE_SOUND_OPTIONS = [
+            { id: 'sunrise-chimes', name: 'Sunrise Chimes', description: 'Gentle layered bells with breathing pauses.' },
+            { id: 'soft-glass-bells', name: 'Soft Glass Bells', description: 'Clean glass-like tones with soft urgency.' },
+            { id: 'warm-marimba-steps', name: 'Warm Marimba Steps', description: 'Wooden, warm steps with a steady morning pulse.' },
+            { id: 'ambient-pulse', name: 'Ambient Pulse', description: 'Low, airy pulse designed to rise slowly.' },
+            { id: 'gentle-digital-bloom', name: 'Gentle Digital Bloom', description: 'Modern digital plucks that bloom instead of stab.' },
+            { id: 'temple-bell-calm', name: 'Temple Bell Calm', description: 'Grounded bell strikes with spacious rests.' },
+            { id: 'morning-piano-drops', name: 'Morning Piano Drops', description: 'Soft piano droplets with a reassuring cadence.' },
+            { id: 'breezy-wind-chime', name: 'Breezy Wind Chime', description: 'Airy chimes with subtle motion and lift.' }
+        ];
+        const ALARM_SOUND_PROFILES = {
+            'sunrise-chimes': {
+                // Developer notes:
+                // vibe: Calm sunrise; optimistic and premium without urgency.
+                // texture: Warm bell layers with gentle harmonics and soft air.
+                // rhythm: Two connected 10s phrases (20.6s total cycle) with breathing rests.
+                // frequency range: ~280Hz to 1040Hz; avoids piercing highs.
+                // loudness: starts soft and blooms through the full composition.
+                // why it works: clear melodic identity, gradual lift, never shrill.
+                // shaping: smooth envelopes, subtle delay tail, harmonic doubling.
+                cycleLength: 20.6,
+                rampSeconds: 10,
+                level: 0.21,
+                motifs: [
+                    { length: 10.4, notes: [{ t: 0.0, d: 0.52, f: 392, g: 0.22, w: 'sine', harmonic: 2, hg: 0.1, pan: -0.06 }, { t: 1.3, d: 0.5, f: 523.25, g: 0.23, w: 'triangle', harmonic: 1.5, hg: 0.08, pan: 0.06 }, { t: 2.7, d: 0.56, f: 659.25, g: 0.24, w: 'sine', harmonic: 2, hg: 0.1, pan: -0.03 }, { t: 4.5, d: 0.48, f: 523.25, g: 0.21, w: 'triangle', pan: 0.05 }, { t: 6.3, d: 0.5, f: 587.33, g: 0.22, w: 'sine', harmonic: 1.8, hg: 0.08, pan: -0.05 }, { t: 8.4, d: 0.62, f: 440, g: 0.2, w: 'triangle', pan: 0.04 }] },
+                    { length: 10.2, notes: [{ t: 0.2, d: 0.48, f: 523.25, g: 0.24, w: 'sine', harmonic: 2, hg: 0.1, pan: 0.05 }, { t: 1.4, d: 0.54, f: 659.25, g: 0.25, w: 'triangle', harmonic: 1.5, hg: 0.09, pan: -0.05 }, { t: 2.8, d: 0.6, f: 783.99, g: 0.26, w: 'sine', harmonic: 2, hg: 0.11, pan: 0.03 }, { t: 4.7, d: 0.48, f: 659.25, g: 0.23, w: 'triangle', pan: -0.04 }, { t: 6.6, d: 0.5, f: 587.33, g: 0.22, w: 'sine', harmonic: 1.8, hg: 0.08, pan: 0.04 }, { t: 8.5, d: 0.66, f: 523.25, g: 0.21, w: 'triangle', pan: -0.02 }] }
+                ]
+            },
+            'soft-glass-bells': {
+                // vibe: Clean modern calm with soft urgency.
+                // texture: Glass-like bell pings with controlled shimmer.
+                // rhythm: 20.4s cycle across two 10s phrases; call-and-answer structure.
+                // frequency range: ~410Hz to 1180Hz; filtered to keep edges soft.
+                // loudness: gentle onset with slight second-half lift.
+                // why it works: articulate enough to wake, spacious enough to stay pleasant.
+                // shaping: short attack, controlled decay, light ambient tail.
+                cycleLength: 20.4,
+                rampSeconds: 9,
+                level: 0.2,
+                motifs: [
+                    { length: 10.0, notes: [{ t: 0.0, d: 0.36, f: 698.46, g: 0.22, w: 'triangle', harmonic: 2.6, hg: 0.08, pan: -0.08 }, { t: 0.7, d: 0.34, f: 880, g: 0.21, w: 'sine', harmonic: 2.2, hg: 0.08, pan: 0.08 }, { t: 2.2, d: 0.38, f: 783.99, g: 0.22, w: 'triangle', pan: -0.06 }, { t: 3.8, d: 0.46, f: 587.33, g: 0.24, w: 'sine', harmonic: 1.8, hg: 0.09, pan: 0.05 }, { t: 5.8, d: 0.4, f: 659.25, g: 0.22, w: 'triangle', pan: -0.05 }, { t: 7.9, d: 0.54, f: 523.25, g: 0.2, w: 'sine', pan: 0.04 }] },
+                    { length: 10.4, notes: [{ t: 0.3, d: 0.34, f: 783.99, g: 0.23, w: 'triangle', harmonic: 2.4, hg: 0.09, pan: 0.07 }, { t: 1.1, d: 0.34, f: 987.77, g: 0.22, w: 'sine', harmonic: 2, hg: 0.08, pan: -0.07 }, { t: 2.5, d: 0.42, f: 880, g: 0.23, w: 'triangle', pan: 0.05 }, { t: 4.2, d: 0.48, f: 659.25, g: 0.24, w: 'sine', harmonic: 1.8, hg: 0.09, pan: -0.05 }, { t: 6.3, d: 0.42, f: 783.99, g: 0.22, w: 'triangle', pan: 0.04 }, { t: 8.5, d: 0.6, f: 587.33, g: 0.21, w: 'sine', pan: -0.03 }] }
+                ]
+            },
+            'warm-marimba-steps': {
+                // vibe: Grounded and positive; confident wake-up momentum.
+                // texture: Wooden marimba body with warm fundamental support.
+                // rhythm: 20.8s composed step pattern with repeated groove and variation.
+                // frequency range: ~220Hz to 760Hz for warm mids.
+                // loudness: soft transients early, stronger phrase accents later.
+                // why it works: predictable cadence keeps attention without stress.
+                // shaping: damped decay and rounded attack like felt mallets.
+                cycleLength: 20.8,
+                rampSeconds: 10,
+                level: 0.22,
+                motifs: [
+                    { length: 10.6, notes: [{ t: 0.0, d: 0.26, f: 293.66, g: 0.26, w: 'triangle', harmonic: 2, hg: 0.06, pan: -0.05 }, { t: 0.65, d: 0.24, f: 329.63, g: 0.27, w: 'triangle', pan: -0.03 }, { t: 1.3, d: 0.24, f: 392, g: 0.27, w: 'triangle', pan: 0.03 }, { t: 1.95, d: 0.24, f: 440, g: 0.28, w: 'triangle', pan: 0.05 }, { t: 3.4, d: 0.28, f: 329.63, g: 0.26, w: 'sine', harmonic: 1.7, hg: 0.06, pan: -0.04 }, { t: 4.3, d: 0.26, f: 392, g: 0.27, w: 'triangle', pan: 0.04 }, { t: 5.2, d: 0.28, f: 493.88, g: 0.28, w: 'sine', pan: -0.02 }, { t: 6.8, d: 0.3, f: 440, g: 0.29, w: 'triangle', pan: 0.03 }, { t: 8.8, d: 0.36, f: 349.23, g: 0.24, w: 'sine', pan: 0.0 }] },
+                    { length: 10.2, notes: [{ t: 0.2, d: 0.26, f: 329.63, g: 0.28, w: 'triangle', harmonic: 2, hg: 0.07, pan: 0.04 }, { t: 0.86, d: 0.24, f: 392, g: 0.29, w: 'triangle', pan: 0.02 }, { t: 1.52, d: 0.24, f: 440, g: 0.29, w: 'triangle', pan: -0.02 }, { t: 2.18, d: 0.24, f: 523.25, g: 0.3, w: 'triangle', pan: -0.04 }, { t: 3.7, d: 0.28, f: 392, g: 0.27, w: 'sine', harmonic: 1.6, hg: 0.06, pan: 0.04 }, { t: 4.7, d: 0.26, f: 493.88, g: 0.28, w: 'triangle', pan: -0.03 }, { t: 5.7, d: 0.28, f: 587.33, g: 0.29, w: 'sine', pan: 0.03 }, { t: 7.2, d: 0.3, f: 523.25, g: 0.3, w: 'triangle', pan: -0.02 }, { t: 8.8, d: 0.38, f: 392, g: 0.25, w: 'sine', pan: 0.0 }] }
+                ]
+            },
+            'ambient-pulse': {
+                // vibe: Minimal ambient wake-up with soft confidence.
+                // texture: Warm pad pulses and mellow airy layer.
+                // rhythm: 21.2s slow-moving composition with long breathing space.
+                // frequency range: ~170Hz to 560Hz emphasizing warm low-mids.
+                // loudness: very gentle start, progressive lift through second phrase.
+                // why it works: sustained pulse builds alertness without agitation.
+                // shaping: long envelopes, low-pass smoothing, soft harmonic bloom.
+                cycleLength: 21.2,
+                rampSeconds: 11,
+                level: 0.2,
+                motifs: [
+                    { length: 10.8, notes: [{ t: 0.0, d: 1.4, f: 220, g: 0.15, w: 'sine', harmonic: 2, hg: 0.04, pan: -0.03 }, { t: 1.9, d: 1.3, f: 246.94, g: 0.16, w: 'triangle', harmonic: 1.5, hg: 0.04, pan: 0.03 }, { t: 3.9, d: 1.4, f: 261.63, g: 0.16, w: 'sine', pan: -0.02 }, { t: 6.1, d: 1.2, f: 293.66, g: 0.17, w: 'triangle', harmonic: 1.6, hg: 0.05, pan: 0.02 }, { t: 8.4, d: 1.2, f: 329.63, g: 0.16, w: 'sine', pan: 0.0 }] },
+                    { length: 10.4, notes: [{ t: 0.4, d: 1.3, f: 246.94, g: 0.17, w: 'sine', harmonic: 2, hg: 0.05, pan: 0.03 }, { t: 2.3, d: 1.2, f: 261.63, g: 0.18, w: 'triangle', harmonic: 1.5, hg: 0.05, pan: -0.03 }, { t: 4.2, d: 1.35, f: 293.66, g: 0.18, w: 'sine', pan: 0.02 }, { t: 6.2, d: 1.15, f: 349.23, g: 0.19, w: 'triangle', harmonic: 1.6, hg: 0.05, pan: -0.02 }, { t: 8.4, d: 1.2, f: 392, g: 0.17, w: 'sine', pan: 0.0 }] }
+                ]
+            },
+            'gentle-digital-bloom': {
+                // vibe: Contemporary, polished, and calm-modern.
+                // texture: Rounded digital plucks with gentle harmonic bloom.
+                // rhythm: 20.2s through two 10s phrases; clustered motif + response.
+                // frequency range: ~260Hz to 980Hz; no harsh upper spikes.
+                // loudness: subtle open, clearer articulation in back half.
+                // why it works: modern identity with melodic structure, never chaotic.
+                // shaping: quick-soft attacks, medium release, filtered harmonics.
+                cycleLength: 20.2,
+                rampSeconds: 9,
+                level: 0.22,
+                motifs: [
+                    { length: 10.0, notes: [{ t: 0.0, d: 0.28, f: 523.25, g: 0.2, w: 'triangle', harmonic: 2, hg: 0.07, pan: -0.06 }, { t: 0.45, d: 0.24, f: 659.25, g: 0.19, w: 'sine', harmonic: 2.3, hg: 0.06, pan: 0.06 }, { t: 0.9, d: 0.24, f: 783.99, g: 0.18, w: 'triangle', pan: -0.04 }, { t: 2.0, d: 0.32, f: 587.33, g: 0.21, w: 'triangle', pan: 0.05 }, { t: 2.7, d: 0.34, f: 659.25, g: 0.2, w: 'sine', pan: -0.03 }, { t: 4.3, d: 0.3, f: 523.25, g: 0.21, w: 'triangle', harmonic: 1.8, hg: 0.06, pan: 0.03 }, { t: 5.2, d: 0.3, f: 587.33, g: 0.2, w: 'sine', pan: -0.02 }, { t: 7.4, d: 0.42, f: 440, g: 0.18, w: 'triangle', pan: 0.01 }] },
+                    { length: 10.2, notes: [{ t: 0.3, d: 0.3, f: 587.33, g: 0.21, w: 'triangle', harmonic: 2, hg: 0.07, pan: 0.05 }, { t: 0.78, d: 0.25, f: 739.99, g: 0.2, w: 'sine', harmonic: 2.1, hg: 0.06, pan: -0.05 }, { t: 1.28, d: 0.25, f: 880, g: 0.19, w: 'triangle', pan: 0.04 }, { t: 2.4, d: 0.34, f: 659.25, g: 0.22, w: 'triangle', pan: -0.04 }, { t: 3.15, d: 0.35, f: 739.99, g: 0.21, w: 'sine', pan: 0.03 }, { t: 4.9, d: 0.32, f: 587.33, g: 0.22, w: 'triangle', harmonic: 1.8, hg: 0.06, pan: -0.02 }, { t: 5.9, d: 0.3, f: 659.25, g: 0.21, w: 'sine', pan: 0.02 }, { t: 8.1, d: 0.46, f: 493.88, g: 0.19, w: 'triangle', pan: 0.0 }] }
+                ]
+            },
+            'temple-bell-calm': {
+                // vibe: Centered, peaceful, ceremonial calm.
+                // texture: Grounded bell fundamentals with low harmonic body.
+                // rhythm: 21.6s sparse composition; deliberate strikes with long rests.
+                // frequency range: ~190Hz to 760Hz, favoring mellow mids.
+                // loudness: smooth start, each strike blooms and settles naturally.
+                // why it works: sparse pacing remains effective without sounding frantic.
+                // shaping: long release and subtle echo for meditative space.
+                cycleLength: 21.6,
+                rampSeconds: 10,
+                level: 0.23,
+                motifs: [
+                    { length: 11.0, notes: [{ t: 0.0, d: 0.82, f: 246.94, g: 0.2, w: 'sine', harmonic: 2, hg: 0.09, pan: -0.03 }, { t: 2.3, d: 0.78, f: 329.63, g: 0.2, w: 'triangle', harmonic: 1.5, hg: 0.09, pan: 0.03 }, { t: 4.9, d: 0.86, f: 392, g: 0.21, w: 'sine', harmonic: 2, hg: 0.09, pan: -0.02 }, { t: 7.6, d: 0.82, f: 329.63, g: 0.2, w: 'triangle', pan: 0.02 }, { t: 9.5, d: 0.92, f: 261.63, g: 0.19, w: 'sine', pan: 0.0 }] },
+                    { length: 10.6, notes: [{ t: 0.4, d: 0.8, f: 293.66, g: 0.21, w: 'sine', harmonic: 2, hg: 0.09, pan: 0.03 }, { t: 2.5, d: 0.78, f: 392, g: 0.21, w: 'triangle', harmonic: 1.5, hg: 0.09, pan: -0.03 }, { t: 5.0, d: 0.9, f: 440, g: 0.22, w: 'sine', harmonic: 2, hg: 0.1, pan: 0.02 }, { t: 7.4, d: 0.82, f: 349.23, g: 0.2, w: 'triangle', pan: -0.02 }, { t: 9.0, d: 0.96, f: 293.66, g: 0.19, w: 'sine', pan: 0.0 }] }
+                ]
+            },
+            'morning-piano-drops': {
+                // vibe: Familiar, human, reassuring wake-up tone.
+                // texture: Soft piano-like droplets with warm support.
+                // rhythm: 20.6s composed sequence with recognizable descending motif.
+                // frequency range: ~230Hz to 900Hz, no metallic top-end.
+                // loudness: starts low, rounded accents become clearer over time.
+                // why it works: melodic motion attracts attention without annoyance.
+                // shaping: cushioned attack with medium release and gentle tail.
+                cycleLength: 20.6,
+                rampSeconds: 10,
+                level: 0.22,
+                motifs: [
+                    { length: 10.2, notes: [{ t: 0.0, d: 0.34, f: 659.25, g: 0.2, w: 'triangle', harmonic: 2, hg: 0.06, pan: -0.05 }, { t: 0.8, d: 0.36, f: 587.33, g: 0.21, w: 'triangle', pan: 0.05 }, { t: 1.7, d: 0.38, f: 523.25, g: 0.22, w: 'sine', harmonic: 1.7, hg: 0.06, pan: -0.03 }, { t: 2.8, d: 0.44, f: 440, g: 0.23, w: 'sine', pan: 0.03 }, { t: 4.6, d: 0.36, f: 493.88, g: 0.21, w: 'triangle', pan: -0.03 }, { t: 5.5, d: 0.38, f: 523.25, g: 0.22, w: 'sine', pan: 0.03 }, { t: 7.2, d: 0.4, f: 392, g: 0.2, w: 'triangle', pan: -0.02 }, { t: 8.9, d: 0.52, f: 349.23, g: 0.19, w: 'sine', pan: 0.0 }] },
+                    { length: 10.4, notes: [{ t: 0.3, d: 0.34, f: 739.99, g: 0.21, w: 'triangle', harmonic: 2, hg: 0.07, pan: 0.05 }, { t: 1.1, d: 0.36, f: 659.25, g: 0.22, w: 'triangle', pan: -0.05 }, { t: 2.0, d: 0.38, f: 587.33, g: 0.23, w: 'sine', harmonic: 1.7, hg: 0.06, pan: 0.03 }, { t: 3.2, d: 0.44, f: 493.88, g: 0.24, w: 'sine', pan: -0.03 }, { t: 5.0, d: 0.36, f: 523.25, g: 0.22, w: 'triangle', pan: 0.02 }, { t: 5.9, d: 0.38, f: 587.33, g: 0.23, w: 'sine', pan: -0.02 }, { t: 7.6, d: 0.42, f: 440, g: 0.21, w: 'triangle', pan: 0.01 }, { t: 9.2, d: 0.56, f: 392, g: 0.19, w: 'sine', pan: 0.0 }] }
+                ]
+            },
+            'breezy-wind-chime': {
+                // vibe: Airy and fresh with soft emotional lift.
+                // texture: Wind-chime clusters with gentle harmonic air.
+                // rhythm: 21.2s cycle with flutter clusters and calm answering tones.
+                // frequency range: ~320Hz to 1120Hz; highs remain controlled.
+                // loudness: very gentle open, modest intensity build across cycle.
+                // why it works: musical movement stays pleasant while still awakening.
+                // shaping: softened transients, longer tails, subtle spatial delay.
+                cycleLength: 21.2,
+                rampSeconds: 10,
+                level: 0.2,
+                motifs: [
+                    { length: 10.4, notes: [{ t: 0.0, d: 0.28, f: 523.25, g: 0.18, w: 'sine', harmonic: 2.2, hg: 0.06, pan: -0.08 }, { t: 0.38, d: 0.26, f: 659.25, g: 0.17, w: 'triangle', harmonic: 2, hg: 0.06, pan: 0.08 }, { t: 0.76, d: 0.3, f: 783.99, g: 0.16, w: 'sine', harmonic: 1.8, hg: 0.05, pan: -0.06 }, { t: 1.2, d: 0.34, f: 659.25, g: 0.17, w: 'triangle', pan: 0.06 }, { t: 2.6, d: 0.42, f: 587.33, g: 0.19, w: 'sine', pan: -0.04 }, { t: 4.5, d: 0.4, f: 523.25, g: 0.19, w: 'triangle', pan: 0.04 }, { t: 6.8, d: 0.44, f: 493.88, g: 0.18, w: 'sine', pan: -0.03 }, { t: 8.8, d: 0.54, f: 440, g: 0.17, w: 'triangle', pan: 0.02 }] },
+                    { length: 10.8, notes: [{ t: 0.3, d: 0.28, f: 587.33, g: 0.19, w: 'sine', harmonic: 2.1, hg: 0.06, pan: 0.08 }, { t: 0.66, d: 0.26, f: 739.99, g: 0.18, w: 'triangle', harmonic: 2, hg: 0.06, pan: -0.08 }, { t: 1.04, d: 0.3, f: 880, g: 0.17, w: 'sine', harmonic: 1.8, hg: 0.05, pan: 0.06 }, { t: 1.46, d: 0.34, f: 739.99, g: 0.18, w: 'triangle', pan: -0.06 }, { t: 2.9, d: 0.44, f: 659.25, g: 0.2, w: 'sine', pan: 0.04 }, { t: 4.9, d: 0.4, f: 587.33, g: 0.2, w: 'triangle', pan: -0.04 }, { t: 7.2, d: 0.46, f: 523.25, g: 0.19, w: 'sine', pan: 0.02 }, { t: 9.3, d: 0.6, f: 493.88, g: 0.18, w: 'triangle', pan: 0.0 }] }
+                ]
+            }
+        };
+        const createDefaultTasks = () => ([
             { id: 1, text: "Rehydrate (20oz Water)", done: false },
             { id: 2, text: "5 Min Mobility Stretch", done: false },
             { id: 3, text: "View Morning Sunlight", done: false },
             { id: 4, text: "No-Phone Focus Window", done: false }
-        ];
+        ]);
+
+        let tasks = createDefaultTasks();
 
         let alarms = [];
 
@@ -1046,7 +1210,7 @@
         let selectedAlarmType = 'routine'; // currently selected type for new alarms
 
         // Selected alarm sound type
-        let selectedSound = 'digital'; // default sound
+        let selectedSound = DEFAULT_SOUND_ID; // default sound
         const MOON_PHASES = [
             { cls: 'phase-crescent-right', weight: 14, label: 'crescent-right' },
             { cls: 'phase-crescent-left', weight: 12, label: 'crescent-left' },
@@ -1057,13 +1221,207 @@
         ];
         // Scene wind vector shared by cloud drift and cartoon wind streaks.
         let _sceneWindDirection = 1; // 1 => left-to-right, -1 => right-to-left
+        let _setAlarmGlowTimeout = null;
+
+        function _safeParseJSON(raw) {
+            try { return JSON.parse(raw); } catch (e) { return null; }
+        }
+
+        function _normalizeTaskList(list) {
+            if (!Array.isArray(list)) return createDefaultTasks();
+            const normalized = list
+                .filter(t => t && typeof t.text === 'string')
+                .map(t => ({
+                    id: Number.isFinite(Number(t.id)) ? Number(t.id) : Date.now() + Math.floor(Math.random() * 10000),
+                    text: t.text.trim(),
+                    done: !!t.done
+                }))
+                .filter(t => t.text.length > 0);
+            return normalized.length ? normalized : createDefaultTasks();
+        }
+
+        function _serializeTimersForState() {
+            if (!Array.isArray(_timers)) return [];
+            return _timers.map(t => ({
+                id: String(t.id),
+                label: String(t.label || ''),
+                total: Math.max(0, Number(t.total) || 0),
+                remaining: Math.max(0, Number(t.remaining) || 0),
+                active: !!t.active,
+                endAt: t.active ? Math.max(Date.now(), Number(t.endAt) || (Date.now() + Math.max(0, Number(t.remaining) || 0))) : null
+            }));
+        }
+
+        function _serializeStopwatchForState() {
+            const elapsedNow = _sw_elapsed + (_sw_running ? (Date.now() - _sw_start) : 0);
+            return {
+                running: !!_sw_running,
+                elapsed: Math.max(0, elapsedNow),
+                laps: Array.isArray(_sw_laps) ? _sw_laps.filter(v => Number.isFinite(Number(v))).map(v => Math.max(0, Number(v))).slice(0, 100) : []
+            };
+        }
+
+        function saveState() {
+            try {
+                const customSounds = SOUND_OPTIONS
+                    .filter(s => s && s.isCustom && typeof s.audioUrl === 'string' && s.audioUrl.startsWith('data:'))
+                    .map(s => ({
+                        id: String(s.id),
+                        name: String(s.name || 'Imported Sound'),
+                        description: String(s.description || 'Imported sound'),
+                        audioUrl: s.audioUrl
+                    }));
+
+                const state = {
+                    version: 1,
+                    savedAt: Date.now(),
+                    tasks: _normalizeTaskList(tasks),
+                    alarms: Array.isArray(alarms) ? alarms.map(a => String(a || '')).filter(Boolean) : [],
+                    alarmsMeta: Array.isArray(alarmsMeta) ? alarmsMeta.map(d => String(d || 'Everyday')) : [],
+                    alarmTypes: Array.isArray(alarmTypes) ? alarmTypes.map(t => (t === 'regular' ? 'regular' : 'routine')) : [],
+                    selectedAlarmType: selectedAlarmType === 'regular' ? 'regular' : 'routine',
+                    selectedSound: String(selectedSound || DEFAULT_SOUND_ID),
+                    customSounds,
+                    timers: _serializeTimersForState(),
+                    stopwatch: _serializeStopwatchForState()
+                };
+                localStorage.setItem(APP_STATE_STORAGE_KEY, JSON.stringify(state));
+            } catch (e) {
+                console.warn('Failed to save app state', e);
+            }
+        }
+
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(APP_STATE_STORAGE_KEY);
+                if (!raw) return null;
+                const parsed = _safeParseJSON(raw);
+                if (!parsed || typeof parsed !== 'object') return null;
+                return parsed;
+            } catch (e) {
+                console.warn('Failed to load app state', e);
+                return null;
+            }
+        }
+
+        function initializeState() {
+            const state = loadState();
+
+            // always rebuild sound options from defaults first
+            SOUND_OPTIONS = BASE_SOUND_OPTIONS.map(s => ({ ...s }));
+
+            if (!state) {
+                tasks = createDefaultTasks();
+                alarms = [];
+                alarmsMeta = [];
+                alarmTypes = [];
+                selectedAlarmType = 'routine';
+                selectedSound = DEFAULT_SOUND_ID;
+                _timers.splice(0, _timers.length);
+                _sw_running = false;
+                _sw_elapsed = 0;
+                _sw_start = 0;
+                _sw_laps = [];
+                if (_sw_tick) { clearInterval(_sw_tick); _sw_tick = null; }
+                const swBtn = document.getElementById('sw-start');
+                if (swBtn) swBtn.textContent = 'Start';
+                return;
+            }
+
+            tasks = _normalizeTaskList(state.tasks);
+            alarms = Array.isArray(state.alarms) ? state.alarms.map(a => String(a || '')).filter(Boolean) : [];
+            alarmsMeta = Array.isArray(state.alarmsMeta) ? state.alarmsMeta.map(v => String(v || 'Everyday')) : [];
+            alarmTypes = Array.isArray(state.alarmTypes) ? state.alarmTypes.map(v => (v === 'regular' ? 'regular' : 'routine')) : [];
+
+            while (alarmsMeta.length < alarms.length) alarmsMeta.push('Everyday');
+            while (alarmTypes.length < alarms.length) alarmTypes.push('routine');
+            if (alarmsMeta.length > alarms.length) alarmsMeta = alarmsMeta.slice(0, alarms.length);
+            if (alarmTypes.length > alarms.length) alarmTypes = alarmTypes.slice(0, alarms.length);
+
+            selectedAlarmType = state.selectedAlarmType === 'regular' ? 'regular' : 'routine';
+
+            const customSounds = Array.isArray(state.customSounds) ? state.customSounds : [];
+            customSounds.forEach(cs => {
+                if (!cs || typeof cs !== 'object') return;
+                if (typeof cs.audioUrl !== 'string' || !cs.audioUrl.startsWith('data:')) return;
+                const id = String(cs.id || `custom-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`);
+                if (SOUND_OPTIONS.some(s => s.id === id)) return;
+                SOUND_OPTIONS.unshift({
+                    id,
+                    name: String(cs.name || 'Imported Sound'),
+                    description: String(cs.description || 'Imported sound'),
+                    audioUrl: cs.audioUrl,
+                    isCustom: true
+                });
+            });
+
+            const soundExists = SOUND_OPTIONS.some(s => s.id === state.selectedSound);
+            selectedSound = soundExists ? state.selectedSound : DEFAULT_SOUND_ID;
+
+            _timers.splice(0, _timers.length);
+            const now = Date.now();
+            const persistedTimers = Array.isArray(state.timers) ? state.timers : [];
+            persistedTimers.forEach(pt => {
+                if (!pt || typeof pt !== 'object') return;
+                const timer = {
+                    id: String(pt.id || `${Date.now()}-${Math.random().toString(36).slice(2, 6)}`),
+                    label: String(pt.label || ''),
+                    total: Math.max(0, Number(pt.total) || 0),
+                    remaining: Math.max(0, Number(pt.remaining) || 0),
+                    interval: null,
+                    active: !!pt.active,
+                    endAt: null
+                };
+                if (timer.total <= 0 && timer.remaining <= 0) return;
+
+                if (timer.active) {
+                    const restoredEndAt = Number(pt.endAt) || (now + timer.remaining);
+                    timer.remaining = Math.max(0, restoredEndAt - now);
+                    timer.endAt = restoredEndAt;
+                    if (timer.remaining === 0) {
+                        timer.active = false;
+                        timer.endAt = null;
+                    }
+                }
+
+                _timers.push(timer);
+            });
+
+            if (_sw_tick) { clearInterval(_sw_tick); _sw_tick = null; }
+            _sw_running = false;
+            _sw_elapsed = 0;
+            _sw_start = 0;
+            _sw_laps = [];
+            if (state.stopwatch && typeof state.stopwatch === 'object') {
+                _sw_elapsed = Math.max(0, Number(state.stopwatch.elapsed) || 0);
+                _sw_laps = Array.isArray(state.stopwatch.laps) ? state.stopwatch.laps.filter(v => Number.isFinite(Number(v))).map(v => Math.max(0, Number(v))).slice(0, 100) : [];
+                if (state.stopwatch.running) {
+                    _sw_running = true;
+                    _sw_start = Date.now();
+                    _sw_tick = setInterval(_sw_render, 60);
+                }
+            }
+
+            _timers.forEach(timer => {
+                if (timer.active && timer.remaining > 0) {
+                    _startTimerInterval(timer, { preserveEndAt: true, persist: false });
+                }
+            });
+            const swBtn = document.getElementById('sw-start');
+            if (swBtn) swBtn.textContent = _sw_running ? 'Stop' : 'Start';
+        }
 
         // 2. BOOT SEQUENCE
         window.onload = () => {
             console.log("Atmosphere Pro [Core Initializing...]");
             setupCamera();
+            initializeState();
             initPickerWheels();
             renderApplication();
+            renderAlarms();
+            renderSoundOptions();
+            _renderTimers();
+            _sw_render();
             attachScrollSnapping();
             initNightSky();
             initWindFX();
@@ -1094,6 +1452,10 @@
 
             console.log("Atmosphere Pro [System Online]");
         };
+
+        window.addEventListener('beforeunload', () => {
+            saveState();
+        });
 
         window.addEventListener('resize', () => {
             clearTimeout(window._nightSkyResizeTick);
@@ -1529,6 +1891,7 @@
             if(task) {
                 task.done = !task.done;
                 renderApplication();
+                saveState();
             }
         }
 
@@ -1644,6 +2007,20 @@
                     btnRegular.style.borderColor = 'var(--accent-blue)';
                 }
             }
+            saveState();
+        }
+
+        function triggerSetAlarmSuccessGlow() {
+            const btn = document.getElementById('set-alarm-btn');
+            if (!btn) return;
+            btn.classList.remove('alarm-confirm-glow');
+            void btn.offsetWidth; // restart animation if user clicks rapidly
+            btn.classList.add('alarm-confirm-glow');
+            if (_setAlarmGlowTimeout) clearTimeout(_setAlarmGlowTimeout);
+            _setAlarmGlowTimeout = setTimeout(() => {
+                btn.classList.remove('alarm-confirm-glow');
+                _setAlarmGlowTimeout = null;
+            }, 820);
         }
 
         function addAlarm() {
@@ -1659,6 +2036,8 @@
             // Store the alarm type
             alarmTypes.push(selectedAlarmType);
             renderAlarms();
+            saveState();
+            triggerSetAlarmSuccessGlow();
             
             // Interaction Feedback
             console.log(`Alarm Set: ${newAlarm} (${d}) - Type: ${selectedAlarmType}`);
@@ -1669,6 +2048,7 @@
             if (alarmsMeta && alarmsMeta.length > index) alarmsMeta.splice(index, 1);
             if (alarmTypes && alarmTypes.length > index) alarmTypes.splice(index, 1);
             renderAlarms();
+            saveState();
         }
 
         // Hold-to-delete functionality
@@ -1751,21 +2131,18 @@
                 tasks.push({ id: Date.now(), text: val, done: false });
                 input.value = "";
                 renderApplication();
+                saveState();
             }
         }
 
         function deleteTask(id) {
             tasks = tasks.filter(t => t.id !== id);
             renderApplication();
+            saveState();
         }
 
         // 8.5. SOUND MANAGEMENT
-        const SOUND_OPTIONS = [
-            { id: 'classic', name: 'Classic Beep', description: 'Traditional sine wave alarm' },
-            { id: 'digital', name: 'Digital Pulse', description: 'Square wave with sharp edges' },
-            { id: 'gentle', name: 'Gentle Chime', description: 'Soft triangle wave melody' },
-            { id: 'urgent', name: 'Urgent Alert', description: 'Sawtooth wave for attention' }
-        ];
+        let SOUND_OPTIONS = BASE_SOUND_OPTIONS.map(s => ({ ...s }));
 
         function renderSoundOptions() {
             const container = document.getElementById('sound-options');
@@ -1795,6 +2172,7 @@
         function selectSound(soundId) {
             selectedSound = soundId;
             renderSoundOptions();
+            saveState();
         }
 
         function importSoundPrompt() {
@@ -1813,12 +2191,21 @@
                 try { evt.target.value = ''; } catch (e) {}
                 return;
             }
-            const url = URL.createObjectURL(file);
-            const id = 'custom-' + Date.now().toString(36);
-            SOUND_OPTIONS.unshift({ id, name, description: 'Imported sound', audioUrl: url });
-            // auto-select imported sound
-            selectedSound = id;
-            renderSoundOptions();
+            const reader = new FileReader();
+            reader.onload = () => {
+                const audioUrl = typeof reader.result === 'string' ? reader.result : '';
+                if (!audioUrl.startsWith('data:')) return;
+                const id = 'custom-' + Date.now().toString(36);
+                SOUND_OPTIONS.unshift({ id, name, description: 'Imported sound', audioUrl, isCustom: true });
+                // auto-select imported sound
+                selectedSound = id;
+                renderSoundOptions();
+                saveState();
+            };
+            reader.onerror = () => {
+                console.warn('Failed to read imported sound file');
+            };
+            reader.readAsDataURL(file);
         }
 
         function testSound(soundId) {
@@ -1833,31 +2220,43 @@
                     audio.volume = 0.0; // start silent then ramp
                     audio.loop = false;
                     const start = audio.play();
+                    if (start && typeof start.catch === 'function') start.catch(() => {});
                     // ramp volume in 2s
                     let vol = 0.0;
                     const rampInt = setInterval(() => {
-                        vol = Math.min(0.9, vol + 0.06);
+                        vol = Math.min(0.9, vol + 0.05);
                         try { audio.volume = vol; } catch (e) {}
-                    }, 140);
+                    }, 120);
 
                     const stop = () => {
-                        try { audio.pause(); audio.currentTime = 0; } catch (e) {}
                         try { clearInterval(rampInt); } catch (e) {}
+                        const fadeMs = 360;
+                        const steps = 9;
+                        const volNow = Number.isFinite(audio.volume) ? audio.volume : 0;
+                        let step = 0;
+                        const fade = setInterval(() => {
+                            step += 1;
+                            try { audio.volume = Math.max(0, volNow * (1 - (step / steps))); } catch (e) {}
+                            if (step >= steps) {
+                                clearInterval(fade);
+                                try { audio.pause(); audio.currentTime = 0; } catch (e) {}
+                            }
+                        }, Math.max(20, Math.floor(fadeMs / steps)));
                     };
 
                     _activeOscillators.push({ audioEl: audio, stop });
 
-                    // stop after 4s
-                    setTimeout(() => { stop(); }, 4000);
+                    // stop after 6s
+                    setTimeout(() => { stop(); }, 6000);
                 } catch (e) {
                     console.warn('Failed to play imported audio', e);
                 }
             } else {
-                // Play the selected sound for 2 seconds (WebAudio-based)
+                // Play one full composed cycle (20s+) for accurate preview.
                 const stopBeep = _startBeep(soundId);
                 setTimeout(() => {
                     try { stopBeep(); } catch(e){}
-                }, 2000);
+                }, 22000);
             }
         }
 
@@ -1885,6 +2284,7 @@
                     wake.style.transform = 'translateY(0) scale(1)';
                 }, 150);
             }, 900);
+            saveState();
         }
 
         function forceStopRoutine() {
@@ -1896,6 +2296,7 @@
                 showTabs();
                 renderApplication();
                 renderAlarms();
+                saveState();
             } catch (e) {
                 console.warn('Failed to force-stop routine', e);
             }
@@ -2042,12 +2443,43 @@
         const _activeOscillators = [];
         let _alarmOverlay = null;
         let _currentRingingIndexes = [];
+        // One unattended auto-stop timer per ringing alarm index (exactly 5 minutes).
+        const _alarmAutoStopTimers = new Map();
         // alarms snoozed in the current session should ring as regular once (no routine auto-screen)
         const _snoozedAsRegularOnce = {};
         // Timer overlay for finished timers that should ring until user stops
         let _timerOverlay = null;
         let _currentRingingTimerId = null;
         let _currentTimerStopFn = null;
+
+        function _clearAlarmAutoStopTimer(index) {
+            const timerId = _alarmAutoStopTimers.get(index);
+            if (timerId) {
+                clearTimeout(timerId);
+                _alarmAutoStopTimers.delete(index);
+            }
+        }
+
+        function _clearAllAlarmAutoStopTimers() {
+            _alarmAutoStopTimers.forEach(timerId => clearTimeout(timerId));
+            _alarmAutoStopTimers.clear();
+        }
+
+        function _scheduleAlarmAutoStop(index) {
+            // Prevent duplicate/racing timers for the same currently ringing alarm.
+            _clearAlarmAutoStopTimer(index);
+            const timerId = setTimeout(() => {
+                _alarmAutoStopTimers.delete(index);
+                _currentRingingIndexes = _currentRingingIndexes.filter(i => i !== index);
+
+                // Only stop sound + close UI when the final ringing alarm times out.
+                if (_currentRingingIndexes.length === 0) {
+                    _stopAllBeeps();
+                    _closeAlarmOverlay();
+                }
+            }, 5 * 60 * 1000);
+            _alarmAutoStopTimers.set(index, timerId);
+        }
 
         // Util: parse "HH:MM AM" style string to hour/min 24-hour
         function _parseAlarmString(alarmStr) {
@@ -2118,191 +2550,277 @@
             });
         }
 
-        // Start a repeating beep using WebAudio or imported audio; returns stop function
-        // Starts softer and lower, then slowly increases pitch and volume to sound less like a whistle
+        // Start a repeating alarm phrase using WebAudio (or imported audio fallback); returns stop function.
+        // Sound design rules:
+        // - fixed composed patterns (20s+ cycles) with breathing space
+        // - soft attack and smooth release
+        // - no piercing highs (filtered + constrained frequencies)
+        // - one active alarm sound at a time
+        const ALARM_TEMPO_SCALE = 0.52; // <1 = faster playback of authored phrases
+        const ALARM_MELODIC_DENSITY = 3; // add rhythmic companion notes per melodic event
+        const ALARM_GROOVE_CONFIG = {
+            'sunrise-chimes': { bpm: 114, bassFreq: 220, accents: [1.0, 0.72, 0.9, 0.76] },
+            'soft-glass-bells': { bpm: 118, bassFreq: 246.94, accents: [1.0, 0.7, 0.86, 0.74] },
+            'warm-marimba-steps': { bpm: 122, bassFreq: 207.65, accents: [1.0, 0.78, 0.92, 0.8] },
+            'ambient-pulse': { bpm: 108, bassFreq: 196, accents: [1.0, 0.68, 0.82, 0.7] },
+            'gentle-digital-bloom': { bpm: 124, bassFreq: 233.08, accents: [1.0, 0.74, 0.9, 0.76] },
+            'temple-bell-calm': { bpm: 110, bassFreq: 185, accents: [1.0, 0.66, 0.82, 0.7] },
+            'morning-piano-drops': { bpm: 120, bassFreq: 220, accents: [1.0, 0.74, 0.9, 0.78] },
+            'breezy-wind-chime': { bpm: 116, bassFreq: 233.08, accents: [1.0, 0.72, 0.86, 0.74] }
+        };
         function _startBeep(soundType = selectedSound) {
+            // ensure only one alarm audio stream exists at once
+            _stopAllBeeps(true);
             try {
-                // if the selected sound is an imported audio file, use HTMLAudioElement looping playback
                 const opt = (typeof SOUND_OPTIONS !== 'undefined') ? SOUND_OPTIONS.find(s => s.id === soundType) : null;
                 if (opt && opt.audioUrl) {
                     try {
                         const audio = new Audio(opt.audioUrl);
                         audio.loop = true;
-                        audio.volume = 0.0; // start silent
+                        audio.volume = 0.0;
                         const playPromise = audio.play();
-                        // some browsers return a promise
-                        if (playPromise && typeof playPromise.then === 'function') {
+                        if (playPromise && typeof playPromise.catch === 'function') {
                             playPromise.catch(() => {});
                         }
-
-                        // ramp volume up to full over 10 seconds
-                        let target = 0.8;
-                        let vol = 0.0;
+                        const target = 0.8;
+                        const rampMs = 10000;
+                        const started = Date.now();
                         const ramp = setInterval(() => {
-                            vol = Math.min(target, vol + (target / 100)); // increments to reach target in 10s (100 intervals * 100ms)
-                            try { audio.volume = vol; } catch (e) {}
+                            const pct = Math.min(1, (Date.now() - started) / rampMs);
+                            try { audio.volume = target * pct; } catch (e) {}
+                            if (pct >= 1) clearInterval(ramp);
                         }, 100);
-
-                        const stop = () => {
+                        let stopped = false;
+                        const stop = (immediate = false) => {
+                            if (stopped) return;
+                            stopped = true;
                             try { clearInterval(ramp); } catch (e) {}
-                            try { audio.pause(); audio.currentTime = 0; } catch (e) {}
+                            if (immediate) {
+                                try { audio.pause(); audio.currentTime = 0; } catch (e) {}
+                                return;
+                            }
+                            const fadeMs = 420;
+                            const steps = 12;
+                            const startVol = Number.isFinite(audio.volume) ? audio.volume : 0;
+                            let i = 0;
+                            const fade = setInterval(() => {
+                                i += 1;
+                                try { audio.volume = Math.max(0, startVol * (1 - (i / steps))); } catch (e) {}
+                                if (i >= steps) {
+                                    clearInterval(fade);
+                                    try { audio.pause(); audio.currentTime = 0; } catch (e) {}
+                                }
+                            }, Math.max(20, Math.floor(fadeMs / steps)));
                         };
-
-                        _activeOscillators.push({ audioEl: audio, stop });
+                        const handle = { audioEl: audio, stop };
+                        _activeOscillators.push(handle);
                         return stop;
                     } catch (e) {
                         console.warn('Failed to play imported audio', e);
-                        // fall through to WebAudio fallback
                     }
                 }
 
+                const profile = ALARM_SOUND_PROFILES[soundType] || ALARM_SOUND_PROFILES[DEFAULT_SOUND_ID];
+                const groove = ALARM_GROOVE_CONFIG[soundType] || ALARM_GROOVE_CONFIG[DEFAULT_SOUND_ID];
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
-
-                // master gain to control overall volume
-                const master = ctx.createGain();
-                master.gain.value = 0.02; // start very soft
-                master.connect(ctx.destination);
-
-                // gentle lowpass to avoid piercing whistle timbre
-                const lp = ctx.createBiquadFilter();
-                lp.type = 'lowpass';
-                lp.frequency.value = 2400;
-                lp.Q.value = 0.7;
-                lp.connect(master);
-
-                // Layered oscillators for richer, non-whistle timbre (Apple-like approximation)
-                const oscA = ctx.createOscillator(); // body
-                const oscB = ctx.createOscillator(); // detuned layer
-                const oscC = ctx.createOscillator(); // sub for warmth
-
-                // create small gain for each oscillator
-                const gA = ctx.createGain(); gA.gain.value = 0.6;
-                const gB = ctx.createGain(); gB.gain.value = 0.35;
-                const gC = ctx.createGain(); gC.gain.value = 0.25;
-
-                // connect chain: each => lp
-                gA.connect(lp); gB.connect(lp); gC.connect(lp);
-
-                // default params per soundType (startFreq, endFreq, rampSeconds, waveform choices)
-                let params = {
-                    startFreq: 420,
-                    endFreq: 980,
-                    ramp: 5.5,
-                    oscAType: 'sawtooth',
-                    oscBType: 'triangle',
-                    oscCType: 'sine'
-                };
-
-                switch(soundType) {
-                    case 'classic':
-                        params = Object.assign(params, { startFreq: 380, endFreq: 980, ramp: 5.5 });
-                        break;
-                    case 'digital':
-                        params = Object.assign(params, { startFreq: 300, endFreq: 1100, ramp: 4.0, oscAType: 'square', oscBType: 'sawtooth' });
-                        break;
-                    case 'gentle':
-                        params = Object.assign(params, { startFreq: 480, endFreq: 720, ramp: 6.5, oscAType: 'triangle', oscBType: 'sine', oscCType: 'sine' });
-                        break;
-                    case 'urgent':
-                        params = Object.assign(params, { startFreq: 520, endFreq: 1400, ramp: 3.2, oscAType: 'sawtooth', oscBType: 'square' });
-                        break;
-                }
-
-                oscA.type = params.oscAType;
-                oscB.type = params.oscBType;
-                oscC.type = params.oscCType;
-
-                // connect oscillators to their gains
-                oscA.connect(gA); oscB.connect(gB); oscC.connect(gC);
-
                 const now = ctx.currentTime;
 
-                // start frequencies slightly detuned for warmth
-                oscA.frequency.setValueAtTime(params.startFreq, now);
-                oscB.frequency.setValueAtTime(params.startFreq * 0.997, now);
-                oscC.frequency.setValueAtTime(params.startFreq * 0.5, now);
+                const master = ctx.createGain();
+                master.gain.setValueAtTime(0.0001, now);
+                master.connect(ctx.destination);
 
-                // ramp frequencies up smoothly to the end frequency
-                oscA.frequency.linearRampToValueAtTime(params.endFreq, now + params.ramp);
-                oscB.frequency.linearRampToValueAtTime(params.endFreq * 0.997, now + params.ramp);
-                oscC.frequency.linearRampToValueAtTime(params.endFreq * 0.5, now + params.ramp);
+                const comp = ctx.createDynamicsCompressor();
+                comp.threshold.value = -28;
+                comp.knee.value = 22;
+                comp.ratio.value = 3;
+                comp.attack.value = 0.01;
+                comp.release.value = 0.35;
+                comp.connect(master);
 
-                // slowly increase master volume (soft -> louder) but keep constant once reached
-                master.gain.cancelScheduledValues(now);
-                master.gain.setValueAtTime(0.02, now);
-                master.gain.linearRampToValueAtTime(0.18, now + Math.min(4, params.ramp));
+                const toneBus = ctx.createGain();
+                toneBus.gain.value = 1;
+                toneBus.connect(comp);
 
-                // subtle LFO on filter cutoff for organic motion
-                const lfo = ctx.createOscillator();
-                const lfoGain = ctx.createGain();
-                lfo.type = 'sine'; lfo.frequency.value = 0.18 + Math.random() * 0.12; // slow
-                lfoGain.gain.value = 220 + Math.random() * 180;
-                lfo.connect(lfoGain);
-                lfoGain.connect(lp.frequency);
-                lp.frequency.setValueAtTime(2200, now);
+                const lp = ctx.createBiquadFilter();
+                lp.type = 'lowpass';
+                lp.frequency.value = 2900;
+                lp.Q.value = 0.6;
+                lp.connect(toneBus);
 
-                oscA.start(now); oscB.start(now); oscC.start(now); lfo.start(now);
+                // Gentle delay network gives a premium, spacious tail without haze.
+                const wet = ctx.createGain();
+                wet.gain.value = 0.11;
+                const delay = ctx.createDelay(0.6);
+                delay.delayTime.value = 0.22;
+                const feedback = ctx.createGain();
+                feedback.gain.value = 0.14;
+                lp.connect(wet);
+                wet.connect(delay);
+                delay.connect(feedback);
+                feedback.connect(delay);
+                delay.connect(comp);
 
-                // push to active nodes so we can stop cleanly
-                const pulse = null; // not using setInterval pulsing anymore
-                _activeOscillators.push({ ctx, oscA, oscB, oscC, gA, gB, gC, master, lp, lfo, lfoGain, pulse });
+                const safeLevel = Math.max(0.12, Math.min(0.28, Number(profile.level) || 0.2));
+                const rampSeconds = Math.max(4, Math.min(14, Number(profile.rampSeconds) || 10));
+                master.gain.linearRampToValueAtTime(safeLevel, now + rampSeconds);
 
-                // return a stop function that ramps down and stops all nodes
-                return () => {
+                const activeOsc = [];
+                let scheduler = null;
+                let stopped = false;
+                let motifIndex = 0;
+                let nextPhraseAt = now + 0.05;
+                const motifs = Array.isArray(profile.motifs) && profile.motifs.length ? profile.motifs : [{ length: 3.0, notes: [] }];
+                const beatSeconds = 60 / Math.max(92, Math.min(140, Number(groove.bpm) || 116));
+                const eighthSeconds = beatSeconds / 2;
+
+                function scheduleNote(baseTime, note, levelScale = 1, timeOffset = 0) {
+                    const rawAt = Math.max(0, ((Number(note.t) || 0) * ALARM_TEMPO_SCALE) + timeOffset);
+                    const quantizedAt = Math.round(rawAt / eighthSeconds) * eighthSeconds;
+                    const at = baseTime + Math.max(0, quantizedAt);
+                    const dur = Math.max(0.09, (Number(note.d) || 0.3) * ALARM_TEMPO_SCALE);
+                    const freq = Math.max(140, Math.min(1600, Number(note.f) || 440));
+                    const gainLevel = Math.max(0.03, Math.min(0.5, (Number(note.g) || 0.2) * levelScale));
+                    const release = Math.min(1.2, Math.max(0.12, dur * 0.75));
+                    const attack = Math.min(0.08, Math.max(0.01, dur * 0.16));
+                    const stopAt = at + dur + release + 0.06;
+
+                    const panner = ctx.createStereoPanner();
+                    const notePan = Number.isFinite(Number(note.pan)) ? Number(note.pan) : 0;
+                    panner.pan.value = Math.max(-0.28, Math.min(0.28, notePan));
+                    panner.connect(lp);
+
+                    const env = ctx.createGain();
+                    env.gain.setValueAtTime(0.0001, at);
+                    env.gain.linearRampToValueAtTime(gainLevel, at + attack);
+                    env.gain.exponentialRampToValueAtTime(Math.max(0.0001, gainLevel * 0.65), at + Math.max(attack + 0.03, dur * 0.55));
+                    env.gain.exponentialRampToValueAtTime(0.0001, at + dur + release);
+                    env.connect(panner);
+
+                    const osc = ctx.createOscillator();
+                    osc.type = note.w || 'sine';
+                    osc.frequency.setValueAtTime(freq, at);
+                    osc.connect(env);
+                    osc.start(at);
+                    osc.stop(stopAt);
+                    activeOsc.push(osc);
+
+                    const harmonic = Number(note.harmonic) || 0;
+                    if (harmonic > 0) {
+                        const hGainLevel = Math.max(0.02, Math.min(0.2, Number(note.hg) || (gainLevel * 0.3)));
+                        const hEnv = ctx.createGain();
+                        hEnv.gain.setValueAtTime(0.0001, at);
+                        hEnv.gain.linearRampToValueAtTime(hGainLevel, at + attack * 0.8);
+                        hEnv.gain.exponentialRampToValueAtTime(0.0001, at + dur + (release * 0.8));
+                        hEnv.connect(panner);
+                        const hOsc = ctx.createOscillator();
+                        hOsc.type = 'sine';
+                        hOsc.frequency.setValueAtTime(Math.min(2200, freq * harmonic), at);
+                        hOsc.connect(hEnv);
+                        hOsc.start(at);
+                        hOsc.stop(stopAt);
+                        activeOsc.push(hOsc);
+                    }
+                }
+
+                function scheduleBeatBackbone(baseTime, motifLen) {
+                    const beatsInPhrase = Math.max(4, Math.floor(motifLen / beatSeconds));
+                    const accents = Array.isArray(groove.accents) && groove.accents.length ? groove.accents : [1.0, 0.72, 0.9, 0.76];
+                    const bass = Math.max(170, Math.min(320, Number(groove.bassFreq) || 220));
+                    for (let i = 0; i < beatsInPhrase; i += 1) {
+                        const beatOffset = i * beatSeconds;
+                        const accent = accents[i % accents.length];
+                        scheduleNote(baseTime, {
+                            t: beatOffset / ALARM_TEMPO_SCALE,
+                            d: 0.18,
+                            f: bass,
+                            g: 0.1 * accent,
+                            w: 'triangle',
+                            harmonic: 2,
+                            hg: 0.025,
+                            pan: 0
+                        }, 1, 0);
+                        scheduleNote(baseTime, {
+                            t: (beatOffset + (beatSeconds * 0.5)) / ALARM_TEMPO_SCALE,
+                            d: 0.12,
+                            f: bass * 1.12,
+                            g: 0.055 * accent,
+                            w: 'sine',
+                            harmonic: 0,
+                            pan: 0
+                        }, 1, 0);
+                    }
+                }
+
+                function schedulePhrases() {
+                    if (stopped) return;
+                    while (nextPhraseAt < (ctx.currentTime + 1.8)) {
+                        const motif = motifs[motifIndex % motifs.length];
+                        const notes = Array.isArray(motif.notes) ? motif.notes : [];
+                        const motifLen = Math.max(1.25, (Number(motif.length) || Number(profile.phraseLength) || 3.0) * ALARM_TEMPO_SCALE);
+                        scheduleBeatBackbone(nextPhraseAt, motifLen);
+                        notes.forEach(note => {
+                            scheduleNote(nextPhraseAt, note);
+                            if (ALARM_MELODIC_DENSITY > 1) {
+                                // Companion rhythmic hit on the upbeat.
+                                scheduleNote(nextPhraseAt, note, 0.62, eighthSeconds * 0.5);
+                            }
+                            if (ALARM_MELODIC_DENSITY > 2) {
+                                // Second companion hit to create 2-4 note groupings per cycle.
+                                scheduleNote(nextPhraseAt, note, 0.46, eighthSeconds);
+                            }
+                        });
+                        nextPhraseAt += motifLen;
+                        motifIndex += 1;
+                    }
+                }
+
+                schedulePhrases();
+                scheduler = setInterval(schedulePhrases, 220);
+
+                const stop = (immediate = false) => {
+                    if (stopped) return;
+                    stopped = true;
+                    if (scheduler) clearInterval(scheduler);
+                    if (immediate) {
+                        activeOsc.forEach(o => { try { o.stop(); } catch (e) {} });
+                        try { ctx.close(); } catch (e) {}
+                        return;
+                    }
                     try {
-                        const stopNow = ctx.currentTime;
-                        // ramp master down
-                        master.gain.cancelScheduledValues(stopNow);
-                        master.gain.setValueAtTime(master.gain.value, stopNow);
-                        master.gain.linearRampToValueAtTime(0.0001, stopNow + 0.35);
-
-                        // stop oscillators after fade
-                        setTimeout(() => {
-                            try { oscA.stop(); } catch (e) {}
-                            try { oscB.stop(); } catch (e) {}
-                            try { oscC.stop(); } catch (e) {}
-                            try { lfo.stop(); } catch (e) {}
-                            try { ctx.close(); } catch (e) {}
-                        }, 420);
+                        const t = ctx.currentTime;
+                        master.gain.cancelScheduledValues(t);
+                        master.gain.setValueAtTime(Math.max(0.0001, master.gain.value), t);
+                        master.gain.linearRampToValueAtTime(0.0001, t + 0.42);
                     } catch (e) {}
+                    setTimeout(() => {
+                        activeOsc.forEach(o => { try { o.stop(); } catch (e) {} });
+                        try { ctx.close(); } catch (e) {}
+                    }, 500);
                 };
+
+                _activeOscillators.push({ ctx, master, stop, scheduler });
+                return stop;
             } catch (e) {
                 console.warn('AudioContext unavailable', e);
                 return () => {};
             }
         }
 
-        // Stop all active beeps
-        function _stopAllBeeps() {
+        // Stop all active alarm sounds with graceful fades.
+        function _stopAllBeeps(immediate = false) {
             while (_activeOscillators.length) {
                 const node = _activeOscillators.pop();
                 try {
-                    // HTMLAudioElement-based entries
-                    if (node && node.audioEl) {
-                        try { node.audioEl.pause(); node.audioEl.currentTime = 0; } catch (e) {}
-                        try { if (typeof node.stop === 'function') node.stop(); } catch (e) {}
+                    if (node && typeof node.stop === 'function') {
+                        node.stop(immediate);
                         continue;
                     }
-
-                    // WebAudio-based entries
+                    if (node && node.audioEl) {
+                        try { node.audioEl.pause(); node.audioEl.currentTime = 0; } catch (e) {}
+                        continue;
+                    }
                     if (node && node.ctx) {
-                        try { clearInterval(node.pulse); } catch (e) {}
-                        try {
-                            // prefer master gain if present
-                            if (node.master && node.master.gain) {
-                                node.master.gain.linearRampToValueAtTime(0, node.ctx.currentTime + 0.1);
-                            } else if (node.gain && node.gain.gain) {
-                                node.gain.gain.linearRampToValueAtTime(0, node.ctx.currentTime + 0.1);
-                            }
-                        } catch (e) {}
-                        setTimeout(() => {
-                            try { if (node.oscA) node.oscA.stop(); } catch(e){}
-                            try { if (node.oscB) node.oscB.stop(); } catch(e){}
-                            try { if (node.oscC) node.oscC.stop(); } catch(e){}
-                            try { if (node.osc) node.osc.stop(); } catch(e){}
-                            try { if (node.lfo) node.lfo.stop(); } catch(e){}
-                            try { node.ctx.close(); } catch(e){}
-                        }, 120);
+                        try { node.ctx.close(); } catch (e) {}
                     }
                 } catch (e) {}
             }
@@ -2311,6 +2829,7 @@
         // Show overlay and start sound
         function _ringAlarm(index) {
             _currentRingingIndexes.push(index);
+            _scheduleAlarmAutoStop(index);
 
             // play sound immediately
             const stopBeep = _startBeep();
@@ -2439,6 +2958,7 @@
 
             if (stopBtnEl) {
                 stopBtnEl.onclick = () => {
+                    _clearAllAlarmAutoStopTimers();
                     stopBeep();
                     _stopAllBeeps();
                     _closeAlarmOverlay();
@@ -2463,6 +2983,7 @@
                     const snoozeWheelEl = document.getElementById('alarm-snooze-minutes');
                     const snoozeMinutes = Math.max(1, Math.min(59, parseInt((snoozeWheelEl && snoozeWheelEl.value) || '5', 10) || 5));
 
+                    _clearAllAlarmAutoStopTimers();
                     stopBeep();
                     _stopAllBeeps();
                     _closeAlarmOverlay();
@@ -2496,6 +3017,7 @@
         function _closeAlarmOverlay() {
             if (_alarmOverlay) {
                 try { document.body.removeChild(_alarmOverlay); } catch (e) {}
+                _clearAllAlarmAutoStopTimers();
                 _alarmOverlay = null;
                 _currentRingingIndexes = [];
             }
@@ -2532,6 +3054,7 @@
             
             // Re-render the alarms list to show the updated +5 minute time
             renderAlarms();
+            saveState();
 
             // Snooze should always bring the user back to home with tabs visible.
             try {
@@ -2625,7 +3148,7 @@
         /* ---------------------------
            Timers: lightweight in-app implementation
            --------------------------- */
-        const _timers = [];
+        let _timers = [];
         function _formatMs(ms){
             const s = Math.max(0, Math.floor(ms/1000));
             const hh = Math.floor(s/3600);
@@ -2673,6 +3196,46 @@
                 displayEl.textContent = _formatMs(timer.remaining);
             }
         }
+
+        function _startTimerInterval(timer, opts = {}) {
+            const { preserveEndAt = false, persist = true } = opts;
+            if (!timer) return;
+            clearInterval(timer.interval);
+            timer.active = true;
+            timer.endAt = preserveEndAt && Number.isFinite(Number(timer.endAt))
+                ? Number(timer.endAt)
+                : (Date.now() + Math.max(0, Number(timer.remaining) || 0));
+            timer.interval = setInterval(() => {
+                timer.remaining = Math.max(0, (Number(timer.endAt) || Date.now()) - Date.now());
+                if (timer.remaining === 0) {
+                    clearInterval(timer.interval);
+                    timer.interval = null;
+                    timer.active = false;
+                    timer.endAt = null;
+                    saveState();
+                    _timerDone(timer);
+                    return;
+                }
+                if (!window._holdToDeleteInProgress) {
+                    _renderTimers();
+                } else {
+                    _updateTimerDisplay(timer.id);
+                }
+            }, 250);
+            if (persist) saveState();
+        }
+
+        function _stopTimerInterval(timer, persist = true) {
+            if (!timer) return;
+            if (timer.active && Number.isFinite(Number(timer.endAt))) {
+                timer.remaining = Math.max(0, Number(timer.endAt) - Date.now());
+            }
+            clearInterval(timer.interval);
+            timer.interval = null;
+            timer.active = false;
+            timer.endAt = null;
+            if (persist) saveState();
+        }
         function getWheelValue(wheelId) {
             const wheel = document.getElementById(wheelId);
             if (!wheel) return 0;
@@ -2697,23 +3260,11 @@
             const total = (hour*3600 + min*60 + sec)*1000;
             if (total <= 0) return;
             const id = String(Date.now()) + Math.random().toString(36).slice(2,6);
-            const timer = { id, label, total, remaining: total, interval: null, active: false };
+            const timer = { id, label, total, remaining: total, interval: null, active: false, endAt: null };
             _timers.unshift(timer);
             
             // Automatically start the timer
-            timer.active = true;
-            const end = Date.now() + timer.remaining;
-            timer.interval = setInterval(()=> {
-                timer.remaining = Math.max(0, end - Date.now());
-                if (timer.remaining===0) { clearInterval(timer.interval); timer.interval=null; timer.active=false; _timerDone(timer); }
-                // Only re-render if no hold-to-delete is in progress
-                if (!window._holdToDeleteInProgress) {
-                    _renderTimers();
-                } else {
-                    // Just update the timer display without re-rendering buttons
-                    _updateTimerDisplay(timer.id);
-                }
-            }, 250);
+            _startTimerInterval(timer);
             
             _renderTimers();
             
@@ -2724,20 +3275,30 @@
         function toggleTimer(id) {
             const t = _timers.find(x=>x.id===id); if(!t) return;
             if (t.active) {
-                clearInterval(t.interval); t.interval=null; t.active=false;
+                _stopTimerInterval(t);
             } else {
-                t.active = true;
-                const end = Date.now() + t.remaining;
-                t.interval = setInterval(()=> {
-                    t.remaining = Math.max(0, end - Date.now());
-                    if (t.remaining===0) { clearInterval(t.interval); t.interval=null; t.active=false; _timerDone(t); }
-                    _renderTimers();
-                }, 250);
+                _startTimerInterval(t);
             }
             _renderTimers();
         }
-        function resetTimer(id) { const t=_timers.find(x=>x.id===id); if(!t) return; clearInterval(t.interval); t.interval=null; t.active=false; t.remaining=t.total; _renderTimers(); }
-        function deleteTimer(id) { const idx=_timers.findIndex(x=>x.id===id); if(idx>=0){ clearInterval(_timers[idx].interval); _timers.splice(idx,1); _renderTimers(); } }
+        function resetTimer(id) {
+            const t=_timers.find(x=>x.id===id);
+            if(!t) return;
+            _stopTimerInterval(t, false);
+            t.remaining = t.total;
+            t.endAt = null;
+            _renderTimers();
+            saveState();
+        }
+        function deleteTimer(id) {
+            const idx=_timers.findIndex(x=>x.id===id);
+            if(idx>=0){
+                _stopTimerInterval(_timers[idx], false);
+                _timers.splice(idx,1);
+                _renderTimers();
+                saveState();
+            }
+        }
         function _timerDone(t) {
             // play sound continuously until user stops it via overlay
             try {
@@ -2823,23 +3384,12 @@
                             const extendMs = extMinutes * 60 * 1000;
                             timer.remaining = extendMs;
                             timer.total += extendMs;
-                            timer.active = true;
-                            const end = Date.now() + timer.remaining;
-                            clearInterval(timer.interval);
-                            timer.interval = setInterval(() => {
-                                timer.remaining = Math.max(0, end - Date.now());
-                                if (timer.remaining === 0) {
-                                    clearInterval(timer.interval);
-                                    timer.interval = null;
-                                    timer.active = false;
-                                    _timerDone(timer);
-                                }
-                                _renderTimers();
-                            }, 250);
+                            _startTimerInterval(timer);
                         }
                         
                         _closeTimerOverlay();
                         _renderTimers();
+                        saveState();
                     };
 
                     const pickerContainer = document.createElement('div');
@@ -3010,9 +3560,10 @@
                 document.getElementById('sw-start').textContent = 'Stop';
             }
             _sw_render();
+            saveState();
         }
-        function _sw_lap(){ const now = _sw_elapsed + (_sw_running ? (Date.now()-_sw_start) : 0); _sw_laps.unshift(now); _sw_render(); try{ const stop=_startBeep(); setTimeout(()=>{ stop(); _stopAllBeeps(); },160);}catch(e){} }
-        function _sw_reset(){ _sw_running=false; clearInterval(_sw_tick); _sw_tick=null; _sw_elapsed=0; _sw_start=0; _sw_laps=[]; document.getElementById('sw-start').textContent='Start'; _sw_render(); }
+        function _sw_lap(){ const now = _sw_elapsed + (_sw_running ? (Date.now()-_sw_start) : 0); _sw_laps.unshift(now); _sw_render(); saveState(); try{ const stop=_startBeep(); setTimeout(()=>{ stop(); _stopAllBeeps(); },160);}catch(e){} }
+        function _sw_reset(){ _sw_running=false; clearInterval(_sw_tick); _sw_tick=null; _sw_elapsed=0; _sw_start=0; _sw_laps=[]; document.getElementById('sw-start').textContent='Start'; _sw_render(); saveState(); }
         document.getElementById('sw-start')?.addEventListener('click', _sw_startstop);
         document.getElementById('sw-lap')?.addEventListener('click', _sw_lap);
         document.getElementById('sw-reset')?.addEventListener('click', _sw_reset);
