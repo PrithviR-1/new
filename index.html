@@ -2556,8 +2556,9 @@
         // - soft attack and smooth release
         // - no piercing highs (filtered + constrained frequencies)
         // - one active alarm sound at a time
-        const ALARM_TEMPO_SCALE = 0.52; // <1 = faster playback of authored phrases
+        const ALARM_TEMPO_SCALE = 0.56; // <1 = faster melodic motion inside a 20s song
         const ALARM_MELODIC_DENSITY = 3; // add rhythmic companion notes per melodic event
+        const ALARM_SONG_LOOP_SECONDS = 20; // each alarm repeats after exactly 20s
         const ALARM_GROOVE_CONFIG = {
             'sunrise-chimes': { bpm: 114, bassFreq: 220, accents: [1.0, 0.72, 0.9, 0.76] },
             'soft-glass-bells': { bpm: 118, bassFreq: 246.94, accents: [1.0, 0.7, 0.86, 0.74] },
@@ -2567,6 +2568,16 @@
             'temple-bell-calm': { bpm: 110, bassFreq: 185, accents: [1.0, 0.66, 0.82, 0.7] },
             'morning-piano-drops': { bpm: 120, bassFreq: 220, accents: [1.0, 0.74, 0.9, 0.78] },
             'breezy-wind-chime': { bpm: 116, bassFreq: 233.08, accents: [1.0, 0.72, 0.86, 0.74] }
+        };
+        const ALARM_BACKGROUND_ARRANGEMENTS = {
+            'sunrise-chimes': { wave: 'sine', arpWave: 'triangle', chords: [[261.63, 329.63, 392], [293.66, 369.99, 440], [329.63, 415.3, 493.88], [293.66, 369.99, 440]] },
+            'soft-glass-bells': { wave: 'triangle', arpWave: 'sine', chords: [[293.66, 369.99, 440], [329.63, 415.3, 493.88], [349.23, 440, 523.25], [329.63, 415.3, 493.88]] },
+            'warm-marimba-steps': { wave: 'triangle', arpWave: 'triangle', chords: [[246.94, 311.13, 392], [261.63, 329.63, 415.3], [293.66, 369.99, 466.16], [261.63, 329.63, 415.3]] },
+            'ambient-pulse': { wave: 'sine', arpWave: 'sine', chords: [[220, 277.18, 329.63], [246.94, 311.13, 369.99], [261.63, 329.63, 392], [246.94, 311.13, 369.99]] },
+            'gentle-digital-bloom': { wave: 'triangle', arpWave: 'sine', chords: [[261.63, 329.63, 415.3], [293.66, 369.99, 466.16], [329.63, 415.3, 523.25], [293.66, 369.99, 466.16]] },
+            'temple-bell-calm': { wave: 'sine', arpWave: 'triangle', chords: [[196, 246.94, 293.66], [220, 277.18, 329.63], [246.94, 311.13, 369.99], [220, 277.18, 329.63]] },
+            'morning-piano-drops': { wave: 'triangle', arpWave: 'sine', chords: [[261.63, 329.63, 392], [293.66, 369.99, 440], [329.63, 415.3, 493.88], [293.66, 369.99, 440]] },
+            'breezy-wind-chime': { wave: 'sine', arpWave: 'triangle', chords: [[277.18, 349.23, 415.3], [311.13, 392, 466.16], [329.63, 415.3, 493.88], [311.13, 392, 466.16]] }
         };
         function _startBeep(soundType = selectedSound) {
             // ensure only one alarm audio stream exists at once
@@ -2622,6 +2633,7 @@
 
                 const profile = ALARM_SOUND_PROFILES[soundType] || ALARM_SOUND_PROFILES[DEFAULT_SOUND_ID];
                 const groove = ALARM_GROOVE_CONFIG[soundType] || ALARM_GROOVE_CONFIG[DEFAULT_SOUND_ID];
+                const arrangement = ALARM_BACKGROUND_ARRANGEMENTS[soundType] || ALARM_BACKGROUND_ARRANGEMENTS[DEFAULT_SOUND_ID];
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
                 const now = ctx.currentTime;
 
@@ -2667,17 +2679,17 @@
                 const activeOsc = [];
                 let scheduler = null;
                 let stopped = false;
-                let motifIndex = 0;
-                let nextPhraseAt = now + 0.05;
+                let nextSongAt = now + 0.05;
+                let songIndex = 0;
                 const motifs = Array.isArray(profile.motifs) && profile.motifs.length ? profile.motifs : [{ length: 3.0, notes: [] }];
                 const beatSeconds = 60 / Math.max(92, Math.min(140, Number(groove.bpm) || 116));
                 const eighthSeconds = beatSeconds / 2;
 
                 function scheduleNote(baseTime, note, levelScale = 1, timeOffset = 0) {
-                    const rawAt = Math.max(0, ((Number(note.t) || 0) * ALARM_TEMPO_SCALE) + timeOffset);
+                    const rawAt = Math.max(0, (Number(note.t) || 0) + timeOffset);
                     const quantizedAt = Math.round(rawAt / eighthSeconds) * eighthSeconds;
                     const at = baseTime + Math.max(0, quantizedAt);
-                    const dur = Math.max(0.09, (Number(note.d) || 0.3) * ALARM_TEMPO_SCALE);
+                    const dur = Math.max(0.09, Number(note.d) || 0.3);
                     const freq = Math.max(140, Math.min(1600, Number(note.f) || 440));
                     const gainLevel = Math.max(0.03, Math.min(0.5, (Number(note.g) || 0.2) * levelScale));
                     const release = Math.min(1.2, Math.max(0.12, dur * 0.75));
@@ -2730,7 +2742,7 @@
                         const beatOffset = i * beatSeconds;
                         const accent = accents[i % accents.length];
                         scheduleNote(baseTime, {
-                            t: beatOffset / ALARM_TEMPO_SCALE,
+                            t: beatOffset,
                             d: 0.18,
                             f: bass,
                             g: 0.1 * accent,
@@ -2740,7 +2752,7 @@
                             pan: 0
                         }, 1, 0);
                         scheduleNote(baseTime, {
-                            t: (beatOffset + (beatSeconds * 0.5)) / ALARM_TEMPO_SCALE,
+                            t: beatOffset + (beatSeconds * 0.5),
                             d: 0.12,
                             f: bass * 1.12,
                             g: 0.055 * accent,
@@ -2751,31 +2763,81 @@
                     }
                 }
 
-                function schedulePhrases() {
-                    if (stopped) return;
-                    while (nextPhraseAt < (ctx.currentTime + 1.8)) {
-                        const motif = motifs[motifIndex % motifs.length];
+                function scheduleBackgroundArrangement(baseTime, loopLen) {
+                    const chords = Array.isArray(arrangement.chords) && arrangement.chords.length ? arrangement.chords : [[261.63, 329.63, 392]];
+                    const sectionLen = loopLen / chords.length;
+                    const padWave = arrangement.wave || 'sine';
+                    const arpWave = arrangement.arpWave || 'triangle';
+                    chords.forEach((chord, chordIdx) => {
+                        const start = chordIdx * sectionLen;
+                        chord.forEach((freq, fIdx) => {
+                            scheduleNote(baseTime, {
+                                t: start + (fIdx * 0.06),
+                                d: Math.max(1.2, sectionLen * 0.86),
+                                f: Math.max(150, Math.min(1200, Number(freq) || 330)),
+                                g: 0.055,
+                                w: padWave,
+                                harmonic: 2,
+                                hg: 0.02,
+                                pan: (fIdx - 1) * 0.08
+                            }, 1, 0);
+                        });
+                        const arpStep = Math.max(0.18, beatSeconds / 2);
+                        const arpCount = Math.max(4, Math.floor(sectionLen / arpStep));
+                        for (let i = 0; i < arpCount; i += 1) {
+                            const arpFreq = chord[i % chord.length] * (i % 2 === 0 ? 1 : 2);
+                            scheduleNote(baseTime, {
+                                t: start + (i * arpStep) + (songIndex % 2 ? arpStep * 0.25 : 0),
+                                d: Math.max(0.1, arpStep * 0.62),
+                                f: Math.max(180, Math.min(1400, arpFreq)),
+                                g: 0.04 + ((i % 4 === 0) ? 0.015 : 0),
+                                w: arpWave,
+                                harmonic: 0,
+                                pan: ((i % 3) - 1) * 0.06
+                            }, 1, 0);
+                        }
+                    });
+                }
+
+                function scheduleMelodySong(baseTime, loopLen) {
+                    let cursor = 0;
+                    let localMotifIndex = songIndex % motifs.length;
+                    while (cursor < (loopLen - 0.22)) {
+                        const motif = motifs[localMotifIndex % motifs.length];
                         const notes = Array.isArray(motif.notes) ? motif.notes : [];
-                        const motifLen = Math.max(1.25, (Number(motif.length) || Number(profile.phraseLength) || 3.0) * ALARM_TEMPO_SCALE);
-                        scheduleBeatBackbone(nextPhraseAt, motifLen);
+                        const motifLen = Math.max(1.0, (Number(motif.length) || Number(profile.phraseLength) || 3.0) * ALARM_TEMPO_SCALE);
                         notes.forEach(note => {
-                            scheduleNote(nextPhraseAt, note);
+                            const scaledNote = {
+                                ...note,
+                                t: cursor + ((Number(note.t) || 0) * ALARM_TEMPO_SCALE),
+                                d: Math.max(0.09, (Number(note.d) || 0.3) * ALARM_TEMPO_SCALE)
+                            };
+                            scheduleNote(baseTime, scaledNote);
                             if (ALARM_MELODIC_DENSITY > 1) {
-                                // Companion rhythmic hit on the upbeat.
-                                scheduleNote(nextPhraseAt, note, 0.62, eighthSeconds * 0.5);
+                                scheduleNote(baseTime, scaledNote, 0.62, eighthSeconds * 0.5);
                             }
                             if (ALARM_MELODIC_DENSITY > 2) {
-                                // Second companion hit to create 2-4 note groupings per cycle.
-                                scheduleNote(nextPhraseAt, note, 0.46, eighthSeconds);
+                                scheduleNote(baseTime, scaledNote, 0.46, eighthSeconds);
                             }
                         });
-                        nextPhraseAt += motifLen;
-                        motifIndex += 1;
+                        cursor += motifLen;
+                        localMotifIndex += 1;
                     }
                 }
 
-                schedulePhrases();
-                scheduler = setInterval(schedulePhrases, 220);
+                function scheduleSongs() {
+                    if (stopped) return;
+                    while (nextSongAt < (ctx.currentTime + 2.4)) {
+                        scheduleBeatBackbone(nextSongAt, ALARM_SONG_LOOP_SECONDS);
+                        scheduleBackgroundArrangement(nextSongAt, ALARM_SONG_LOOP_SECONDS);
+                        scheduleMelodySong(nextSongAt, ALARM_SONG_LOOP_SECONDS);
+                        nextSongAt += ALARM_SONG_LOOP_SECONDS;
+                        songIndex += 1;
+                    }
+                }
+
+                scheduleSongs();
+                scheduler = setInterval(scheduleSongs, 220);
 
                 const stop = (immediate = false) => {
                     if (stopped) return;
