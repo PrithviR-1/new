@@ -772,7 +772,31 @@
             max-width: 100%;
         }
         .alarm-row .alarm-toggle-btn {
-            min-height: 44px !important;
+            --toggle-track-height: 32px;
+            --toggle-track-padding: 4px;
+            --toggle-thumb-size: calc(var(--toggle-track-height) - (2 * var(--toggle-track-padding)));
+            height: var(--toggle-track-height) !important;
+            min-height: var(--toggle-track-height) !important;
+            padding: var(--toggle-track-padding) !important;
+            border-radius: 999px !important;
+            overflow: hidden;
+            background-clip: padding-box;
+        }
+        .alarm-row .alarm-toggle-btn > span {
+            width: var(--toggle-thumb-size) !important;
+            height: var(--toggle-thumb-size) !important;
+            border-radius: 50% !important;
+            top: 50% !important;
+            left: var(--toggle-track-padding) !important;
+            transform: translateY(-50%);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+            transition: left .2s ease !important;
+        }
+        .alarm-row .alarm-toggle-btn[aria-label*="on"] > span {
+            left: var(--toggle-track-padding) !important;
+        }
+        .alarm-row .alarm-toggle-btn[aria-label*="off"] > span {
+            left: calc(100% - var(--toggle-thumb-size) - var(--toggle-track-padding)) !important;
         }
         .alarm-row .alarm-repeat-trigger {
             width: 100%;
