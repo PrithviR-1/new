@@ -688,22 +688,34 @@
             padding: 24px 20px !important;
             margin-bottom: 12px !important;
             border-radius: 14px !important;
-            gap: 14px;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 14px !important;
             overflow: hidden;
         }
-        .alarm-row > div:first-child {
-            flex: 1 1 180px;
+        .alarm-time-row {
+            width: 100%;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
             min-width: 0;
         }
-        .alarm-row > div:last-child {
+        .alarm-controls-row {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: flex-end;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px 12px !important;
-            margin-left: auto;
-            flex: 0 1 240px;
-            max-width: 100%;
+            gap: 14px;
+            width: 100%;
+            min-width: 0;
+        }
+        .alarm-controls-row .alarm-edit-btn,
+        .alarm-controls-row .alarm-delete-btn {
+            flex: 1 1 0;
+            min-width: 0;
+        }
+        .alarm-controls-row .alarm-toggle-btn {
+            flex: 0 0 56px;
         }
         .alarm-edit-btn {
             border: none;
@@ -761,6 +773,11 @@
         }
         .alarm-row .alarm-toggle-btn {
             min-height: 44px !important;
+        }
+        .alarm-row .alarm-repeat-trigger {
+            width: 100%;
+            justify-content: center;
+            border-radius: 12px;
         }
         .alarm-row .alarm-delete-btn {
             min-height: 44px;
@@ -2699,26 +2716,21 @@
                 const rowDisabledStyle = !isEnabled ? 'background:rgba(130,130,130,0.12); border:1px solid rgba(180,180,180,0.2);' : '';
                 const contentDisabledStyle = !isEnabled ? 'opacity:0.46; filter:grayscale(1);' : '';
                 return `
-                <div class="alarm-row" data-alarm-idx="${i}" style="display:flex; justify-content:space-between; align-items:center; padding:22px 0; border-bottom:1px solid rgba(255,255,255,0.1);${highlightStyle}${rowDisabledStyle}padding:20px;border-radius:12px;margin-bottom:8px;">
-                    <div style="display:flex; flex-direction:column; gap:8px; ${contentDisabledStyle}">
-                        <div style="display:flex; align-items:baseline; gap:10px;">
-                            <span style="font-size:36px; font-weight:300; letter-spacing:2px; margin-right:10px;">${a.split(' ')[0]}</span>
-                            <span style="font-size:14px; font-weight:900; opacity:0.5;">${a.split(' ')[1]}</span>
-                        </div>
-                        <div style="display:flex; gap:8px; align-items:center;">
-                            <span style="font-size:11px; color:${typeColor}; font-weight:900; text-transform:uppercase; letter-spacing:1px;">${typeLabel}</span>
-                            <button type="button" class="alarm-repeat-trigger" data-alarm-idx="${i}" aria-label="Edit repeating days for ${a}">
-                                <span class="alarm-repeat-label">Repeating: ${repeatLabel}</span>
-                            </button>
-                        </div>
+                <div class="alarm-row" data-alarm-idx="${i}" style="padding:22px 0; border-bottom:1px solid rgba(255,255,255,0.1);${highlightStyle}${rowDisabledStyle}padding:20px;border-radius:12px;margin-bottom:8px;">
+                    <div class="alarm-time-row" style="${contentDisabledStyle}">
+                        <span style="font-size:36px; font-weight:300; letter-spacing:2px; margin-right:10px;">${a.split(' ')[0]}</span>
+                        <span style="font-size:14px; font-weight:900; opacity:0.5;">${a.split(' ')[1]}</span>
                     </div>
-                    <div style="display:flex; align-items:center; gap:12px;">
+                    <div class="alarm-controls-row" style="${contentDisabledStyle}">
                         <button class="alarm-edit-btn" data-alarm-idx="${i}">Edit</button>
                         <button class="alarm-toggle-btn" data-alarm-idx="${i}" aria-label="${isEnabled ? 'Turn alarm off' : 'Turn alarm on'}" style="position:relative; width:56px; height:32px; border:none; border-radius:999px; cursor:pointer; background:${isEnabled ? '#10d176' : '#7a7f88'}; transition:background .2s ease;">
                             <span style="position:absolute; top:3px; left:${isEnabled ? '27px' : '3px'}; width:26px; height:26px; border-radius:50%; background:#fff; transition:left .2s ease;"></span>
                         </button>
                         <button class="alarm-delete-btn" data-alarm-idx="${i}" style="background:none; border:none; color:var(--accent-red); font-weight:900; font-size:11px; cursor:pointer; text-transform:uppercase; letter-spacing:1.5px;">Remove</button>
                     </div>
+                    <button type="button" class="alarm-repeat-trigger" data-alarm-idx="${i}" aria-label="Edit repeating days for ${a}" style="${contentDisabledStyle}">
+                        <span class="alarm-repeat-label">Repeating: ${repeatLabel}</span>
+                    </button>
                 </div>
             `}).join('');
 
