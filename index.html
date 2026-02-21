@@ -83,8 +83,8 @@
             position: absolute;
             top: 11%;
             left: 50%;
-            width: 220px;
-            height: 220px;
+            width: 116px;
+            height: 116px;
             transform: translate(-50%, 100vh);
             transition: transform 6s cubic-bezier(0.23, 1, 0.32, 1), z-index 0.1s;
             z-index: 2;
@@ -168,61 +168,60 @@
         .moon-system.phase-threeq-right .moon-shadow { opacity: 1; transform: translateX(-22px); }
         .moon-system.phase-threeq-left .moon-shadow { opacity: 1; transform: translateX(22px); }
 
-        /* The stylized triangle rays */
-        .sun-ray-layer {
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            background: var(--sun-main);
-            clip-path: polygon(50% 0%, 63% 38%, 100% 38%, 69% 59%, 82% 100%, 50% 75%, 18% 100%, 31% 59%, 0% 38%, 37% 38%);
-            border: 4px solid var(--sun-stroke);
-            animation: rotate-sun 30s linear infinite;
-        }
-
-        .sun-ray-layer.back {
-            width: 224px;
-            height: 224px;
-            background: var(--sun-stroke);
-            opacity: 0.46;
-            animation: rotate-sun-reverse 45s linear infinite;
-        }
-
-        .sun-body-cartoon {
+        .sun-spin {
+            width: 126px;
+            height: 126px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: relative;
-            width: 120px;
-            height: 120px;
-            background: var(--sun-main);
-            border: 7px solid var(--sun-stroke);
-            border-radius: 50%;
-            z-index: 10;
-            box-shadow: 0 0 46px var(--sun-glow), 0 0 76px var(--sun-glow);
-            overflow: hidden;
+            z-index: 3;
         }
 
-        /* Highlight Spot */
-        .sun-body-cartoon::before {
-            content: "";
+        .sun-glow {
             position: absolute;
-            top: 15%;
-            left: 15%;
-            width: 45px;
-            height: 45px;
-            background: var(--sun-light);
+            width: 178px;
+            height: 178px;
             border-radius: 50%;
-            opacity: 0.84;
+            background: radial-gradient(circle, rgba(255, 218, 120, 0.58) 0%, rgba(255, 196, 84, 0.34) 40%, rgba(255, 166, 52, 0.1) 68%, rgba(255, 166, 52, 0) 100%);
+            filter: blur(10px);
+            opacity: 0.9;
+            animation: sun-pulse 5s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 1;
         }
 
-        /* Ambient Glow Pulse */
-        .sun-aura {
+        .sun-lightcast {
             position: absolute;
-            width: 170px;
-            height: 170px;
-            background: var(--sun-glow);
+            width: 320px;
+            height: 320px;
             border-radius: 50%;
-            filter: blur(28px);
-            animation: sun-pulse 4s ease-in-out infinite alternate;
+            background: radial-gradient(circle, rgba(255, 222, 145, 0.24) 0%, rgba(255, 206, 110, 0.14) 35%, rgba(255, 186, 88, 0.05) 58%, rgba(255, 186, 88, 0) 100%);
+            filter: blur(20px);
+            opacity: 0.72;
+            animation: sun-pulse 6.4s ease-in-out infinite alternate;
+            pointer-events: none;
+            z-index: 0;
         }
 
+        .sun-icon {
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: visible;
+        }
+
+        .sun-icon .sun-rotor {
+            opacity: 0.96;
+            transform-origin: 100px 100px;
+            transform-box: view-box;
+            animation: rotate-sun 30s linear infinite;
+            will-change: transform;
+        }
+
+        .sun-icon .sun-core {
+            filter: drop-shadow(0 0 11px rgba(255, 205, 98, 0.4)) drop-shadow(0 0 24px rgba(255, 205, 98, 0.22));
+        }
 
         /* --- NIGHT SKY STARFIELD --- */
         .starfield,
@@ -239,6 +238,71 @@
         .day-active .starfield,
         .day-active .shooting-starfield {
             opacity: 0;
+        }
+
+        .birds-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+        }
+
+        .day-active .birds-layer {
+            opacity: 0.62;
+        }
+
+        #body:not(.day-active) .birds-layer {
+            opacity: 0;
+        }
+
+        .bird {
+            position: absolute;
+            left: -16vw;
+            top: var(--y, 26%);
+            width: 22px;
+            height: 14px;
+            color: var(--bird-color, rgba(0, 0, 0, 0.82));
+            filter: none;
+            transform: translate3d(var(--sx, -16vw), 0, 0) rotate(var(--tilt, 0deg)) scale(var(--scale, 0.8)) scaleX(var(--flip, 1));
+            animation: bird-fly var(--dur, 32s) linear 1;
+            animation-delay: var(--delay, 0s);
+            will-change: transform, opacity;
+        }
+
+        .bird-svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: visible;
+            animation: bird-bob var(--bobdur, 2.6s) ease-in-out infinite;
+            will-change: transform;
+        }
+
+        .bird .body {
+            fill: currentColor;
+            opacity: 0.92;
+        }
+
+        .bird .wing {
+            fill: currentColor;
+            transform-box: fill-box;
+            transform-origin: 82% 78%;
+            animation: bird-flap-seq var(--flapcycle, 5.8s) cubic-bezier(0.42, 0, 0.2, 1) infinite;
+            animation-delay: var(--flapdelay, 0s);
+            will-change: transform;
+        }
+
+        .bird .wing.right {
+            transform-origin: 18% 78%;
+            animation-name: bird-flap-seq-right;
+        }
+
+        .bird .tail {
+            fill: currentColor;
+            opacity: 0.86;
         }
 
         /* --- CARTOON WIND FX LAYER --- */
@@ -297,8 +361,16 @@
             animation-name: wind-sweep-left;
         }
 
+        .day-active .wind-streak {
+            animation-play-state: running;
+        }
+
         #body:not(.day-active) .wind-layer {
-            opacity: 0.16;
+            opacity: 0;
+        }
+
+        #body:not(.day-active) .wind-streak {
+            animation-play-state: paused;
         }
 
         .star {
@@ -357,7 +429,7 @@
         .cloud {
             position: absolute;
             /* Remove CSS looping animations — movement handled by JS for randomness */
-            filter: url(#cloud-filter);
+            filter: none;
             will-change: transform, opacity;
             pointer-events: none;
             transform-origin: center;
@@ -365,48 +437,29 @@
 
         .cloud-group {
             position: relative;
-            /* Soft depth with subtle ambient bloom for natural edge lift */
-            filter: drop-shadow(0 18px 30px rgba(10,15,30,0.2)) drop-shadow(0 6px 18px rgba(255,255,255,0.08));
+            filter: none;
             transition: transform 420ms cubic-bezier(.2,.9,.3,1);
         }
 
         .puff-base {
             position: absolute;
-            background: radial-gradient(130% 105% at 50% 38%,
-                rgba(170, 206, 233, 0.88) 0%,
-                rgba(144, 188, 221, 0.82) 56%,
-                rgba(120, 170, 210, 0.62) 78%,
-                rgba(120, 170, 210, 0.26) 100%);
+            background: #f4f9ff;
             border-radius: 120px;
             z-index: 1;
-            filter: blur(2px);
-            box-shadow: inset 0 8px 18px rgba(255,255,255,0.08);
+            filter: none;
+            box-shadow: none;
         }
         .puff-body {
             position: absolute;
-            background: radial-gradient(135% 115% at 34% 28%,
-                rgba(249, 253, 255, 0.98) 0%,
-                rgba(238, 246, 251, 0.96) 52%,
-                rgba(221, 236, 247, 0.86) 76%,
-                rgba(213, 231, 245, 0.42) 100%);
+            background: #f4f9ff;
             border-radius: 120px;
             z-index: 2;
             top: -8px; left: 6px;
-            box-shadow: inset -9px -7px 20px rgba(0,0,0,0.05), 0 3px 12px rgba(255,255,255,0.08);
-            filter: blur(0.65px);
+            box-shadow: none;
+            filter: none;
         }
         .puff-highlight {
-            position: absolute;
-            background: radial-gradient(120% 100% at 30% 26%,
-                rgba(255,255,255,0.95) 0%,
-                rgba(255,255,255,0.78) 52%,
-                rgba(255,255,255,0.34) 78%,
-                rgba(255,255,255,0.08) 100%);
-            border-radius: 120px;
-            z-index: 3;
-            top: -18px; left: 12px;
-            filter: blur(1.1px);
-            opacity: 0.92;
+            display: none;
         }
 
         /* Complex Positioning (static positions; JS will animate motion)
@@ -682,6 +735,69 @@
             100% { opacity: 0; transform: translate3d(var(--ex, 120vw), var(--ey, 60vh), 0) rotate(var(--shoot-angle, -26deg)); }
         }
 
+        @keyframes bird-fly {
+            0% {
+                transform: translate3d(var(--sx, -16vw), 0, 0) rotate(var(--tilt, 0deg)) scale(var(--scale, 0.8)) scaleX(var(--flip, 1));
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            28% {
+                transform: translate3d(calc(var(--sx, -16vw) + (var(--dx, 132vw) * 0.28)), calc(var(--arc, -10px) * 0.55), 0) rotate(calc(var(--tilt, 0deg) + 0.9deg)) scale(var(--scale, 0.8)) scaleX(var(--flip, 1));
+                opacity: 1;
+            }
+            56% {
+                transform: translate3d(calc(var(--sx, -16vw) + (var(--dx, 132vw) * 0.56)), calc(var(--arc, -10px) * 1.05), 0) rotate(calc(var(--tilt, 0deg) - 0.8deg)) scale(var(--scale, 0.8)) scaleX(var(--flip, 1));
+                opacity: 1;
+            }
+            80% {
+                transform: translate3d(calc(var(--sx, -16vw) + (var(--dx, 132vw) * 0.80)), calc(var(--arc, -10px) * 0.35), 0) rotate(calc(var(--tilt, 0deg) + 0.5deg)) scale(var(--scale, 0.8)) scaleX(var(--flip, 1));
+                opacity: 1;
+            }
+            92% { opacity: 1; }
+            100% {
+                transform: translate3d(calc(var(--sx, -16vw) + var(--dx, 132vw)), calc(var(--arc, -10px) * -0.18), 0) rotate(var(--tilt, 0deg)) scale(var(--scale, 0.8)) scaleX(var(--flip, 1));
+                opacity: 0;
+            }
+        }
+
+        @keyframes bird-flap-seq {
+            /* 3 flaps -> 1s pause -> 1 flap -> 1s pause -> 2 flaps */
+            0%, 2% { transform: rotate(-6deg) translateY(0); }
+            4% { transform: rotate(34deg) translateY(-0.6px); }   /* flap 1 */
+            8% { transform: rotate(-6deg) translateY(0.3px); }
+            12% { transform: rotate(34deg) translateY(-0.6px); }  /* flap 2 */
+            16% { transform: rotate(-6deg) translateY(0.3px); }
+            20% { transform: rotate(34deg) translateY(-0.6px); }  /* flap 3 */
+            24%, 41% { transform: rotate(-2deg) translateY(0); }  /* ~1s pause */
+            45% { transform: rotate(34deg) translateY(-0.6px); }  /* flap 4 (single) */
+            49%, 66% { transform: rotate(-2deg) translateY(0); }  /* ~1s pause */
+            72% { transform: rotate(34deg) translateY(-0.6px); }  /* flap 5 */
+            78% { transform: rotate(-6deg) translateY(0.3px); }
+            84% { transform: rotate(34deg) translateY(-0.6px); }  /* flap 6 */
+            90%, 100% { transform: rotate(-6deg) translateY(0); }
+        }
+
+        @keyframes bird-flap-seq-right {
+            0%, 2% { transform: rotate(6deg) translateY(0); }
+            4% { transform: rotate(-34deg) translateY(-0.6px); }
+            8% { transform: rotate(6deg) translateY(0.3px); }
+            12% { transform: rotate(-34deg) translateY(-0.6px); }
+            16% { transform: rotate(6deg) translateY(0.3px); }
+            20% { transform: rotate(-34deg) translateY(-0.6px); }
+            24%, 41% { transform: rotate(2deg) translateY(0); }
+            45% { transform: rotate(-34deg) translateY(-0.6px); }
+            49%, 66% { transform: rotate(2deg) translateY(0); }
+            72% { transform: rotate(-34deg) translateY(-0.6px); }
+            78% { transform: rotate(6deg) translateY(0.3px); }
+            84% { transform: rotate(-34deg) translateY(-0.6px); }
+            90%, 100% { transform: rotate(6deg) translateY(0); }
+        }
+
+        @keyframes bird-bob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(1.5px); }
+        }
+
         @keyframes wind-sweep-right {
             0% {
                 opacity: 0;
@@ -773,8 +889,11 @@
         @media (max-width: 500px) {
             .glass-card { padding: 32px 24px; border-radius: 36px; }
             h2 { font-size: 34px; }
-            .sun-system { width: 190px; height: 190px; }
-            .sun-body-cartoon { width: 102px; height: 102px; }
+            .sun-system { width: 100px; height: 100px; }
+            .sun-spin { width: 108px; height: 108px; }
+            .sun-glow { width: 152px; height: 152px; }
+            .sun-lightcast { width: 260px; height: 260px; }
+            .bird { width: 18px; height: 11px; }
             .moon-system { width: 100px; height: 100px; top: 10%; left: 53%; }
             .moon-body { width: 64px; height: 64px; }
             .moon-shadow { width: 64px; height: 64px; }
@@ -812,12 +931,31 @@
         .tab-btn {
             background: transparent;
             color: var(--text-primary);
-            padding: 10px 14px;
+            padding: 8px 12px;
             border-radius: 14px;
             font-weight: 800;
             cursor: pointer;
             border: none;
-            font-size: 13px;
+            font-size: 11px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            min-width: 72px;
+        }
+        .tab-icon {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .tab-label {
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
         .tab-btn.active {
             background: linear-gradient(90deg, rgba(0,122,255,0.18), rgba(48,209,88,0.08));
@@ -856,10 +994,49 @@
 
     <div id="stage">
         <div id="sun-system" class="sun-system">
-            <div class="sun-aura"></div>
-            <div class="sun-ray-layer back"></div>
-            <div class="sun-ray-layer"></div>
-            <div class="sun-body-cartoon"></div>
+            <div class="sun-lightcast" aria-hidden="true"></div>
+            <div class="sun-glow" aria-hidden="true"></div>
+            <div class="sun-spin" aria-hidden="true">
+                <svg class="sun-icon" viewBox="0 0 200 200">
+                    <defs>
+                        <radialGradient id="sun-core-shade" cx="34%" cy="30%" r="78%">
+                            <stop offset="0%" stop-color="#f8de84" stop-opacity="0.52"></stop>
+                            <stop offset="62%" stop-color="#f2cf66" stop-opacity="0.16"></stop>
+                            <stop offset="100%" stop-color="#e7b74e" stop-opacity="0.3"></stop>
+                        </radialGradient>
+                        <clipPath id="sun-core-clip">
+                            <circle cx="100" cy="100" r="56"></circle>
+                        </clipPath>
+                    </defs>
+                    <g class="sun-rotor" fill="#f0d26b">
+                        <rect x="95" y="8" width="10" height="38" rx="5"></rect>
+                        <rect x="96.5" y="14" width="7" height="32" rx="3.5" transform="rotate(22.5 100 100)"></rect>
+                        <rect x="95" y="8" width="10" height="38" rx="5" transform="rotate(45 100 100)"></rect>
+                        <rect x="96.5" y="14" width="7" height="32" rx="3.5" transform="rotate(67.5 100 100)"></rect>
+                        <rect x="95" y="8" width="10" height="38" rx="5" transform="rotate(90 100 100)"></rect>
+                        <rect x="96.5" y="14" width="7" height="32" rx="3.5" transform="rotate(112.5 100 100)"></rect>
+                        <rect x="95" y="8" width="10" height="38" rx="5" transform="rotate(135 100 100)"></rect>
+                        <rect x="96.5" y="14" width="7" height="32" rx="3.5" transform="rotate(157.5 100 100)"></rect>
+                        <rect x="95" y="8" width="10" height="38" rx="5" transform="rotate(180 100 100)"></rect>
+                        <rect x="96.5" y="14" width="7" height="32" rx="3.5" transform="rotate(202.5 100 100)"></rect>
+                        <rect x="95" y="8" width="10" height="38" rx="5" transform="rotate(225 100 100)"></rect>
+                        <rect x="96.5" y="14" width="7" height="32" rx="3.5" transform="rotate(247.5 100 100)"></rect>
+                        <rect x="95" y="8" width="10" height="38" rx="5" transform="rotate(270 100 100)"></rect>
+                        <rect x="96.5" y="14" width="7" height="32" rx="3.5" transform="rotate(292.5 100 100)"></rect>
+                        <rect x="95" y="8" width="10" height="38" rx="5" transform="rotate(315 100 100)"></rect>
+                        <rect x="96.5" y="14" width="7" height="32" rx="3.5" transform="rotate(337.5 100 100)"></rect>
+                    </g>
+                    <g class="sun-core">
+                        <circle cx="100" cy="100" r="56" fill="#f0d26b"></circle>
+                        <g clip-path="url(#sun-core-clip)">
+                            <circle cx="100" cy="100" r="56" fill="url(#sun-core-shade)"></circle>
+                            <ellipse cx="78" cy="76" rx="23" ry="16" fill="rgba(255, 241, 178, 0.36)"></ellipse>
+                            <path d="M132 72 l7 -4 M140 80 l5 -3 M122 142 l7 -4 M130 150 l7 -4" stroke="#f6bc5f" stroke-width="3.5" stroke-linecap="round" fill="none"></path>
+                        </g>
+                        <circle cx="100" cy="100" r="56" fill="none" stroke="rgba(255, 241, 178, 0.45)" stroke-width="1.5"></circle>
+                    </g>
+                </svg>
+            </div>
         </div>
 
         <div id="moon-system" class="moon-system phase-full" aria-hidden="true">
@@ -874,6 +1051,7 @@
 
         <div id="starfield" class="starfield" aria-hidden="true"></div>
         <div id="shooting-starfield" class="shooting-starfield" aria-hidden="true"></div>
+        <div id="birds-layer" class="birds-layer" aria-hidden="true"></div>
 
         <div class="cloud-container">
             <div class="cloud c1">
@@ -1032,10 +1210,41 @@
     <!-- BOTTOM TAB NAV -->
     <div class="bottom-nav" aria-hidden="false">
         <div class="nav-inner">
-            <button class="tab-btn" id="tab-alarms" onclick="switchTab('post')">Alarms</button>
-            <button class="tab-btn" id="tab-timers" onclick="switchTab('timers')">Timer</button>
-            <button class="tab-btn" id="tab-stopwatch" onclick="switchTab('stopwatch')">Stopwatch</button>
-            <button class="tab-btn" id="tab-sounds" onclick="switchTab('sounds')">Sounds</button>
+            <button class="tab-btn" id="tab-alarms" onclick="switchTab('post')" aria-label="Alarms">
+                <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M14 21a2 2 0 0 1-4 0"></path>
+                    <path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 2h16z"></path>
+                    <path d="M7.5 5 5 3"></path>
+                    <path d="m16.5 5 2.5-2"></path>
+                </svg>
+                <span class="tab-label">Alarms</span>
+            </button>
+            <button class="tab-btn" id="tab-timers" onclick="switchTab('timers')" aria-label="Timers">
+                <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="14" r="7"></circle>
+                    <path d="M9 3h6"></path>
+                    <path d="M12 7v3"></path>
+                    <path d="m12 14 3-2"></path>
+                </svg>
+                <span class="tab-label">Timers</span>
+            </button>
+            <button class="tab-btn" id="tab-stopwatch" onclick="switchTab('stopwatch')" aria-label="Stopwatch">
+                <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="13" r="8"></circle>
+                    <path d="M12 13 15 10"></path>
+                    <path d="M9 2h6"></path>
+                    <path d="M15.5 5.5 17 4"></path>
+                </svg>
+                <span class="tab-label">Stopwatch</span>
+            </button>
+            <button class="tab-btn" id="tab-sounds" onclick="switchTab('sounds')" aria-label="Sounds">
+                <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M11 6 7.8 9H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h2.8L11 18a1 1 0 0 0 1.7-.7V6.7A1 1 0 0 0 11 6z"></path>
+                    <path d="M16 9.5a4 4 0 0 1 0 5"></path>
+                    <path d="M18.7 7a7.5 7.5 0 0 1 0 10"></path>
+                </svg>
+                <span class="tab-label">Sounds</span>
+            </button>
         </div>
     </div>
 
@@ -1207,6 +1416,7 @@
         
         // Alarm types: 'routine' = morning routine alarm, 'regular' = standard alarm
         let alarmTypes = alarms.map(() => 'routine'); // default to routine
+        let alarmEnabled = alarms.map(() => true); // per-alarm on/off state
         let selectedAlarmType = 'routine'; // currently selected type for new alarms
 
         // Selected alarm sound type
@@ -1222,6 +1432,16 @@
         // Scene wind vector shared by cloud drift and cartoon wind streaks.
         let _sceneWindDirection = 1; // 1 => left-to-right, -1 => right-to-left
         let _setAlarmGlowTimeout = null;
+        let _isRoutineTransitioning = false;
+        let _taskIdCounter = 0;
+        let _isRenderingApplication = false;
+        let _isRenderingRoutineEditor = false;
+        let _isMutatingTasks = false;
+
+        function _createTaskId() {
+            _taskIdCounter += 1;
+            return `task-${Date.now()}-${_taskIdCounter}-${Math.random().toString(36).slice(2, 6)}`;
+        }
 
         function _safeParseJSON(raw) {
             try { return JSON.parse(raw); } catch (e) { return null; }
@@ -1229,13 +1449,22 @@
 
         function _normalizeTaskList(list) {
             if (!Array.isArray(list)) return createDefaultTasks();
+            const seen = new Set();
             const normalized = list
                 .filter(t => t && typeof t.text === 'string')
                 .map(t => ({
-                    id: Number.isFinite(Number(t.id)) ? Number(t.id) : Date.now() + Math.floor(Math.random() * 10000),
+                    id: t.id,
                     text: t.text.trim(),
                     done: !!t.done
                 }))
+                .map(t => {
+                    let id = (typeof t.id === 'string' && t.id.trim())
+                        ? t.id.trim()
+                        : (Number.isFinite(Number(t.id)) ? String(Number(t.id)) : _createTaskId());
+                    if (seen.has(id)) id = _createTaskId();
+                    seen.add(id);
+                    return { ...t, id };
+                })
                 .filter(t => t.text.length > 0);
             return normalized.length ? normalized : createDefaultTasks();
         }
@@ -1279,6 +1508,7 @@
                     alarms: Array.isArray(alarms) ? alarms.map(a => String(a || '')).filter(Boolean) : [],
                     alarmsMeta: Array.isArray(alarmsMeta) ? alarmsMeta.map(d => String(d || 'Everyday')) : [],
                     alarmTypes: Array.isArray(alarmTypes) ? alarmTypes.map(t => (t === 'regular' ? 'regular' : 'routine')) : [],
+                    alarmEnabled: Array.isArray(alarmEnabled) ? alarmEnabled.map(v => !!v) : [],
                     selectedAlarmType: selectedAlarmType === 'regular' ? 'regular' : 'routine',
                     selectedSound: String(selectedSound || DEFAULT_SOUND_ID),
                     customSounds,
@@ -1315,6 +1545,7 @@
                 alarms = [];
                 alarmsMeta = [];
                 alarmTypes = [];
+                alarmEnabled = [];
                 selectedAlarmType = 'routine';
                 selectedSound = DEFAULT_SOUND_ID;
                 _timers.splice(0, _timers.length);
@@ -1332,11 +1563,14 @@
             alarms = Array.isArray(state.alarms) ? state.alarms.map(a => String(a || '')).filter(Boolean) : [];
             alarmsMeta = Array.isArray(state.alarmsMeta) ? state.alarmsMeta.map(v => String(v || 'Everyday')) : [];
             alarmTypes = Array.isArray(state.alarmTypes) ? state.alarmTypes.map(v => (v === 'regular' ? 'regular' : 'routine')) : [];
+            alarmEnabled = Array.isArray(state.alarmEnabled) ? state.alarmEnabled.map(v => !!v) : [];
 
             while (alarmsMeta.length < alarms.length) alarmsMeta.push('Everyday');
             while (alarmTypes.length < alarms.length) alarmTypes.push('routine');
+            while (alarmEnabled.length < alarms.length) alarmEnabled.push(true);
             if (alarmsMeta.length > alarms.length) alarmsMeta = alarmsMeta.slice(0, alarms.length);
             if (alarmTypes.length > alarms.length) alarmTypes = alarmTypes.slice(0, alarms.length);
+            if (alarmEnabled.length > alarms.length) alarmEnabled = alarmEnabled.slice(0, alarms.length);
 
             selectedAlarmType = state.selectedAlarmType === 'regular' ? 'regular' : 'routine';
 
@@ -1424,6 +1658,7 @@
             _sw_render();
             attachScrollSnapping();
             initNightSky();
+            initDayBirds();
             initWindFX();
             initCloudsMotion();
             initClickRadar();
@@ -1641,6 +1876,15 @@
             const shootingField = document.getElementById('shooting-starfield');
             if (!starfield || !shootingField) return;
 
+            function _pickNightStarTint() {
+                const r = Math.random();
+                // 1/20 each special tint
+                if (r < 0.05) return { color: 'rgba(214, 236, 255, 0.98)', glow: 'rgba(176, 212, 255, 0.7)' }; // whitish blue
+                if (r < 0.10) return { color: 'rgba(222, 255, 232, 0.98)', glow: 'rgba(170, 236, 190, 0.68)' }; // whitish green
+                if (r < 0.15) return { color: 'rgba(255, 250, 220, 0.98)', glow: 'rgba(255, 230, 170, 0.72)' }; // yellowish white
+                return null;
+            }
+
             const viewportArea = Math.max(window.innerWidth, 320) * Math.max(window.innerHeight, 480);
             const starCount = Math.min(900, Math.max(420, Math.floor(viewportArea / 2200)));
             const diamondCount = Math.max(8, Math.floor(starCount * 0.025));
@@ -1666,6 +1910,11 @@
                 star.style.setProperty('--drift-delay', `${-Math.random() * 15}s`);
                 star.style.setProperty('--dx', `${(Math.random() - 0.5) * 22}px`);
                 star.style.setProperty('--dy', `${(Math.random() - 0.5) * 18}px`);
+                const tint = _pickNightStarTint();
+                if (tint) {
+                    star.style.background = tint.color;
+                    star.style.boxShadow = `0 0 8px ${tint.glow}`;
+                }
                 starfield.appendChild(star);
             }
 
@@ -1683,6 +1932,11 @@
                 diamond.style.setProperty('--drift-delay', `${-Math.random() * 20}s`);
                 diamond.style.setProperty('--dx', `${(Math.random() - 0.5) * 26}px`);
                 diamond.style.setProperty('--dy', `${(Math.random() - 0.5) * 20}px`);
+                const tint = _pickNightStarTint();
+                if (tint) {
+                    diamond.style.background = tint.color;
+                    diamond.style.boxShadow = `0 0 12px ${tint.glow}`;
+                }
                 starfield.appendChild(diamond);
             }
 
@@ -1728,6 +1982,74 @@
                 streak.style.setProperty('--shoot-delay', `${Math.random() * 10}s`);
                 shootingField.appendChild(streak);
             }
+        }
+
+        // 4.45 Day birds: probabilistic group spawns (1-4 birds), daytime only.
+        function initDayBirds() {
+            const layer = document.getElementById('birds-layer');
+            if (!layer) return;
+
+            function spawnGroup() {
+                // Only spawn groups during daytime.
+                if (!document.getElementById('body')?.classList.contains('day-active')) return;
+
+                const groupSize = 1 + Math.floor(Math.random() * 4); // 1..4
+                const baseY = 14 + Math.random() * 24; // upper sky band
+                const baseScale = 0.62 + Math.random() * 0.26; // farther away/smaller
+                const baseDur = 15 + Math.random() * 10;
+                const flockSpread = 3.2 + Math.random() * 4.2;
+                const fromRight = Math.random() < 0.5;
+
+                for (let i = 0; i < groupSize; i++) {
+                    const bird = document.createElement('span');
+                    bird.className = 'bird';
+                    const y = baseY + ((i - (groupSize - 1) / 2) * flockSpread) + (Math.random() * 2 - 1);
+                    const scale = baseScale + (Math.random() * 0.18 - 0.09);
+                    const dur = baseDur + (Math.random() * 2.6 - 1.3);
+                    const delay = i * (0.35 + Math.random() * 0.28);
+                    const flapCycle = 5.4 + Math.random() * 0.8;
+                    const bobDur = 2.1 + Math.random() * 1.3;
+                    const arc = -6 - Math.random() * 12;
+                    const tiltBase = Math.random() * 3.2 - 1.6;
+                    const tilt = fromRight ? (-tiltBase) : tiltBase;
+                    const isGray = Math.random() < 0.2; // 1 in 5
+                    bird.style.setProperty('--y', `${Math.max(8, Math.min(48, y))}%`);
+                    bird.style.setProperty('--scale', `${Math.max(0.5, scale).toFixed(2)}`);
+                    bird.style.setProperty('--dur', `${Math.max(12, dur).toFixed(2)}s`);
+                    bird.style.setProperty('--delay', `${delay.toFixed(2)}s`);
+                    bird.style.setProperty('--flapcycle', `${flapCycle.toFixed(2)}s`);
+                    bird.style.setProperty('--flapdelay', `${(Math.random() * 0.5).toFixed(2)}s`);
+                    bird.style.setProperty('--bobdur', `${bobDur.toFixed(2)}s`);
+                    bird.style.setProperty('--arc', `${arc.toFixed(1)}px`);
+                    bird.style.setProperty('--tilt', `${tilt.toFixed(2)}deg`);
+                    bird.style.setProperty('--sx', fromRight ? '116vw' : '-16vw');
+                    bird.style.setProperty('--dx', fromRight ? '-132vw' : '132vw');
+                    bird.style.setProperty('--flip', fromRight ? '-1' : '1');
+                    bird.style.setProperty('--bird-color', isGray ? 'rgba(126, 130, 136, 0.78)' : 'rgba(0, 0, 0, 0.82)');
+                    bird.innerHTML = `
+                        <svg class="bird-svg" viewBox="0 0 60 36" aria-hidden="true">
+                            <path class="wing left" d="M29 19 C23 10, 14 8, 8 14 C14 16, 21 21, 29 19 Z"></path>
+                            <path class="wing right" d="M31 19 C37 10, 46 8, 52 14 C46 16, 39 21, 31 19 Z"></path>
+                            <ellipse class="body" cx="30" cy="19" rx="6.2" ry="3.7"></ellipse>
+                            <polygon class="tail" points="23,19 16,17 16,21"></polygon>
+                        </svg>
+                    `;
+                    layer.appendChild(bird);
+                    bird.addEventListener('animationend', () => {
+                        try { if (bird.parentNode) bird.parentNode.removeChild(bird); } catch (e) {}
+                    }, { once: true });
+                }
+            }
+
+            function loop() {
+                spawnGroup();
+                // Variable probability pacing: frequent enough to feel alive, not constant.
+                const nextMs = 4800 + Math.random() * 7600;
+                setTimeout(loop, nextMs);
+            }
+
+            // Start with a short delay so first flock appears promptly on day screens.
+            setTimeout(loop, 900);
         }
 
         // 4.5 Cloud motion: randomized, per-cloud constant speed (JS-driven)
@@ -1858,45 +2180,71 @@
 
         // 5. APPLICATION RENDER ENGINE
         function renderApplication() {
-            // Update Routine List (Wake Screen)
-            const list = document.getElementById('routine-list');
-            list.innerHTML = tasks.map(t => `
-                <div class="item ${t.done ? 'checked' : ''}" onclick="toggleTaskCompletion(${t.id})">
-                    <div class="check-circle">${t.done ? '✓' : ''}</div>
-                    <span>${t.text}</span>
-                </div>
-            `).join('');
-
-            // Calculate Progress
-            const completedCount = tasks.filter(t => t.done).length;
-            const progressRatio = tasks.length > 0 ? (completedCount / tasks.length) : 0;
-            const progressPercent = Math.round(progressRatio * 100);
-            
-            const fill = document.getElementById('progress-fill');
-            const text = document.getElementById('progress-percent');
-            
-            fill.style.width = progressPercent + '%';
-            text.innerText = progressPercent + '%';
+            if (_isRenderingApplication) return;
+            _isRenderingApplication = true;
+            try {
+            _renderWakeRoutineListAndProgress();
 
             // Transition Logic
-            if (tasks.length > 0 && tasks.every(t => t.done)) {
+            if (!_isRoutineTransitioning && _isWakeScreenActive() && tasks.length > 0 && tasks.every(t => t.done)) {
                 executeMorningTransition();
             }
 
             renderRoutineEditor();
+            } catch (e) {
+                console.error('renderApplication failed', e);
+            } finally {
+                _isRenderingApplication = false;
+            }
+        }
+
+        function _renderWakeRoutineListAndProgress() {
+            const list = document.getElementById('routine-list');
+            if (list) {
+                list.innerHTML = '';
+                tasks.forEach(t => {
+                    const item = document.createElement('div');
+                    item.className = `item ${t.done ? 'checked' : ''}`;
+                    item.onclick = () => toggleTaskCompletion(t.id);
+
+                    const check = document.createElement('div');
+                    check.className = 'check-circle';
+                    check.textContent = t.done ? '✓' : '';
+
+                    const text = document.createElement('span');
+                    text.textContent = String(t.text || '');
+
+                    item.appendChild(check);
+                    item.appendChild(text);
+                    list.appendChild(item);
+                });
+            }
+
+            const completedCount = tasks.filter(t => t.done).length;
+            const progressRatio = tasks.length > 0 ? (completedCount / tasks.length) : 0;
+            const progressPercent = Math.round(progressRatio * 100);
+            const fill = document.getElementById('progress-fill');
+            const text = document.getElementById('progress-percent');
+            if (fill) fill.style.width = progressPercent + '%';
+            if (text) text.innerText = progressPercent + '%';
+        }
+
+        function _isWakeScreenActive() {
+            const wakeScreen = document.getElementById('screen-wake');
+            return !!(wakeScreen && !wakeScreen.classList.contains('hidden'));
         }
 
         function toggleTaskCompletion(id) {
-            const task = tasks.find(x => x.id === id);
-            if(task) {
-                task.done = !task.done;
-                renderApplication();
-                saveState();
-            }
+            _applyTaskMutation(() => {
+                const task = tasks.find(x => x.id === id);
+                if(task) task.done = !task.done;
+            }, { renderMode: 'full' });
         }
 
         // 6. ANIMATION: SYSTEM TRANSITION
         function executeMorningTransition() {
+            if (_isRoutineTransitioning) return;
+            _isRoutineTransitioning = true;
             console.log("Transition: Sequence Start");
             setTimeout(() => {
                 // sun comes up when transitioning to post screen
@@ -1918,6 +2266,7 @@
                          postScreen.style.transform = 'translateY(0) scale(1)';
                          // routine finished and post screen fully visible -> restore tabs
                          showTabs();
+                         _isRoutineTransitioning = false;
                      }, 150);
                  }, 1000);
              }, 700);
@@ -1926,6 +2275,7 @@
         // 7. ALARM MANAGEMENT
         function _timeUntilAlarm(alarmStr, idx) {
             // Calculate milliseconds until alarm rings
+            if (Array.isArray(alarmEnabled) && alarmEnabled[idx] === false) return Infinity;
             const now = new Date();
             const parsed = _parseAlarmString(alarmStr);
             if (!parsed) return Infinity;
@@ -1961,14 +2311,17 @@
             list.innerHTML = alarms.map((a, i) => {
                 const metaDay = (alarmsMeta && alarmsMeta[i]) ? alarmsMeta[i] : 'Everyday';
                 const alarmType = (alarmTypes && alarmTypes[i]) ? alarmTypes[i] : 'routine';
+                const isEnabled = !(Array.isArray(alarmEnabled) && alarmEnabled[i] === false);
                 const typeLabel = alarmType === 'routine' ? 'Morning Routine' : 'Regular';
                 const typeColor = alarmType === 'routine' ? 'var(--sun-main)' : 'var(--accent-blue)';
                 const timeUntil = _timeUntilAlarm(a, i);
-                const isCloseToRinging = timeUntil < 300000; // within 5 minutes
+                const isCloseToRinging = isEnabled && timeUntil < 300000; // within 5 minutes
                 const highlightStyle = isCloseToRinging ? 'border:2px solid var(--accent-blue);background:rgba(0,122,255,0.15);box-shadow:0 0 20px rgba(0,122,255,0.3);' : '';
+                const rowDisabledStyle = !isEnabled ? 'background:rgba(130,130,130,0.12); border:1px solid rgba(180,180,180,0.2);' : '';
+                const contentDisabledStyle = !isEnabled ? 'opacity:0.46; filter:grayscale(1);' : '';
                 return `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:22px 0; border-bottom:1px solid rgba(255,255,255,0.1);${highlightStyle}padding:20px;border-radius:12px;margin-bottom:8px;">
-                    <div style="display:flex; flex-direction:column; gap:8px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:22px 0; border-bottom:1px solid rgba(255,255,255,0.1);${highlightStyle}${rowDisabledStyle}padding:20px;border-radius:12px;margin-bottom:8px;">
+                    <div style="display:flex; flex-direction:column; gap:8px; ${contentDisabledStyle}">
                         <div style="display:flex; align-items:baseline; gap:10px;">
                             <span style="font-size:36px; font-weight:300; letter-spacing:2px; margin-right:10px;">${a.split(' ')[0]}</span>
                             <span style="font-size:14px; font-weight:900; opacity:0.5;">${a.split(' ')[1]}</span>
@@ -1978,15 +2331,32 @@
                             <span style="font-size:12px; color:var(--text-secondary);">${metaDay}</span>
                         </div>
                     </div>
-                    <button class="alarm-delete-btn" data-alarm-idx="${i}" style="background:none; border:none; color:var(--accent-red); font-weight:900; font-size:11px; cursor:pointer; text-transform:uppercase; letter-spacing:1.5px;">Remove</button>
+                    <div style="display:flex; align-items:center; gap:12px;">
+                        <button class="alarm-toggle-btn" data-alarm-idx="${i}" aria-label="${isEnabled ? 'Turn alarm off' : 'Turn alarm on'}" style="position:relative; width:56px; height:32px; border:none; border-radius:999px; cursor:pointer; background:${isEnabled ? '#10d176' : '#7a7f88'}; transition:background .2s ease;">
+                            <span style="position:absolute; top:3px; left:${isEnabled ? '27px' : '3px'}; width:26px; height:26px; border-radius:50%; background:#fff; transition:left .2s ease;"></span>
+                        </button>
+                        <button class="alarm-delete-btn" data-alarm-idx="${i}" style="background:none; border:none; color:var(--accent-red); font-weight:900; font-size:11px; cursor:pointer; text-transform:uppercase; letter-spacing:1.5px;">Remove</button>
+                    </div>
                 </div>
             `}).join('');
-            
+
+            document.querySelectorAll('.alarm-toggle-btn').forEach(btn => {
+                const idx = parseInt(btn.dataset.alarmIdx);
+                btn.onclick = () => toggleAlarmEnabled(idx);
+            });
+
             // Attach click-to-delete handlers to all alarm delete buttons
             document.querySelectorAll('.alarm-delete-btn').forEach(btn => {
                 const idx = parseInt(btn.dataset.alarmIdx);
                 btn.onclick = () => deleteAlarm(idx);
             });
+        }
+
+        function toggleAlarmEnabled(index) {
+            if (!Array.isArray(alarmEnabled) || index < 0 || index >= alarms.length) return;
+            alarmEnabled[index] = !alarmEnabled[index];
+            renderAlarms();
+            saveState();
         }
 
         function setAlarmType(type) {
@@ -2035,6 +2405,8 @@
             alarmsMeta.push(d);
             // Store the alarm type
             alarmTypes.push(selectedAlarmType);
+            // New alarms are on by default
+            alarmEnabled.push(true);
             renderAlarms();
             saveState();
             triggerSetAlarmSuccessGlow();
@@ -2047,6 +2419,7 @@
             alarms.splice(index, 1);
             if (alarmsMeta && alarmsMeta.length > index) alarmsMeta.splice(index, 1);
             if (alarmTypes && alarmTypes.length > index) alarmTypes.splice(index, 1);
+            if (alarmEnabled && alarmEnabled.length > index) alarmEnabled.splice(index, 1);
             renderAlarms();
             saveState();
         }
@@ -2114,31 +2487,96 @@
 
         // 8. ROUTINE EDITOR
         function renderRoutineEditor() {
+            if (_isRenderingRoutineEditor) return;
+            _isRenderingRoutineEditor = true;
+            try {
             const list = document.getElementById('edit-list');
-            list.innerHTML = tasks.map(t => `
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; background:rgba(255,255,255,0.06); padding:20px 24px; border-radius:24px; border: 1px solid rgba(255,255,255,0.05);">
-                    <span style="opacity:0.9; font-size:16px; font-weight:700;">${t.text}</span>
-                    <span style="color:var(--accent-red); cursor:pointer; font-weight:900; font-size:18px; padding:4px;" onclick="deleteTask(${t.id})">✕</span>
-                </div>
-            `).join('');
+            if (!list) return;
+            list.innerHTML = '';
+            tasks.forEach(t => {
+                const row = document.createElement('div');
+                row.style.display = 'flex';
+                row.style.justifyContent = 'space-between';
+                row.style.alignItems = 'center';
+                row.style.marginBottom = '14px';
+                row.style.background = 'rgba(255,255,255,0.06)';
+                row.style.padding = '20px 24px';
+                row.style.borderRadius = '24px';
+                row.style.border = '1px solid rgba(255,255,255,0.05)';
+
+                const text = document.createElement('span');
+                text.style.opacity = '0.9';
+                text.style.fontSize = '16px';
+                text.style.fontWeight = '700';
+                text.textContent = String(t.text || '');
+
+                const del = document.createElement('button');
+                del.type = 'button';
+                del.textContent = '✕';
+                del.setAttribute('aria-label', 'Delete routine item');
+                del.style.color = 'var(--accent-red)';
+                del.style.cursor = 'pointer';
+                del.style.fontWeight = '900';
+                del.style.fontSize = '18px';
+                del.style.padding = '4px';
+                del.style.background = 'none';
+                del.style.border = 'none';
+                del.onclick = () => deleteTask(t.id);
+
+                row.appendChild(text);
+                row.appendChild(del);
+                list.appendChild(row);
+            });
+            } catch (e) {
+                console.error('renderRoutineEditor failed', e);
+            } finally {
+                _isRenderingRoutineEditor = false;
+            }
         }
 
         function addTask() {
             const input = document.getElementById('task-in');
+            if (!input) return;
             const val = input.value.trim();
             
             if(val.length > 0) {
-                tasks.push({ id: Date.now(), text: val, done: false });
+                _applyTaskMutation(() => {
+                    const id = _createTaskId();
+                    tasks.push({ id, text: val, done: false });
+                }, { renderMode: 'routine_only' });
                 input.value = "";
-                renderApplication();
-                saveState();
             }
         }
 
         function deleteTask(id) {
-            tasks = tasks.filter(t => t.id !== id);
-            renderApplication();
-            saveState();
+            const target = String(id);
+            _applyTaskMutation(() => {
+                const idx = tasks.findIndex(t => String(t.id) === target);
+                if (idx >= 0) tasks.splice(idx, 1); // remove exactly one
+            }, { renderMode: 'routine_only' });
+        }
+
+        function _applyTaskMutation(mutator, opts = {}) {
+            if (_isMutatingTasks) return;
+            _isMutatingTasks = true;
+            try {
+                if (!Array.isArray(tasks)) tasks = [];
+                if (typeof mutator === 'function') mutator();
+                tasks = _normalizeTaskList(tasks);
+
+                const renderMode = opts.renderMode || 'full';
+                if (renderMode === 'routine_only') {
+                    try { _renderWakeRoutineListAndProgress(); } catch (e) { console.error('wake render failed', e); }
+                    try { renderRoutineEditor(); } catch (e) { console.error('routine editor render failed', e); }
+                } else {
+                    renderApplication();
+                }
+                saveState();
+            } catch (e) {
+                console.error('Task mutation failed', e);
+            } finally {
+                _isMutatingTasks = false;
+            }
         }
 
         // 8.5. SOUND MANAGEMENT
@@ -2263,6 +2701,7 @@
         // 9. SYSTEM RESET
         function restart() {
             console.log("System Reset initiated...");
+            _isRoutineTransitioning = false;
             tasks.forEach(t => t.done = false);
             
             document.getElementById('body').classList.remove('day-active');
@@ -2289,6 +2728,7 @@
 
         function forceStopRoutine() {
             try {
+                _isRoutineTransitioning = false;
                 tasks.forEach(t => t.done = false);
                 if (typeof setTabsLocked === 'function') setTabsLocked(false);
                 switchTab('post');
@@ -2531,6 +2971,7 @@
             const todayDayIndex = now.getDay(); // 0-6
 
             alarms.forEach((alarmStr, idx) => {
+                if (Array.isArray(alarmEnabled) && alarmEnabled[idx] === false) return;
                 const parsed = _parseAlarmString(alarmStr);
                 if (!parsed) return;
                 if (parsed.hh === nowHH && parsed.mm === nowMM) {
@@ -2890,6 +3331,13 @@
 
         // Show overlay and start sound
         function _ringAlarm(index) {
+            // Auto-turn off alarm immediately after it rings.
+            if (Array.isArray(alarmEnabled) && index >= 0 && index < alarmEnabled.length && alarmEnabled[index] !== false) {
+                alarmEnabled[index] = false;
+                try { renderAlarms(); } catch (e) {}
+                try { saveState(); } catch (e) {}
+            }
+
             _currentRingingIndexes.push(index);
             _scheduleAlarmAutoStop(index);
 
@@ -3105,6 +3553,10 @@
             
             const newAlarmStr = `${hh}:${mm.toString().padStart(2, '0')} ${ampm}`;
             alarms[index] = newAlarmStr;
+            // Snoozing should turn the alarm back on.
+            if (Array.isArray(alarmEnabled) && index >= 0 && index < alarmEnabled.length) {
+                alarmEnabled[index] = true;
+            }
 
             // Snoozed alarms should return to home now and ring once as a regular alarm.
             _snoozedAsRegularOnce[index] = true;
