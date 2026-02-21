@@ -37,8 +37,8 @@
             --accent-gold: #ffd700;
             
             /* Glassmorphism Specs */
-            --glass-bg: rgba(10, 10, 15, 0.88);
-            --glass-stroke: rgba(255, 255, 255, 0.2);
+            --glass-bg: #111214;
+            --glass-stroke: rgba(255, 255, 255, 0.08);
             --text-primary: #ffffff;
             --text-secondary: #94a3b8;
             --card-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.7);
@@ -497,8 +497,8 @@
             opacity: 1;
             transform: translateY(0);
             transition: all 1.2s var(--ease-out-expo);
-            backdrop-filter: blur(45px saturate(160%));
-            -webkit-backdrop-filter: blur(45px) saturate(160%);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             margin-bottom: 40px;
         }
 
@@ -681,6 +681,143 @@
             transition: 0.3s;
         }
         .btn-add:hover { filter: brightness(1.2); transform: translateY(-2px); }
+
+        .alarm-row {
+            position: relative;
+            transition: box-shadow .2s ease;
+            padding: 24px 20px !important;
+            margin-bottom: 12px !important;
+            border-radius: 14px !important;
+            gap: 14px;
+            overflow: hidden;
+        }
+        .alarm-row > div:first-child {
+            flex: 1 1 180px;
+            min-width: 0;
+        }
+        .alarm-row > div:last-child {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px 12px !important;
+            margin-left: auto;
+            flex: 0 1 240px;
+            max-width: 100%;
+        }
+        .alarm-edit-btn {
+            border: none;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            background: rgba(255,255,255,0.06);
+            color: var(--accent-blue);
+            min-width: 84px;
+            min-height: 44px;
+            text-align: center;
+            transition: background .2s ease, color .2s ease;
+        }
+        .alarm-edit-btn:hover { background: rgba(255,255,255,0.12); }
+        .alarm-edit-btn.editing-active {
+            color: #a7b0ba;
+            background: rgba(158, 167, 178, 0.2);
+        }
+        .alarm-edit-btn.editing-active:hover { background: rgba(158, 167, 178, 0.2); }
+        .alarm-row.alarm-editing {
+            animation: alarm-editing-pulse 2s ease-in-out infinite;
+        }
+        .alarm-repeat-trigger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: 1px solid rgba(255,255,255,0.16);
+            border-radius: 999px;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 800;
+            padding: 10px 12px;
+            min-height: 44px;
+            min-width: 44px;
+            cursor: pointer;
+            transition: border-color .2s ease, background .2s ease, color .2s ease;
+            max-width: 100%;
+        }
+        .alarm-repeat-trigger:hover {
+            border-color: rgba(93, 179, 255, 0.75);
+            color: #d8ecff;
+            background: rgba(0,122,255,0.2);
+        }
+        .alarm-repeat-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 100%;
+        }
+        .alarm-row .alarm-toggle-btn {
+            min-height: 44px !important;
+        }
+        .alarm-row .alarm-delete-btn {
+            min-height: 44px;
+            min-width: 88px;
+            padding: 10px 12px !important;
+            border-radius: 10px !important;
+            background: rgba(255,69,58,0.08) !important;
+            letter-spacing: 1.1px !important;
+        }
+        .alarm-row .alarm-delete-btn:hover {
+            background: rgba(255,69,58,0.15) !important;
+        }
+        .alarm-repeat-popover {
+            position: fixed;
+            z-index: 9998;
+            width: 188px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.18);
+            background: #1f2429;
+            box-shadow: 0 18px 42px rgba(0,0,0,0.45);
+            padding: 10px;
+        }
+        .alarm-repeat-popover-title {
+            font-size: 10px;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            font-weight: 900;
+            color: rgba(255,255,255,0.6);
+            margin: 2px 2px 8px 2px;
+        }
+        .alarm-repeat-popover .day-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #eaf0f7;
+            border-radius: 10px;
+            padding: 5px 7px;
+            cursor: pointer;
+        }
+        .alarm-repeat-popover .day-check:hover { background: rgba(255,255,255,0.08); }
+        .alarm-repeat-popover .day-check input { width: 16px; height: 16px; accent-color: #0a84ff; }
+        .alarm-repeat-popover-done {
+            width: 100%;
+            margin-top: 8px;
+            border: none;
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            background: #0a84ff;
+            color: #fff;
+            cursor: pointer;
+        }
 
         #set-alarm-btn.alarm-confirm-glow {
             animation: alarm-confirm-glow 720ms cubic-bezier(0.22, 0.9, 0.3, 1) 1;
@@ -870,6 +1007,25 @@
             }
         }
 
+        @keyframes alarm-editing-pulse {
+            0% {
+                box-shadow: 0 0 0 rgba(255, 206, 90, 0), 0 0 0 rgba(255, 200, 74, 0);
+                outline: 1px solid rgba(255, 223, 128, 0.42);
+            }
+            25% {
+                box-shadow: 0 0 0 3px rgba(255, 224, 122, 0.24), 0 0 22px rgba(255, 207, 86, 0.45), 0 0 38px rgba(255, 200, 74, 0.18);
+                outline: 1px solid rgba(255, 233, 156, 0.9);
+            }
+            50% {
+                box-shadow: 0 0 0 rgba(255, 206, 90, 0), 0 0 0 rgba(255, 200, 74, 0);
+                outline: 1px solid rgba(255, 223, 128, 0.42);
+            }
+            100% {
+                box-shadow: 0 0 0 rgba(255, 206, 90, 0), 0 0 0 rgba(255, 200, 74, 0);
+                outline: 1px solid rgba(255, 223, 128, 0.42);
+            }
+        }
+
         .day-active #stage { background: var(--sky-day); }
         .day-active .sun-system { transform: translate(-50%, -100px); }
         #body:not(.day-active) .cloud-container {
@@ -921,12 +1077,12 @@
         .bottom-nav .nav-inner {
             display: flex;
             gap: 10px;
-            background: rgba(10,10,15,0.9);
+            background: #111214;
             border: 1px solid rgba(255,255,255,0.06);
             padding: 10px;
             border-radius: 28px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            backdrop-filter: blur(12px);
+            backdrop-filter: none;
         }
         .tab-btn {
             background: transparent;
@@ -1151,6 +1307,7 @@
                     </div>
                 </div>
                 <button id="set-alarm-btn" class="btn-add" style="width:100%; height: 64px; font-size: 17px;" onclick="addAlarm()">Set New Alarm</button>
+                <button id="cancel-edit-alarm-btn" class="btn-primary" style="display:none; width:100%; margin-top:10px; height:52px; font-size:15px; background: var(--accent-red); color: #fff;" onclick="cancelAlarmEdit()">Cancel Edit</button>
             </section>
 
             <div class="divider-glass"></div>
@@ -1411,13 +1568,19 @@
 
         // New: day labels + per-alarm selected day metadata (keeps original alarms[] intact)
         const DAY_LABELS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-        // parallel metadata array to store which day a given alarm is set for (single-day selection)
+        const ALL_DAY_INDICES = [0,1,2,3,4,5,6];
+        // legacy summary metadata retained for compatibility
         let alarmsMeta = alarms.map(() => 'Everyday');
+        // source of truth for per-alarm repeat days
+        let alarmsRepeatDays = alarms.map(() => [...ALL_DAY_INDICES]);
         
         // Alarm types: 'routine' = morning routine alarm, 'regular' = standard alarm
         let alarmTypes = alarms.map(() => 'routine'); // default to routine
         let alarmEnabled = alarms.map(() => true); // per-alarm on/off state
         let selectedAlarmType = 'routine'; // currently selected type for new alarms
+        let editingAlarmIndex = null;
+        let _openRepeatEditorIndex = null;
+        let _repeatPopover = null;
 
         // Selected alarm sound type
         let selectedSound = DEFAULT_SOUND_ID; // default sound
@@ -1469,6 +1632,49 @@
             return normalized.length ? normalized : createDefaultTasks();
         }
 
+        function _legacyMetaToRepeatDays(meta) {
+            if (!meta || String(meta).toLowerCase().includes('every')) return [...ALL_DAY_INDICES];
+            if (String(meta).toLowerCase() === 'weekdays') return [1, 2, 3, 4, 5];
+            if (String(meta).toLowerCase() === 'weekends') return [0, 6];
+            const parts = String(meta).split(',').map(s => s.trim()).filter(Boolean);
+            const indices = [];
+            parts.forEach(p => {
+                const idx = DAY_LABELS.findIndex(x => x.toLowerCase() === p.toLowerCase());
+                if (idx >= 0 && !indices.includes(idx)) indices.push(idx);
+            });
+            return indices.length ? indices.sort((a, b) => a - b) : [...ALL_DAY_INDICES];
+        }
+
+        function _normalizeRepeatDays(days) {
+            if (!Array.isArray(days)) return [...ALL_DAY_INDICES];
+            const seen = new Set();
+            const normalized = [];
+            days.forEach(v => {
+                const d = Number(v);
+                if (!Number.isInteger(d) || d < 0 || d > 6 || seen.has(d)) return;
+                seen.add(d);
+                normalized.push(d);
+            });
+            normalized.sort((a, b) => a - b);
+            return normalized.length ? normalized : [...ALL_DAY_INDICES];
+        }
+
+        function _formatRepeatDays(days) {
+            const normalized = _normalizeRepeatDays(days);
+            if (normalized.length === 7) return 'Every day';
+            if (normalized.join(',') === '1,2,3,4,5') return 'Weekdays';
+            if (normalized.join(',') === '0,6') return 'Weekends';
+            return normalized.map(d => DAY_LABELS[d]).join(', ');
+        }
+
+        function _getRepeatDaysForAlarm(index) {
+            if (Array.isArray(alarmsRepeatDays) && index >= 0 && index < alarmsRepeatDays.length) {
+                return _normalizeRepeatDays(alarmsRepeatDays[index]);
+            }
+            const meta = (alarmsMeta && alarmsMeta[index]) ? alarmsMeta[index] : 'Everyday';
+            return _legacyMetaToRepeatDays(meta);
+        }
+
         function _serializeTimersForState() {
             if (!Array.isArray(_timers)) return [];
             return _timers.map(t => ({
@@ -1507,6 +1713,7 @@
                     tasks: _normalizeTaskList(tasks),
                     alarms: Array.isArray(alarms) ? alarms.map(a => String(a || '')).filter(Boolean) : [],
                     alarmsMeta: Array.isArray(alarmsMeta) ? alarmsMeta.map(d => String(d || 'Everyday')) : [],
+                    alarmsRepeatDays: Array.isArray(alarmsRepeatDays) ? alarmsRepeatDays.map(days => _normalizeRepeatDays(days)) : [],
                     alarmTypes: Array.isArray(alarmTypes) ? alarmTypes.map(t => (t === 'regular' ? 'regular' : 'routine')) : [],
                     alarmEnabled: Array.isArray(alarmEnabled) ? alarmEnabled.map(v => !!v) : [],
                     selectedAlarmType: selectedAlarmType === 'regular' ? 'regular' : 'routine',
@@ -1544,9 +1751,11 @@
                 tasks = createDefaultTasks();
                 alarms = [];
                 alarmsMeta = [];
+                alarmsRepeatDays = [];
                 alarmTypes = [];
                 alarmEnabled = [];
                 selectedAlarmType = 'routine';
+                editingAlarmIndex = null;
                 selectedSound = DEFAULT_SOUND_ID;
                 _timers.splice(0, _timers.length);
                 _sw_running = false;
@@ -1562,17 +1771,25 @@
             tasks = _normalizeTaskList(state.tasks);
             alarms = Array.isArray(state.alarms) ? state.alarms.map(a => String(a || '')).filter(Boolean) : [];
             alarmsMeta = Array.isArray(state.alarmsMeta) ? state.alarmsMeta.map(v => String(v || 'Everyday')) : [];
+            alarmsRepeatDays = Array.isArray(state.alarmsRepeatDays)
+                ? state.alarmsRepeatDays.map(_normalizeRepeatDays)
+                : alarms.map((_, idx) => _legacyMetaToRepeatDays(alarmsMeta[idx]));
             alarmTypes = Array.isArray(state.alarmTypes) ? state.alarmTypes.map(v => (v === 'regular' ? 'regular' : 'routine')) : [];
             alarmEnabled = Array.isArray(state.alarmEnabled) ? state.alarmEnabled.map(v => !!v) : [];
 
             while (alarmsMeta.length < alarms.length) alarmsMeta.push('Everyday');
+            while (alarmsRepeatDays.length < alarms.length) alarmsRepeatDays.push([...ALL_DAY_INDICES]);
             while (alarmTypes.length < alarms.length) alarmTypes.push('routine');
             while (alarmEnabled.length < alarms.length) alarmEnabled.push(true);
             if (alarmsMeta.length > alarms.length) alarmsMeta = alarmsMeta.slice(0, alarms.length);
+            if (alarmsRepeatDays.length > alarms.length) alarmsRepeatDays = alarmsRepeatDays.slice(0, alarms.length);
             if (alarmTypes.length > alarms.length) alarmTypes = alarmTypes.slice(0, alarms.length);
             if (alarmEnabled.length > alarms.length) alarmEnabled = alarmEnabled.slice(0, alarms.length);
+            alarmsRepeatDays = alarmsRepeatDays.map(_normalizeRepeatDays);
+            alarmsMeta = alarmsRepeatDays.map(days => _formatRepeatDays(days));
 
             selectedAlarmType = state.selectedAlarmType === 'regular' ? 'regular' : 'routine';
+            editingAlarmIndex = null;
 
             const customSounds = Array.isArray(state.customSounds) ? state.customSounds : [];
             customSounds.forEach(cs => {
@@ -1653,6 +1870,7 @@
             initPickerWheels();
             renderApplication();
             renderAlarms();
+            _updateAlarmEditorButtons();
             renderSoundOptions();
             _renderTimers();
             _sw_render();
@@ -1662,6 +1880,7 @@
             initWindFX();
             initCloudsMotion();
             initClickRadar();
+            initRepeatPopoverDismiss();
 
             // Show alarm / routine editor screen first (non-destructive)
             try {
@@ -2025,7 +2244,7 @@
                     bird.style.setProperty('--sx', fromRight ? '116vw' : '-16vw');
                     bird.style.setProperty('--dx', fromRight ? '-132vw' : '132vw');
                     bird.style.setProperty('--flip', fromRight ? '-1' : '1');
-                    bird.style.setProperty('--bird-color', isGray ? 'rgba(126, 130, 136, 0.78)' : 'rgba(0, 0, 0, 0.82)');
+                    bird.style.setProperty('--bird-color', isGray ? 'rgba(36, 64, 124, 0.84)' : 'rgba(0, 0, 0, 0.82)');
                     bird.innerHTML = `
                         <svg class="bird-svg" viewBox="0 0 60 36" aria-hidden="true">
                             <path class="wing left" d="M29 19 C23 10, 14 8, 8 14 C14 16, 21 21, 29 19 Z"></path>
@@ -2281,8 +2500,7 @@
             if (!parsed) return Infinity;
             
             const todayDayIndex = now.getDay();
-            const meta = (alarmsMeta && alarmsMeta[idx]) ? alarmsMeta[idx] : 'Everyday';
-            const allowedDays = _metaToDays(meta);
+            const allowedDays = _getRepeatDaysForAlarm(idx);
             
             // Create alarm time for today
             let alarmTime = new Date();
@@ -2306,10 +2524,171 @@
             return Math.max(0, timeMs);
         }
 
+        function _updateAlarmEditorButtons() {
+            const setBtn = document.getElementById('set-alarm-btn');
+            const cancelBtn = document.getElementById('cancel-edit-alarm-btn');
+            if (setBtn) setBtn.textContent = editingAlarmIndex === null ? 'Set New Alarm' : 'Save Alarm Changes';
+            if (cancelBtn) cancelBtn.style.display = editingAlarmIndex === null ? 'none' : 'block';
+        }
+
+        function _clearEditingAlarmVisuals() {
+            document.querySelectorAll('.alarm-row.alarm-editing').forEach(row => row.classList.remove('alarm-editing'));
+            document.querySelectorAll('.alarm-edit-btn.editing-active').forEach(btn => {
+                btn.classList.remove('editing-active');
+                btn.textContent = 'Edit';
+            });
+        }
+
+        function _applyEditingAlarmVisual(index) {
+            _clearEditingAlarmVisuals();
+            if (!Number.isInteger(index) || index < 0) return;
+            const row = document.querySelector(`.alarm-row[data-alarm-idx="${index}"]`);
+            const btn = document.querySelector(`.alarm-edit-btn[data-alarm-idx="${index}"]`);
+            if (row) row.classList.add('alarm-editing');
+            if (btn) {
+                btn.classList.add('editing-active');
+                btn.textContent = 'Editing';
+            }
+        }
+
+        function _scrollWheelToValue(wheelId, value) {
+            const wheel = document.getElementById(wheelId);
+            if (!wheel) return;
+            const target = Array.from(wheel.querySelectorAll('div')).find(el => el.textContent.trim() === String(value));
+            if (!target) return;
+            const offset = target.offsetTop - ((wheel.clientHeight - target.clientHeight) / 2);
+            wheel.scrollTop = Math.max(0, offset);
+            handleWheelSnap(wheel);
+        }
+
+        function editAlarm(index) {
+            if (!Number.isInteger(index) || index < 0 || index >= alarms.length) return;
+            _closeRepeatPopover();
+            editingAlarmIndex = index;
+            _applyEditingAlarmVisual(index);
+            _updateAlarmEditorButtons();
+
+            const parsed = _parseAlarmString(alarms[index] || '');
+            if (parsed) {
+                let displayHour = parsed.hh % 12;
+                if (displayHour === 0) displayHour = 12;
+                const displayMinute = String(parsed.mm).padStart(2, '0');
+                const displayPeriod = parsed.hh >= 12 ? 'PM' : 'AM';
+                _scrollWheelToValue('h-wheel', String(displayHour));
+                _scrollWheelToValue('m-wheel', displayMinute);
+                _scrollWheelToValue('p-wheel', displayPeriod);
+            }
+
+            const selectedDays = _getRepeatDaysForAlarm(index);
+            const firstDay = DAY_LABELS[selectedDays[0] ?? 0];
+            _scrollWheelToValue('d-wheel', firstDay);
+            selectedAlarmType = (alarmTypes && alarmTypes[index]) ? alarmTypes[index] : 'routine';
+            setAlarmType(selectedAlarmType);
+
+            const wheelContainer = document.querySelector('#screen-post .picker-container');
+            if (wheelContainer) {
+                wheelContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        function cancelAlarmEdit() {
+            editingAlarmIndex = null;
+            _clearEditingAlarmVisuals();
+            _closeRepeatPopover();
+            _updateAlarmEditorButtons();
+        }
+
+        function _closeRepeatPopover() {
+            if (_repeatPopover && _repeatPopover.parentNode) {
+                _repeatPopover.parentNode.removeChild(_repeatPopover);
+            }
+            _repeatPopover = null;
+            _openRepeatEditorIndex = null;
+        }
+
+        function _ensureRepeatPopover() {
+            if (_repeatPopover && _repeatPopover.parentNode) return _repeatPopover;
+            _repeatPopover = document.createElement('div');
+            _repeatPopover.className = 'alarm-repeat-popover';
+            _repeatPopover.addEventListener('click', (evt) => evt.stopPropagation());
+            document.body.appendChild(_repeatPopover);
+            return _repeatPopover;
+        }
+
+        function _positionRepeatPopover(anchorEl, popoverEl) {
+            const anchorRect = anchorEl.getBoundingClientRect();
+            const margin = 10;
+            const top = Math.min(window.innerHeight - popoverEl.offsetHeight - margin, anchorRect.bottom + 8);
+            const left = Math.min(window.innerWidth - popoverEl.offsetWidth - margin, Math.max(margin, anchorRect.left));
+            popoverEl.style.top = `${Math.max(margin, top)}px`;
+            popoverEl.style.left = `${Math.max(margin, left)}px`;
+        }
+
+        function _renderRepeatPopoverForAlarm(index, anchorEl) {
+            const popover = _ensureRepeatPopover();
+            const checked = new Set(_getRepeatDaysForAlarm(index));
+            popover.innerHTML = `
+                <div class="alarm-repeat-popover-title">Repeat Days</div>
+                ${DAY_LABELS.map((label, dayIdx) => `
+                    <label class="day-check">
+                        <input type="checkbox" data-day-index="${dayIdx}" ${checked.has(dayIdx) ? 'checked' : ''}>
+                        <span>${label}</span>
+                    </label>
+                `).join('')}
+                <button type="button" class="alarm-repeat-popover-done">Done</button>
+            `;
+            _positionRepeatPopover(anchorEl, popover);
+            _openRepeatEditorIndex = index;
+
+            popover.querySelectorAll('input[type="checkbox"]').forEach(input => {
+                input.addEventListener('change', () => {
+                    const selected = Array.from(popover.querySelectorAll('input[type="checkbox"]'))
+                        .filter(el => el.checked)
+                        .map(el => Number(el.dataset.dayIndex))
+                        .filter(v => Number.isInteger(v) && v >= 0 && v <= 6)
+                        .sort((a, b) => a - b);
+                    if (selected.length === 0) {
+                        input.checked = true;
+                        return;
+                    }
+                    alarmsRepeatDays[index] = _normalizeRepeatDays(selected);
+                    alarmsMeta[index] = _formatRepeatDays(alarmsRepeatDays[index]);
+                    const labelEl = document.querySelector(`.alarm-repeat-trigger[data-alarm-idx="${index}"] .alarm-repeat-label`);
+                    if (labelEl) labelEl.textContent = `Repeating: ${alarmsMeta[index]}`;
+                    saveState();
+                });
+            });
+
+            const doneBtn = popover.querySelector('.alarm-repeat-popover-done');
+            if (doneBtn) doneBtn.onclick = () => _closeRepeatPopover();
+        }
+
+        function openRepeatEditor(index, triggerEl) {
+            if (!Number.isInteger(index) || index < 0 || index >= alarms.length || !triggerEl) return;
+            if (_openRepeatEditorIndex === index) {
+                _closeRepeatPopover();
+                return;
+            }
+            _closeRepeatPopover();
+            _renderRepeatPopoverForAlarm(index, triggerEl);
+        }
+
+        function initRepeatPopoverDismiss() {
+            document.addEventListener('click', (evt) => {
+                if (!_repeatPopover) return;
+                if (evt.target.closest('.alarm-repeat-popover')) return;
+                if (evt.target.closest('.alarm-repeat-trigger')) return;
+                _closeRepeatPopover();
+            });
+            window.addEventListener('resize', () => { if (_repeatPopover) _closeRepeatPopover(); });
+            window.addEventListener('scroll', () => { if (_repeatPopover) _closeRepeatPopover(); }, { passive: true });
+        }
+
         function renderAlarms() {
             const list = document.getElementById('alarm-list');
+            if (!list) return;
             list.innerHTML = alarms.map((a, i) => {
-                const metaDay = (alarmsMeta && alarmsMeta[i]) ? alarmsMeta[i] : 'Everyday';
+                const repeatLabel = _formatRepeatDays(_getRepeatDaysForAlarm(i));
                 const alarmType = (alarmTypes && alarmTypes[i]) ? alarmTypes[i] : 'routine';
                 const isEnabled = !(Array.isArray(alarmEnabled) && alarmEnabled[i] === false);
                 const typeLabel = alarmType === 'routine' ? 'Morning Routine' : 'Regular';
@@ -2320,7 +2699,7 @@
                 const rowDisabledStyle = !isEnabled ? 'background:rgba(130,130,130,0.12); border:1px solid rgba(180,180,180,0.2);' : '';
                 const contentDisabledStyle = !isEnabled ? 'opacity:0.46; filter:grayscale(1);' : '';
                 return `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:22px 0; border-bottom:1px solid rgba(255,255,255,0.1);${highlightStyle}${rowDisabledStyle}padding:20px;border-radius:12px;margin-bottom:8px;">
+                <div class="alarm-row" data-alarm-idx="${i}" style="display:flex; justify-content:space-between; align-items:center; padding:22px 0; border-bottom:1px solid rgba(255,255,255,0.1);${highlightStyle}${rowDisabledStyle}padding:20px;border-radius:12px;margin-bottom:8px;">
                     <div style="display:flex; flex-direction:column; gap:8px; ${contentDisabledStyle}">
                         <div style="display:flex; align-items:baseline; gap:10px;">
                             <span style="font-size:36px; font-weight:300; letter-spacing:2px; margin-right:10px;">${a.split(' ')[0]}</span>
@@ -2328,10 +2707,13 @@
                         </div>
                         <div style="display:flex; gap:8px; align-items:center;">
                             <span style="font-size:11px; color:${typeColor}; font-weight:900; text-transform:uppercase; letter-spacing:1px;">${typeLabel}</span>
-                            <span style="font-size:12px; color:var(--text-secondary);">${metaDay}</span>
+                            <button type="button" class="alarm-repeat-trigger" data-alarm-idx="${i}" aria-label="Edit repeating days for ${a}">
+                                <span class="alarm-repeat-label">Repeating: ${repeatLabel}</span>
+                            </button>
                         </div>
                     </div>
                     <div style="display:flex; align-items:center; gap:12px;">
+                        <button class="alarm-edit-btn" data-alarm-idx="${i}">Edit</button>
                         <button class="alarm-toggle-btn" data-alarm-idx="${i}" aria-label="${isEnabled ? 'Turn alarm off' : 'Turn alarm on'}" style="position:relative; width:56px; height:32px; border:none; border-radius:999px; cursor:pointer; background:${isEnabled ? '#10d176' : '#7a7f88'}; transition:background .2s ease;">
                             <span style="position:absolute; top:3px; left:${isEnabled ? '27px' : '3px'}; width:26px; height:26px; border-radius:50%; background:#fff; transition:left .2s ease;"></span>
                         </button>
@@ -2340,6 +2722,17 @@
                 </div>
             `}).join('');
 
+            document.querySelectorAll('.alarm-edit-btn').forEach(btn => {
+                const idx = parseInt(btn.dataset.alarmIdx);
+                btn.onclick = () => editAlarm(idx);
+            });
+            document.querySelectorAll('.alarm-repeat-trigger').forEach(btn => {
+                const idx = parseInt(btn.dataset.alarmIdx);
+                btn.onclick = (evt) => {
+                    evt.stopPropagation();
+                    openRepeatEditor(idx, btn);
+                };
+            });
             document.querySelectorAll('.alarm-toggle-btn').forEach(btn => {
                 const idx = parseInt(btn.dataset.alarmIdx);
                 btn.onclick = () => toggleAlarmEnabled(idx);
@@ -2350,6 +2743,13 @@
                 const idx = parseInt(btn.dataset.alarmIdx);
                 btn.onclick = () => deleteAlarm(idx);
             });
+
+            _applyEditingAlarmVisual(editingAlarmIndex);
+            if (_openRepeatEditorIndex !== null) {
+                const activeTrigger = document.querySelector(`.alarm-repeat-trigger[data-alarm-idx="${_openRepeatEditorIndex}"]`);
+                if (!activeTrigger) _closeRepeatPopover();
+                else if (_repeatPopover) _positionRepeatPopover(activeTrigger, _repeatPopover);
+            }
         }
 
         function toggleAlarmEnabled(index) {
@@ -2400,13 +2800,23 @@
             const d = document.querySelector('#d-wheel .active')?.innerText || "Everyday";
             
             const newAlarm = `${h}:${m} ${p}`;
-            alarms.push(newAlarm);
-            // Keep parallel metadata for which day the user selected
-            alarmsMeta.push(d);
-            // Store the alarm type
-            alarmTypes.push(selectedAlarmType);
-            // New alarms are on by default
-            alarmEnabled.push(true);
+            const isEditing = editingAlarmIndex !== null && editingAlarmIndex >= 0 && editingAlarmIndex < alarms.length;
+            const parsedDay = DAY_LABELS.findIndex(label => label === d);
+            const selectedDaysForCreate = parsedDay >= 0 ? [parsedDay] : [...ALL_DAY_INDICES];
+            if (isEditing) {
+                alarms[editingAlarmIndex] = newAlarm;
+                alarmsRepeatDays[editingAlarmIndex] = _getRepeatDaysForAlarm(editingAlarmIndex);
+                alarmsMeta[editingAlarmIndex] = _formatRepeatDays(alarmsRepeatDays[editingAlarmIndex]);
+                alarmTypes[editingAlarmIndex] = selectedAlarmType;
+                alarmEnabled[editingAlarmIndex] = alarmEnabled[editingAlarmIndex] !== false;
+                cancelAlarmEdit();
+            } else {
+                alarms.push(newAlarm);
+                alarmsRepeatDays.push(selectedDaysForCreate);
+                alarmsMeta.push(_formatRepeatDays(selectedDaysForCreate));
+                alarmTypes.push(selectedAlarmType);
+                alarmEnabled.push(true);
+            }
             renderAlarms();
             saveState();
             triggerSetAlarmSuccessGlow();
@@ -2418,8 +2828,13 @@
         function deleteAlarm(index) {
             alarms.splice(index, 1);
             if (alarmsMeta && alarmsMeta.length > index) alarmsMeta.splice(index, 1);
+            if (alarmsRepeatDays && alarmsRepeatDays.length > index) alarmsRepeatDays.splice(index, 1);
             if (alarmTypes && alarmTypes.length > index) alarmTypes.splice(index, 1);
             if (alarmEnabled && alarmEnabled.length > index) alarmEnabled.splice(index, 1);
+            if (editingAlarmIndex === index) cancelAlarmEdit();
+            if (editingAlarmIndex !== null && index < editingAlarmIndex) editingAlarmIndex -= 1;
+            if (_openRepeatEditorIndex === index) _closeRepeatPopover();
+            if (_openRepeatEditorIndex !== null && index < _openRepeatEditorIndex) _openRepeatEditorIndex -= 1;
             renderAlarms();
             saveState();
         }
@@ -2950,16 +3365,7 @@
 
         // Convert alarmsMeta label (like "Everyday" or "Mon, Tue") to array of day indices (0=Sun)
         function _metaToDays(meta) {
-            if (!meta || meta.toLowerCase().includes('every')) return [0,1,2,3,4,5,6];
-            const parts = meta.split(',').map(s => s.trim());
-            const indices = [];
-            parts.forEach(p => {
-                const idx = DAY_LABELS.findIndex(x => x.toLowerCase() === p.toLowerCase());
-                if (idx >= 0) indices.push(idx);
-            });
-            // fallback to everyday
-            if (indices.length === 0) return [0,1,2,3,4,5,6];
-            return indices;
+            return _legacyMetaToRepeatDays(meta);
         }
 
         // Check all alarms, called periodically
@@ -2975,9 +3381,7 @@
                 const parsed = _parseAlarmString(alarmStr);
                 if (!parsed) return;
                 if (parsed.hh === nowHH && parsed.mm === nowMM) {
-                    // day check via alarmsMeta
-                    const meta = (alarmsMeta && alarmsMeta[idx]) ? alarmsMeta[idx] : 'Everyday';
-                    const allowedDays = _metaToDays(meta);
+                    const allowedDays = _getRepeatDaysForAlarm(idx);
                     if (!allowedDays.includes(todayDayIndex)) return;
 
                     // haven't fired yet today?
