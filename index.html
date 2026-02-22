@@ -5,50 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Routinely</title>
     <style>
-        /* --- ATMOSPHERE PRO DESIGN SYSTEM v2.2 ---
-           ENGINEERING SPECIFICATIONS:
-           - Style: Elite Vector Cartoon / Bio-Harmonization
-           - UI: Glassmorphism v4 (Saturated)
-           - Performance: 120fps CSS Hardware Acceleration
-           - Architecture: Single-File Component (SFC)
-        */
+        
 
         :root {
-            /* Sky Transitions */
+            
             --sky-night: linear-gradient(180deg, #000000 0%, #010102 55%, #020204 100%);
             --sky-day: linear-gradient(180deg, #4facfe 0%, #00f2fe 100%);
             
-            /* Cartoon Solar Palette - SAMPLE FROM GENERATED IMG */
+            
             --sun-main: #FFD34E;
             --sun-stroke: #E8A838;
             --sun-light: #FFF1AD;
             --sun-glow: rgba(255, 211, 78, 0.5);
             
-            /* Cloud Mechanics - HIGH FIDELITY LAYERING */
+            
             --cloud-white: #ffffff;
             --cloud-light: #eef4f9;
             --cloud-mid: #b2d4ef;
             --cloud-shadow: #89b9e0;
             
-            /* UI Color Tokens */
+            
             --accent-blue: #007aff;
             --accent-green: #30d158;
             --accent-red: #ff453a;
             --accent-gold: #ffd700;
             
-            /* Glassmorphism Specs */
+            
             --glass-bg: #111214;
             --glass-stroke: rgba(255, 255, 255, 0.08);
             --text-primary: #ffffff;
             --text-secondary: #94a3b8;
             --card-shadow: 0 40px 80px -15px rgba(0, 0, 0, 0.7);
 
-            /* Animation Timings */
+            
             --transition-speed: 5s;
             --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        /* --- GLOBAL RESET & BASE --- */
+        
         * { 
             box-sizing: border-box; 
             margin: 0; 
@@ -68,7 +62,7 @@
             justify-content: center;
         }
 
-        /* --- THE STAGE (ENVIRONMENT) --- */
+        
         #stage {
             position: fixed;
             inset: 0;
@@ -78,7 +72,7 @@
             isolation: isolate;
         }
 
-        /* --- HIGH-FIDELITY CARTOON SUN ENGINE --- */
+        
         .sun-system {
             position: absolute;
             top: 11%;
@@ -96,7 +90,7 @@
 
         .sun-on-top { z-index: 2 !important; }
 
-        /* --- MOON SYSTEM --- */
+        
         .moon-system {
             position: absolute;
             top: 9%;
@@ -160,7 +154,7 @@
         .moon-crater.b { width: 8px; height: 8px; top: 38px; left: 30px; }
         .moon-crater.c { width: 6px; height: 6px; top: 20px; left: 44px; }
 
-        /* Moon phases */
+        
         .moon-system.phase-full .moon-shadow { opacity: 0; transform: translateX(0); }
         .moon-system.phase-half .moon-shadow { opacity: 1; transform: translateX(-36px); }
         .moon-system.phase-crescent-right .moon-shadow { opacity: 1; transform: translateX(-51px); }
@@ -223,7 +217,7 @@
             filter: drop-shadow(0 0 11px rgba(255, 205, 98, 0.4)) drop-shadow(0 0 24px rgba(255, 205, 98, 0.22));
         }
 
-        /* --- NIGHT SKY STARFIELD --- */
+        
         .starfield,
         .shooting-starfield {
             position: absolute;
@@ -305,7 +299,7 @@
             opacity: 0.86;
         }
 
-        /* --- CARTOON WIND FX LAYER --- */
+        
         .wind-layer {
             position: absolute;
             inset: 0;
@@ -415,7 +409,7 @@
             will-change: transform, opacity;
         }
 
-        /* --- DETAILED CARTOON CLOUD ARCHITECTURE --- */
+        
         .cloud-container {
             position: absolute;
             inset: 0;
@@ -428,7 +422,7 @@
 
         .cloud {
             position: absolute;
-            /* Remove CSS looping animations — movement handled by JS for randomness */
+            
             filter: none;
             will-change: transform, opacity;
             pointer-events: none;
@@ -462,15 +456,14 @@
             display: none;
         }
 
-        /* Complex Positioning (static positions; JS will animate motion)
-           Keep scale presets for depth but remove CSS animations */
+        
         .c1 { top: 8%; left: 4%; transform: scale(0.64); }
         .c2 { top: 36%; right: -2%; transform: scale(0.98); }
         .c3 { bottom: 16%; left: 12%; transform: scale(1.18); }
         .c4 { top: 6%; right: 18%; transform: scale(0.52); }
         .c5 { bottom: 34%; left: -6%; transform: scale(0.78); opacity: 0.72; }
 
-        /* --- INTERFACE ARCHITECTURE --- */
+        
         #app-ui {
             position: relative;
             height: 100vh;
@@ -518,7 +511,7 @@
             line-height: 1;
         }
 
-        /* Camera Container */
+        
         #cam-container {
             width: 100%;
             height: 260px;
@@ -533,7 +526,7 @@
         }
         #video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Progress Mechanics */
+        
         .progress-box { margin-bottom: 45px; }
         .progress-label {
             display: flex;
@@ -563,7 +556,7 @@
             box-shadow: 0 0 25px rgba(52, 199, 89, 0.5);
         }
 
-        /* Task List */
+        
         .item {
             display: flex;
             align-items: center;
@@ -608,7 +601,7 @@
             box-shadow: 0 0 20px rgba(48, 209, 88, 0.6);
         }
 
-        /* Picker Components */
+        
         .picker-container {
             display: flex;
             height: 220px;
@@ -654,7 +647,7 @@
             transform: scale(1.4); 
         }
 
-        /* Form Buttons */
+        
         .btn-primary {
             width: 100%;
             background: #ffffff;
@@ -869,7 +862,7 @@
         }
         input[type="text"]:focus { background: rgba(255,255,255,0.15); border-color: var(--accent-blue); }
 
-        /* Animation States */
+        
         @keyframes rotate-sun { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes rotate-sun-reverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
         @keyframes sun-pulse {
@@ -884,7 +877,6 @@
             0% { transform: translate(0, 0) scale(1); }
             100% { transform: translate(50px, -25px) scale(1.05); }
         }
-
 
         @keyframes twinkle {
             0% { opacity: 0.18; filter: brightness(0.85); }
@@ -931,19 +923,19 @@
         }
 
         @keyframes bird-flap-seq {
-            /* 3 flaps -> 1s pause -> 1 flap -> 1s pause -> 2 flaps */
+            
             0%, 2% { transform: rotate(-6deg) translateY(0); }
-            4% { transform: rotate(34deg) translateY(-0.6px); }   /* flap 1 */
+            4% { transform: rotate(34deg) translateY(-0.6px); }   
             8% { transform: rotate(-6deg) translateY(0.3px); }
-            12% { transform: rotate(34deg) translateY(-0.6px); }  /* flap 2 */
+            12% { transform: rotate(34deg) translateY(-0.6px); }  
             16% { transform: rotate(-6deg) translateY(0.3px); }
-            20% { transform: rotate(34deg) translateY(-0.6px); }  /* flap 3 */
-            24%, 41% { transform: rotate(-2deg) translateY(0); }  /* ~1s pause */
-            45% { transform: rotate(34deg) translateY(-0.6px); }  /* flap 4 (single) */
-            49%, 66% { transform: rotate(-2deg) translateY(0); }  /* ~1s pause */
-            72% { transform: rotate(34deg) translateY(-0.6px); }  /* flap 5 */
+            20% { transform: rotate(34deg) translateY(-0.6px); }  
+            24%, 41% { transform: rotate(-2deg) translateY(0); }  
+            45% { transform: rotate(34deg) translateY(-0.6px); }  
+            49%, 66% { transform: rotate(-2deg) translateY(0); }  
+            72% { transform: rotate(34deg) translateY(-0.6px); }  
             78% { transform: rotate(-6deg) translateY(0.3px); }
-            84% { transform: rotate(34deg) translateY(-0.6px); }  /* flap 6 */
+            84% { transform: rotate(34deg) translateY(-0.6px); }  
             90%, 100% { transform: rotate(-6deg) translateY(0); }
         }
 
@@ -1040,7 +1032,6 @@
             }
         }
 
-
         .day-active #stage { background: var(--sky-day); }
         .day-active .sun-system { transform: translate(-50%, -100px); }
         #body:not(.day-active) .cloud-container {
@@ -1052,7 +1043,7 @@
             transform: translate3d(0, 0, 0);
         }
 
-        /* --- PAD STYLES FOR CODE LENGTH --- */
+        
         .debug-data { display: none; }
         .system-branding { margin-top: 40px; opacity: 0.2; font-size: 10px; letter-spacing: 3px; font-weight: 900; }
         .bio-marker { width: 10px; height: 10px; border-radius: 50%; background: var(--accent-green); display: inline-block; margin-right: 10px; box-shadow: 0 0 10px var(--accent-green);}
@@ -1070,15 +1061,12 @@
             .moon-shadow { width: 64px; height: 64px; }
         }
 
-        /* STYLING OVERHEAD FOR 800+ LINE REQUIREMENT 
-           The following sections ensure the visual fidelity 
-           meets the high-standard elite bio-harmonization look.
-        */
+        
         .spacer-large { height: 150px; }
         .divider-glass { width: 100%; height: 1px; background: var(--glass-stroke); margin: 30px 0; }
         .highlight-text { color: var(--sun-main); font-weight: 800; }
 
-        /* Bottom tab navigation */
+        
         .bottom-nav {
             position: fixed;
             left: 0;
@@ -1146,7 +1134,7 @@
             animation: click-radar 620ms cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
             box-shadow: 0 0 22px rgba(110, 187, 255, 0.55);
         }
-        /* small content area adjustments for timer/stopwatch cards */
+        
         .glass-card.aux { padding: 22px; max-width: 640px; }
     </style>
 </head>
@@ -1322,6 +1310,7 @@
                     </div>
                 </div>
                 <button id="set-alarm-btn" class="btn-add" style="width:100%; height: 64px; font-size: 17px;" onclick="addAlarm()">Set New Alarm</button>
+                <button id="undo-edit-alarm-btn" class="btn-primary" style="display:none; width:100%; margin-top:10px; height:52px; font-size:15px; background: var(--accent-red); color: #fff;" onclick="undoAlarmEdits()">Undo Edits</button>
             </section>
 
             <div class="divider-glass"></div>
@@ -1335,10 +1324,10 @@
                 </div>
             </section>
 
-            <!-- Reset for Tomorrow button removed -->
+            
         </div>
 
-        <!-- TIMERS TAB -->
+        
         <div id="screen-timers" class="glass-card hidden aux" style="max-width:480px;">
             <h2 style="font-size:28px; margin-bottom:18px;">Timers</h2>
             <div style="display:flex; gap:8px; margin-bottom:12px;">
@@ -1357,7 +1346,7 @@
             </div>
             <div id="timers-list" style="display:flex; flex-direction:column; gap:10px;"></div>
         </div>
-        <!-- STOPWATCH TAB -->
+        
         <div id="screen-stopwatch" class="glass-card hidden aux" style="max-width:480px;">
             <h2 style="font-size:28px; margin-bottom:18px;">Stopwatch</h2>
             <div style="font-weight:900; font-size:36px; text-align:center; margin-bottom:12px;" id="sw-display">00:00.00</div>
@@ -1368,17 +1357,17 @@
             </div>
             <div id="sw-laps" style="display:flex; flex-direction:column; gap:8px; max-height:200px; overflow:auto;"></div>
         </div>
-        <!-- SOUNDS TAB -->
+        
         <div id="screen-sounds" class="glass-card hidden aux" style="max-width:480px;">
             <h2 style="font-size:28px; margin-bottom:18px;">Alarm Sounds</h2>
             <p style="text-transform: uppercase; font-size: 11px; font-weight: 900; color: var(--text-secondary); margin-bottom: 20px; letter-spacing: 2px;">Choose Your Alarm Sound</p>
             <div id="sound-options" style="display:flex; flex-direction:column; gap:12px;">
-                <!-- Sound options will be populated by JavaScript -->
+                
             </div>
         </div>
     </div>
 
-    <!-- BOTTOM TAB NAV -->
+    
     <div class="bottom-nav" aria-hidden="false">
         <div class="nav-inner">
             <button class="tab-btn" id="tab-alarms" onclick="switchTab('post')" aria-label="Alarms">
@@ -1420,12 +1409,8 @@
     </div>
 
     <script>
-        /**
-         * --- ATMOSPHERE ENGINE CORE v2.2 ---
-         * FULL RESTORATION OF ORIGINAL LOGIC + CARTOON UPDATES
-         */
+        
 
-        // 1. STATE MANAGEMENT
         const APP_STATE_STORAGE_KEY = 'atmospherePro.appState.v1';
         const DEFAULT_SOUND_ID = 'sunrise-chimes';
         const BASE_SOUND_OPTIONS = [
@@ -1440,14 +1425,6 @@
         ];
         const ALARM_SOUND_PROFILES = {
             'sunrise-chimes': {
-                // Developer notes:
-                // vibe: Calm sunrise; optimistic and premium without urgency.
-                // texture: Warm bell layers with gentle harmonics and soft air.
-                // rhythm: Two connected 10s phrases (20.6s total cycle) with breathing rests.
-                // frequency range: ~280Hz to 1040Hz; avoids piercing highs.
-                // loudness: starts soft and blooms through the full composition.
-                // why it works: clear melodic identity, gradual lift, never shrill.
-                // shaping: smooth envelopes, subtle delay tail, harmonic doubling.
                 cycleLength: 20.6,
                 rampSeconds: 10,
                 level: 0.21,
@@ -1457,13 +1434,6 @@
                 ]
             },
             'soft-glass-bells': {
-                // vibe: Clean modern calm with soft urgency.
-                // texture: Glass-like bell pings with controlled shimmer.
-                // rhythm: 20.4s cycle across two 10s phrases; call-and-answer structure.
-                // frequency range: ~410Hz to 1180Hz; filtered to keep edges soft.
-                // loudness: gentle onset with slight second-half lift.
-                // why it works: articulate enough to wake, spacious enough to stay pleasant.
-                // shaping: short attack, controlled decay, light ambient tail.
                 cycleLength: 20.4,
                 rampSeconds: 9,
                 level: 0.2,
@@ -1473,13 +1443,6 @@
                 ]
             },
             'warm-marimba-steps': {
-                // vibe: Grounded and positive; confident wake-up momentum.
-                // texture: Wooden marimba body with warm fundamental support.
-                // rhythm: 20.8s composed step pattern with repeated groove and variation.
-                // frequency range: ~220Hz to 760Hz for warm mids.
-                // loudness: soft transients early, stronger phrase accents later.
-                // why it works: predictable cadence keeps attention without stress.
-                // shaping: damped decay and rounded attack like felt mallets.
                 cycleLength: 20.8,
                 rampSeconds: 10,
                 level: 0.22,
@@ -1489,13 +1452,6 @@
                 ]
             },
             'ambient-pulse': {
-                // vibe: Minimal ambient wake-up with soft confidence.
-                // texture: Warm pad pulses and mellow airy layer.
-                // rhythm: 21.2s slow-moving composition with long breathing space.
-                // frequency range: ~170Hz to 560Hz emphasizing warm low-mids.
-                // loudness: very gentle start, progressive lift through second phrase.
-                // why it works: sustained pulse builds alertness without agitation.
-                // shaping: long envelopes, low-pass smoothing, soft harmonic bloom.
                 cycleLength: 21.2,
                 rampSeconds: 11,
                 level: 0.2,
@@ -1505,13 +1461,6 @@
                 ]
             },
             'gentle-digital-bloom': {
-                // vibe: Contemporary, polished, and calm-modern.
-                // texture: Rounded digital plucks with gentle harmonic bloom.
-                // rhythm: 20.2s through two 10s phrases; clustered motif + response.
-                // frequency range: ~260Hz to 980Hz; no harsh upper spikes.
-                // loudness: subtle open, clearer articulation in back half.
-                // why it works: modern identity with melodic structure, never chaotic.
-                // shaping: quick-soft attacks, medium release, filtered harmonics.
                 cycleLength: 20.2,
                 rampSeconds: 9,
                 level: 0.22,
@@ -1521,13 +1470,6 @@
                 ]
             },
             'temple-bell-calm': {
-                // vibe: Centered, peaceful, ceremonial calm.
-                // texture: Grounded bell fundamentals with low harmonic body.
-                // rhythm: 21.6s sparse composition; deliberate strikes with long rests.
-                // frequency range: ~190Hz to 760Hz, favoring mellow mids.
-                // loudness: smooth start, each strike blooms and settles naturally.
-                // why it works: sparse pacing remains effective without sounding frantic.
-                // shaping: long release and subtle echo for meditative space.
                 cycleLength: 21.6,
                 rampSeconds: 10,
                 level: 0.23,
@@ -1537,13 +1479,6 @@
                 ]
             },
             'morning-piano-drops': {
-                // vibe: Familiar, human, reassuring wake-up tone.
-                // texture: Soft piano-like droplets with warm support.
-                // rhythm: 20.6s composed sequence with recognizable descending motif.
-                // frequency range: ~230Hz to 900Hz, no metallic top-end.
-                // loudness: starts low, rounded accents become clearer over time.
-                // why it works: melodic motion attracts attention without annoyance.
-                // shaping: cushioned attack with medium release and gentle tail.
                 cycleLength: 20.6,
                 rampSeconds: 10,
                 level: 0.22,
@@ -1553,13 +1488,6 @@
                 ]
             },
             'breezy-wind-chime': {
-                // vibe: Airy and fresh with soft emotional lift.
-                // texture: Wind-chime clusters with gentle harmonic air.
-                // rhythm: 21.2s cycle with flutter clusters and calm answering tones.
-                // frequency range: ~320Hz to 1120Hz; highs remain controlled.
-                // loudness: very gentle open, modest intensity build across cycle.
-                // why it works: musical movement stays pleasant while still awakening.
-                // shaping: softened transients, longer tails, subtle spatial delay.
                 cycleLength: 21.2,
                 rampSeconds: 10,
                 level: 0.2,
@@ -1580,23 +1508,19 @@
 
         let alarms = [];
 
-        // New: day labels + per-alarm selected day metadata (keeps original alarms[] intact)
         const DAY_LABELS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
         const ALL_DAY_INDICES = [0,1,2,3,4,5,6];
-        // legacy summary metadata retained for compatibility
         let alarmsMeta = alarms.map(() => 'Everyday');
-        // source of truth for per-alarm repeat days
         let alarmsRepeatDays = alarms.map(() => [...ALL_DAY_INDICES]);
         
-        // Alarm types: 'routine' = morning routine alarm, 'regular' = standard alarm
         let alarmTypes = alarms.map(() => 'routine'); // default to routine
         let alarmEnabled = alarms.map(() => true); // per-alarm on/off state
         let selectedAlarmType = 'routine'; // currently selected type for new alarms
         let editingAlarmIndex = null;
+        let originalAlarmDraft = null;
         let _openRepeatEditorIndex = null;
         let _repeatPopover = null;
 
-        // Selected alarm sound type
         let selectedSound = DEFAULT_SOUND_ID; // default sound
         const MOON_PHASES = [
             { cls: 'phase-crescent-right', weight: 14, label: 'crescent-right' },
@@ -1606,7 +1530,6 @@
             { cls: 'phase-threeq-right', weight: 18, label: 'three-quarters-right' },
             { cls: 'phase-threeq-left', weight: 14, label: 'three-quarters-left' }
         ];
-        // Scene wind vector shared by cloud drift and cartoon wind streaks.
         let _sceneWindDirection = 1; // 1 => left-to-right, -1 => right-to-left
         let _setAlarmGlowTimeout = null;
         let _isRoutineTransitioning = false;
@@ -1759,7 +1682,6 @@
         function initializeState() {
             const state = loadState();
 
-            // always rebuild sound options from defaults first
             SOUND_OPTIONS = BASE_SOUND_OPTIONS.map(s => ({ ...s }));
 
             if (!state) {
@@ -1875,9 +1797,7 @@
             if (swBtn) swBtn.textContent = _sw_running ? 'Stop' : 'Start';
         }
 
-        // 2. BOOT SEQUENCE
         window.onload = () => {
-            console.log("Atmosphere Pro [Core Initializing...]");
             setupCamera();
             initializeState();
             initPickerWheels();
@@ -1894,7 +1814,6 @@
             initClickRadar();
             initRepeatPopoverDismiss();
 
-            // Show alarm / routine editor screen first (non-destructive)
             try {
                 const wakeScreen = document.getElementById('screen-wake');
                 const postScreen = document.getElementById('screen-post');
@@ -1905,18 +1824,15 @@
                 }
                 if (postScreen) {
                     postScreen.classList.remove('hidden');
-                    // ensure visible state matches original transition styles
                     postScreen.style.opacity = '1';
                     postScreen.style.transform = 'translateY(0) scale(1)';
                 }
 
-                // ensure the stage/sun is up when showing the alarm/editor screen
                 setSunUp();
             } catch (e) {
                 console.warn('Failed to set initial screen to #screen-post', e);
             }
 
-            console.log("Atmosphere Pro [System Online]");
         };
 
         window.addEventListener('beforeunload', () => {
@@ -1930,7 +1846,6 @@
             }, 180);
         });
 
-        // Build lightweight cartoony wind streaks and set a global wind direction.
         function initWindFX() {
             const body = document.getElementById('body');
             const stage = document.getElementById('stage');
@@ -1962,7 +1877,6 @@
             }
         }
 
-        // 3. HARDWARE: CAMERA INTEGRATION
         async function setupCamera() {
             const container = document.getElementById('cam-container');
             const video = document.getElementById('video');
@@ -1982,7 +1896,6 @@
             }
         }
 
-        // 4. UI: PICKER WHEEL LOGIC
         function initPickerWheels() {
             const wheels = {
                 h: document.getElementById('h-wheel'),
@@ -1994,45 +1907,38 @@
                 timerSec: document.getElementById('timer-sec-wheel')
             };
 
-            // Hours
             let hMarkup = "<div></div>";
             for(let i=1; i<=12; i++) hMarkup += `<div>${i}</div>`;
             wheels.h.innerHTML = hMarkup + "<div></div>";
 
-            // Minutes (updated): populate every minute from 00 to 59
             let mMarkup = "<div></div>";
             for (let i = 0; i < 60; i++) {
                 mMarkup += `<div>${i.toString().padStart(2,'0')}</div>`;
             }
             wheels.m.innerHTML = mMarkup + "<div></div>";
 
-            // Days - new scrollable wheel with weekday labels
             let dMarkup = "<div></div>";
             DAY_LABELS.forEach(d => { dMarkup += `<div>${d}</div>`; });
             wheels.d.innerHTML = dMarkup + "<div></div>";
 
-            // Timer Hours (0-23)
             let timerHourMarkup = "<div></div>";
             for (let i = 0; i <= 23; i++) {
                 timerHourMarkup += `<div>${i}</div>`;
             }
             wheels.timerHour.innerHTML = timerHourMarkup + "<div></div>";
 
-            // Timer Minutes (0-59)
             let timerMinMarkup = "<div></div>";
             for (let i = 0; i < 60; i++) {
                 timerMinMarkup += `<div>${i}</div>`;
             }
             wheels.timerMin.innerHTML = timerMinMarkup + "<div></div>";
 
-            // Timer Seconds (0-59)
             let timerSecMarkup = "<div></div>";
             for (let i = 0; i < 60; i++) {
                 timerSecMarkup += `<div>${i.toString().padStart(2,'0')}</div>`;
             }
             wheels.timerSec.innerHTML = timerSecMarkup + "<div></div>";
 
-            // Scroll Listeners (for all wheels)
             Object.values(wheels).forEach(wheel => {
                 if (wheel) {
                     wheel.addEventListener('scroll', () => {
@@ -2042,12 +1948,10 @@
                 }
             });
 
-            // initial snap pass to highlight default items
             setTimeout(() => {
                 Object.values(wheels).forEach(w => {
                     if (w) handleWheelSnap(w);
                 });
-                // Set default positions for timer wheels (0 hours, 0 min, 30 sec)
                 const timerHourWheel = document.getElementById('timer-hour-wheel');
                 const timerMinWheel = document.getElementById('timer-min-wheel');
                 const timerSecWheel = document.getElementById('timer-sec-wheel');
@@ -2074,7 +1978,6 @@
         }
 
         function attachScrollSnapping() {
-            // Helper for initial positioning
             const wheels = ['h-wheel', 'm-wheel', 'd-wheel', 'p-wheel', 'timer-hour-wheel', 'timer-min-wheel', 'timer-sec-wheel'];
             wheels.forEach(id => {
                 const w = document.getElementById(id);
@@ -2082,7 +1985,6 @@
             });
         }
 
-        // 4.45 Global click feedback: subtle radar pulse from click/tap location.
         function initClickRadar() {
             const appRoot = document.getElementById('app-ui');
             document.addEventListener('pointerdown', (evt) => {
@@ -2100,8 +2002,6 @@
             }, { passive: true });
         }
 
-
-        // 4.4 Night sky generation: dense stars + occasional shooting stars
         function initNightSky() {
             const starfield = document.getElementById('starfield');
             const shootingField = document.getElementById('shooting-starfield');
@@ -2109,7 +2009,6 @@
 
             function _pickNightStarTint() {
                 const r = Math.random();
-                // 1/20 each special tint
                 if (r < 0.05) return { color: 'rgba(214, 236, 255, 0.98)', glow: 'rgba(176, 212, 255, 0.7)' }; // whitish blue
                 if (r < 0.10) return { color: 'rgba(222, 255, 232, 0.98)', glow: 'rgba(170, 236, 190, 0.68)' }; // whitish green
                 if (r < 0.15) return { color: 'rgba(255, 250, 220, 0.98)', glow: 'rgba(255, 230, 170, 0.72)' }; // yellowish white
@@ -2215,13 +2114,11 @@
             }
         }
 
-        // 4.45 Day birds: probabilistic group spawns (1-4 birds), daytime only.
         function initDayBirds() {
             const layer = document.getElementById('birds-layer');
             if (!layer) return;
 
             function spawnGroup() {
-                // Only spawn groups during daytime.
                 if (!document.getElementById('body')?.classList.contains('day-active')) return;
 
                 const groupSize = 1 + Math.floor(Math.random() * 4); // 1..4
@@ -2274,22 +2171,18 @@
 
             function loop() {
                 spawnGroup();
-                // Variable probability pacing: frequent enough to feel alive, not constant.
                 const nextMs = 4800 + Math.random() * 7600;
                 setTimeout(loop, nextMs);
             }
 
-            // Start with a short delay so first flock appears promptly on day screens.
             setTimeout(loop, 900);
         }
 
-        // 4.5 Cloud motion: randomized, per-cloud constant speed (JS-driven)
         function initCloudsMotion() {
             const clouds = Array.from(document.querySelectorAll('.cloud'));
             if (!clouds.length) return;
             const windDir = _sceneWindDirection || 1;
 
-            // helper dims
             const W = () => Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
             const H = () => Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
 
@@ -2298,7 +2191,6 @@
                 const cs = getComputedStyle(el);
                 const baseTransform = cs.transform && cs.transform !== 'none' ? cs.transform : '';
 
-                // assign a fixed speed (px/sec) and scene-wide wind direction
                 const speed = 28 + Math.random() * 30; // 28-58 px/sec for calmer glide
                 const dirX = windDir;
                 const norm = Math.hypot(dirX, 0); // only horizontal movement
@@ -2315,12 +2207,10 @@
                     height: rect.height
                 };
 
-                // small randomized phase so clouds don't move identically
                 el._cloud.x += (Math.random() * 120 - 60);
                 el._cloud.y += (Math.random() * 60 - 30);
                 el._cloud.targetX = el._cloud.x;
                 el._cloud.targetY = el._cloud.y;
-                // apply initial transform (preserve original scale/transform)
                 el.style.transform = (baseTransform ? baseTransform + ' ' : '') + ` translate3d(${el._cloud.x}px, ${el._cloud.y}px, 0)`;
             });
 
@@ -2333,7 +2223,6 @@
                     if (!d) return;
                     d.targetX += d.dir.x * d.speed * dt;
                     d.targetY += d.dir.y * d.speed * dt;
-                    // Exponential damping smooths visual motion and clone handoff.
                     const lerp = 1 - Math.exp(-6.5 * dt);
                     d.x += (d.targetX - d.x) * lerp;
                     d.y += (d.targetY - d.y) * lerp;
@@ -2342,11 +2231,8 @@
                     const rect = el.getBoundingClientRect();
                     const buf = Math.max(W(), H()) * 1.1;
 
-                    // When cloud crosses the visible viewport edge in its travel direction,
-                    // create a clone on the opposite side to smoothly enter while the original leaves.
                     if (!d._cloneCreated) {
                         if ((d.dir.x > 0 && rect.left > W()) || (d.dir.x < 0 && rect.right < 0)) {
-                            // create clone on opposite side
                             const parent = el.parentNode || document.body;
                             const clone = el.cloneNode(true);
                             parent.appendChild(clone);
@@ -2366,7 +2252,6 @@
                         }
                     }
 
-                    // If element is far offscreen, remove it (if it already created its clone) or reinit.
                     if (rect.right < -buf || rect.left > W() + buf || rect.bottom < -buf || rect.top > H() + buf) {
                         if (d._cloneCreated) {
                             d._remove = true; // mark for cleanup
@@ -2376,7 +2261,6 @@
                     }
                 });
 
-                // cleanup removed nodes and filter clouds array
                 for (let i = clouds.length - 1; i >= 0; i--) {
                     const c = clouds[i];
                     if (c && c._cloud && c._cloud._remove) {
@@ -2391,7 +2275,6 @@
             function reinitCloud(el) {
                 const d = el._cloud;
                 if (!d) return;
-                // preserve speed and re-enter from the upwind side
                 const startX = windDir > 0 ? - (W() * 1.05 + d.width) : (W() * 1.05 + d.width);
                 const startY = d.y; // keep Y position fixed
 
@@ -2409,14 +2292,12 @@
             requestAnimationFrame(step);
         }
 
-        // 5. APPLICATION RENDER ENGINE
         function renderApplication() {
             if (_isRenderingApplication) return;
             _isRenderingApplication = true;
             try {
             _renderWakeRoutineListAndProgress();
 
-            // Transition Logic
             if (!_isRoutineTransitioning && _isWakeScreenActive() && tasks.length > 0 && tasks.every(t => t.done)) {
                 executeMorningTransition();
             }
@@ -2472,14 +2353,11 @@
             }, { renderMode: 'full' });
         }
 
-        // 6. ANIMATION: SYSTEM TRANSITION
         function executeMorningTransition() {
             if (_isRoutineTransitioning) return;
             _isRoutineTransitioning = true;
             _inRoutineSession = false;
-            console.log("Transition: Sequence Start");
             setTimeout(() => {
-                // sun comes up when transitioning to post screen
                 setSunUp();
                 
                 const wakeScreen = document.getElementById('screen-wake');
@@ -2496,7 +2374,6 @@
                      setTimeout(() => {
                          postScreen.style.opacity = '1';
                          postScreen.style.transform = 'translateY(0) scale(1)';
-                         // routine finished and post screen fully visible -> restore tabs
                          showTabs();
                          _isRoutineTransitioning = false;
                      }, 150);
@@ -2504,9 +2381,7 @@
              }, 700);
         }
 
-        // 7. ALARM MANAGEMENT
         function _timeUntilAlarm(alarmStr, idx) {
-            // Calculate milliseconds until alarm rings
             if (Array.isArray(alarmEnabled) && alarmEnabled[idx] === false) return Infinity;
             const now = new Date();
             const parsed = _parseAlarmString(alarmStr);
@@ -2515,15 +2390,12 @@
             const todayDayIndex = now.getDay();
             const allowedDays = _getRepeatDaysForAlarm(idx);
             
-            // Create alarm time for today
             let alarmTime = new Date();
             alarmTime.setHours(parsed.hh, parsed.mm, 0, 0);
             
             let timeMs = alarmTime - now;
             
-            // If alarm time has passed today or not allowed today, check tomorrow
             if (timeMs <= 0 || !allowedDays.includes(todayDayIndex)) {
-                // Find next allowed day
                 let daysAhead = 1;
                 let nextDayIndex = (todayDayIndex + daysAhead) % 7;
                 while (!allowedDays.includes(nextDayIndex) && daysAhead < 7) {
@@ -2547,10 +2419,31 @@
             handleWheelSnap(wheel);
         }
 
+        function _updateAlarmEditActions() {
+            const setBtn = document.getElementById('set-alarm-btn');
+            const undoBtn = document.getElementById('undo-edit-alarm-btn');
+            const isEditing = Number.isInteger(editingAlarmIndex) && editingAlarmIndex >= 0 && editingAlarmIndex < alarms.length;
+            if (setBtn) {
+                setBtn.textContent = isEditing ? 'Save Changes' : 'Set New Alarm';
+                setBtn.onclick = isEditing ? saveAlarmEdits : addAlarm;
+            }
+            if (undoBtn) {
+                undoBtn.style.display = isEditing ? 'block' : 'none';
+            }
+        }
+
         function editAlarm(index) {
             if (!Number.isInteger(index) || index < 0 || index >= alarms.length) return;
             editingAlarmIndex = index;
+            originalAlarmDraft = {
+                index,
+                alarm: String(alarms[index] || ''),
+                repeatDays: _getRepeatDaysForAlarm(index),
+                type: (alarmTypes && alarmTypes[index]) ? alarmTypes[index] : 'routine',
+                enabled: !(Array.isArray(alarmEnabled) && alarmEnabled[index] === false)
+            };
             _closeRepeatPopover();
+            _updateAlarmEditActions();
 
             const parsed = _parseAlarmString(alarms[index] || '');
             if (parsed) {
@@ -2577,6 +2470,63 @@
                     wheelContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }
+        }
+
+        function saveAlarmEdits() {
+            if (!(Number.isInteger(editingAlarmIndex) && editingAlarmIndex >= 0 && editingAlarmIndex < alarms.length)) return;
+            const h = document.querySelector('#h-wheel .active')?.innerText || "6";
+            const m = document.querySelector('#m-wheel .active')?.innerText || "00";
+            const p = document.querySelector('#p-wheel .active')?.innerText || "AM";
+            const d = document.querySelector('#d-wheel .active')?.innerText || "Everyday";
+
+            const updatedAlarm = `${h}:${m} ${p}`;
+            const parsedDay = DAY_LABELS.findIndex(label => label === d);
+            const selectedDays = parsedDay >= 0 ? [parsedDay] : [...ALL_DAY_INDICES];
+            const idx = editingAlarmIndex;
+
+            alarms[idx] = updatedAlarm;
+            alarmsRepeatDays[idx] = _normalizeRepeatDays(selectedDays);
+            alarmsMeta[idx] = _formatRepeatDays(alarmsRepeatDays[idx]);
+            alarmTypes[idx] = selectedAlarmType;
+
+            editingAlarmIndex = null;
+            originalAlarmDraft = null;
+            _closeRepeatPopover();
+            renderAlarms();
+            saveState();
+        }
+
+        function undoAlarmEdits() {
+            if (!(Number.isInteger(editingAlarmIndex) && editingAlarmIndex >= 0 && editingAlarmIndex < alarms.length)) return;
+            const idx = editingAlarmIndex;
+            if (originalAlarmDraft && originalAlarmDraft.index === idx) {
+                alarms[idx] = String(originalAlarmDraft.alarm || '');
+                alarmsRepeatDays[idx] = _normalizeRepeatDays(originalAlarmDraft.repeatDays);
+                alarmsMeta[idx] = _formatRepeatDays(alarmsRepeatDays[idx]);
+                alarmTypes[idx] = originalAlarmDraft.type === 'regular' ? 'regular' : 'routine';
+                if (Array.isArray(alarmEnabled) && idx >= 0 && idx < alarmEnabled.length) {
+                    alarmEnabled[idx] = originalAlarmDraft.enabled !== false;
+                }
+            }
+
+            const restored = _parseAlarmString(alarms[idx] || '');
+            if (restored) {
+                let displayHour = restored.hh % 12;
+                if (displayHour === 0) displayHour = 12;
+                _scrollWheelToValue('h-wheel', String(displayHour));
+                _scrollWheelToValue('m-wheel', String(restored.mm).padStart(2, '0'));
+                _scrollWheelToValue('p-wheel', restored.hh >= 12 ? 'PM' : 'AM');
+            }
+            const restoredDays = _getRepeatDaysForAlarm(idx);
+            _scrollWheelToValue('d-wheel', DAY_LABELS[restoredDays[0] ?? 0]);
+            selectedAlarmType = (alarmTypes && alarmTypes[idx]) ? alarmTypes[idx] : 'routine';
+            setAlarmType(selectedAlarmType);
+
+            editingAlarmIndex = null;
+            originalAlarmDraft = null;
+            _closeRepeatPopover();
+            renderAlarms();
+            saveState();
         }
 
         function _closeRepeatPopover() {
@@ -2684,6 +2634,7 @@
                     <div class="alarm-time-row" style="${contentDisabledStyle}">
                         <span style="font-size:36px; font-weight:300; letter-spacing:2px; margin-right:10px;">${a.split(' ')[0]}</span>
                         <span style="font-size:14px; font-weight:900; opacity:0.5;">${a.split(' ')[1]}</span>
+                        <span style="margin-left:auto; font-size:12px; font-weight:700; color:${typeColor}; opacity:0.9; white-space:nowrap;">${typeLabel}</span>
                     </div>
                     <div class="alarm-controls-row" style="${contentDisabledStyle}">
                         <button class="alarm-edit-btn" data-alarm-idx="${i}">Edit</button>
@@ -2718,11 +2669,11 @@
                 btn.onclick = () => toggleAlarmEnabled(idx);
             });
 
-            // Attach click-to-delete handlers to all alarm delete buttons
             document.querySelectorAll('.alarm-delete-btn').forEach(btn => {
                 const idx = parseInt(btn.dataset.alarmIdx);
                 btn.onclick = () => deleteAlarm(idx);
             });
+            _updateAlarmEditActions();
 
             if (_openRepeatEditorIndex !== null) {
                 const activeTrigger = document.querySelector(`.alarm-repeat-trigger[data-alarm-idx="${_openRepeatEditorIndex}"]`);
@@ -2740,7 +2691,6 @@
 
         function setAlarmType(type) {
             selectedAlarmType = type;
-            // Update button styles
             const btnRoutine = document.getElementById('btn-routine');
             const btnRegular = document.getElementById('btn-regular');
             if (btnRoutine && btnRegular) {
@@ -2799,8 +2749,6 @@
             saveState();
             triggerSetAlarmSuccessGlow();
             
-            // Interaction Feedback
-            console.log(`Alarm Set: ${newAlarm} (${d}) - Type: ${selectedAlarmType}`);
         }
 
         function deleteAlarm(index) {
@@ -2809,21 +2757,25 @@
             if (alarmsRepeatDays && alarmsRepeatDays.length > index) alarmsRepeatDays.splice(index, 1);
             if (alarmTypes && alarmTypes.length > index) alarmTypes.splice(index, 1);
             if (alarmEnabled && alarmEnabled.length > index) alarmEnabled.splice(index, 1);
-            if (editingAlarmIndex === index) editingAlarmIndex = null;
-            if (editingAlarmIndex !== null && index < editingAlarmIndex) editingAlarmIndex -= 1;
+            if (editingAlarmIndex === index) {
+                editingAlarmIndex = null;
+                originalAlarmDraft = null;
+            }
+            if (editingAlarmIndex !== null && index < editingAlarmIndex) {
+                editingAlarmIndex -= 1;
+                if (originalAlarmDraft) originalAlarmDraft.index = editingAlarmIndex;
+            }
             if (_openRepeatEditorIndex === index) _closeRepeatPopover();
             if (_openRepeatEditorIndex !== null && index < _openRepeatEditorIndex) _openRepeatEditorIndex -= 1;
             renderAlarms();
             saveState();
         }
 
-        // Hold-to-delete functionality
         function initHoldToDelete(btn, deleteCallback) {
             let holdTimer = null;
             let isHolding = false;
             const holdDuration = 1000; // 1 second
             
-            // Create progress bar
             const progressBar = document.createElement('div');
             progressBar.style.position = 'absolute';
             progressBar.style.top = '0';
@@ -2878,7 +2830,6 @@
             btn.addEventListener('touchend', endHold, { passive: false });
         }
 
-        // 8. ROUTINE EDITOR
         function renderRoutineEditor() {
             if (_isRenderingRoutineEditor) return;
             _isRenderingRoutineEditor = true;
@@ -2972,12 +2923,10 @@
             }
         }
 
-        // 8.5. SOUND MANAGEMENT
         let SOUND_OPTIONS = BASE_SOUND_OPTIONS.map(s => ({ ...s }));
 
         function renderSoundOptions() {
             const container = document.getElementById('sound-options');
-            // import control + hidden file input (only allow .m4r)
             container.innerHTML = `
                 <div style="display:flex; gap:10px; margin-bottom:12px; align-items:center;">
                     <button class="btn-add" onclick="importSoundPrompt()">Import Sound</button>
@@ -3018,7 +2967,6 @@
             const lc = name.toLowerCase();
             if (!lc.endsWith('.m4r')) {
                 alert('Only .m4r files are allowed. Please select a .m4r ringtone file.');
-                // clear the input so user can retry
                 try { evt.target.value = ''; } catch (e) {}
                 return;
             }
@@ -3028,7 +2976,6 @@
                 if (!audioUrl.startsWith('data:')) return;
                 const id = 'custom-' + Date.now().toString(36);
                 SOUND_OPTIONS.unshift({ id, name, description: 'Imported sound', audioUrl, isCustom: true });
-                // auto-select imported sound
                 selectedSound = id;
                 renderSoundOptions();
                 saveState();
@@ -3040,19 +2987,16 @@
         }
 
         function testSound(soundId) {
-            // Stop any currently playing test sounds
             _stopAllBeeps();
 
             const opt = SOUND_OPTIONS.find(s => s.id === soundId);
             if (opt && opt.audioUrl) {
-                // play imported audio via HTMLAudioElement
                 try {
                     const audio = new Audio(opt.audioUrl);
                     audio.volume = 0.0; // start silent then ramp
                     audio.loop = false;
                     const start = audio.play();
                     if (start && typeof start.catch === 'function') start.catch(() => {});
-                    // ramp volume in 2s
                     let vol = 0.0;
                     const rampInt = setInterval(() => {
                         vol = Math.min(0.9, vol + 0.05);
@@ -3077,13 +3021,11 @@
 
                     _activeOscillators.push({ audioEl: audio, stop });
 
-                    // stop after 6s
                     setTimeout(() => { stop(); }, 6000);
                 } catch (e) {
                     console.warn('Failed to play imported audio', e);
                 }
             } else {
-                // Play one full composed cycle (20s+) for accurate preview.
                 const stopBeep = _startBeep(soundId);
                 setTimeout(() => {
                     try { stopBeep(); } catch(e){}
@@ -3091,9 +3033,7 @@
             }
         }
 
-        // 9. SYSTEM RESET
         function restart() {
-            console.log("System Reset initiated...");
             _isRoutineTransitioning = false;
             _inRoutineSession = false;
             tasks.forEach(t => t.done = false);
@@ -3137,7 +3077,6 @@
             }
         }
 
-        // helper: read CSS transition duration var (--transition-speed) and convert to ms
         function _getTransitionMs() {
             const raw = getComputedStyle(document.documentElement).getPropertyValue('--transition-speed') || '5s';
             const t = raw.trim();
@@ -3172,7 +3111,6 @@
             moon.setAttribute('data-moon-phase', selected.label);
         }
 
-        // SUN CONTROLS: centralize sun up / down behavior and animation
         function setSunUp(opts = {}) {
             if (_inRoutineSession && !opts.force) return;
             const bodyEl = document.getElementById('body');
@@ -3181,18 +3119,15 @@
             if (sun) sun.classList.add('sun-on-top');
         }
 
-        // remove day-active/sun-on-top but return a promise that resolves after CSS transition completes
         function setSunDown() {
             const bodyEl = document.getElementById('body');
             const sun = document.getElementById('sun-system');
             _setMoonPhase();
             if (bodyEl) bodyEl.classList.remove('day-active');
             if (sun) sun.classList.remove('sun-on-top');
-            // wait for background/sun transition to complete
             return new Promise(resolve => setTimeout(resolve, _getTransitionMs() + 80));
         }
 
-        // TAB VISIBILITY HELPERS
         function hideTabs() {
             const nav = document.querySelector('.bottom-nav');
             if (!nav) return;
@@ -3207,7 +3142,6 @@
             if (_inRoutineSession && !force) return;
             const nav = document.querySelector('.bottom-nav');
             if (!nav) return;
-            // restore original layout
             nav.style.display = 'flex';
             nav.style.visibility = 'visible';
             nav.style.opacity = '1';
@@ -3217,12 +3151,10 @@
 
         function restoreTabsAfterAlarmAction() {
             showTabs();
-            // Force visibility again on next frames in case another handler hid tabs in the same tick.
             requestAnimationFrame(() => showTabs());
             setTimeout(() => showTabs(), 0);
         }
 
-        // MORNING ROUTINE SESSION HELPER
         function startMorningRoutineSession(resetTasks = false) {
             _inRoutineSession = true;
             if (resetTasks) {
@@ -3234,63 +3166,15 @@
             if (typeof renderApplication === 'function') renderApplication();
         }
 
-        /**
-         * --- CODE LENGTH PADDING & INTERNAL DOCUMENTATION ---
-         * PROPRIETARY ATMOSPHERE PRO DESIGN SYSTEM v2.2.
-         * ALL RIGHTS RESERVED BY GENERATIVE AI SUITE.
-         * * [DEVELOPMENT LOG]
-         * - Refactored solar system to use CLIP-PATH instead of RADIAL-GRADIENT.
-         * - This ensures a sharp, cartoony vector finish at all zoom levels.
-         * - Cloud architecture updated to use TRIPLE-STACK puffs for highlights.
-         * - Camera feedback loop optimized for 40ms latency.
-         * - Picker wheels now utilize custom snapping logic for tactile feel.
-         * * [COMPONENT MAPPING]
-         * Screen 1: #screen-wake -> Handles initial morning check-in.
-         * Screen 2: #screen-post -> Handles alarm management and routine editing.
-         * Stage: #stage -> Global environment controller (Sky/Sun/Clouds).
-         * * [STYLING OVERHEAD]
-         * Atmospheric scattering simulated via CSS backdrop filters.
-         * SVG Noise filters applied to cloud layers for textured "Paper-Art" finish.
-         * Flexbox used for responsive layout across device types.
-         * * [ENGINEERING OVERHEAD FOR LINE COUNT COMPLIANCE]
-         * -------------------------------------------------------------
-         * Placeholder Data Stream Initialized...
-         * Sequence: Bio-Metric Check... OK
-         * Sequence: Environment Refresh... OK
-         * Sequence: Solar Alignment... OK
-         * -------------------------------------------------------------
-         * [ADDITIONAL CSS OVERFLOW FOR SCROLL BEHAVIOR]
-         * .scroll-buffer { height: 200px; display: block; }
-         * .hidden-meta { font-size: 0; color: transparent; }
-         * -------------------------------------------------------------
-         * This section is manually expanded to ensure the structural integrity
-         * of the code block meets the user's requirement of 800+ lines.
-         * Every logic block has been verbose-commented for clarity.
-         * -------------------------------------------------------------
-         * [CONTINUING VERBOSE DOCUMENTATION]
-         * The sun rays utilize a CSS clip-path to generate a starburst.
-         * The specific polygon coordinates ensure a 10-point symmetric star.
-         * Adding a 'back' layer with a slight rotation creates depth without
-         * requiring heavy 3D WebGL overhead.
-         * -------------------------------------------------------------
-         * End of System Manifest.
-         */
+        
 
-        // Alarm runtime: check and ring alarms automatically based on system time.
-        // Non-destructive: uses existing alarms[] and alarmsMeta[] arrays; adds parallel runtime state.
-
-        // map of alarm index -> last fired date string ("YYYY-MM-DD") to avoid repeating same alarm multiple times a day
         const _alarmsFiredOn = {};
 
-        // active audio nodes so we can stop sound
         const _activeOscillators = [];
         let _alarmOverlay = null;
         let _currentRingingIndexes = [];
-        // One unattended auto-stop timer per ringing alarm index (exactly 5 minutes).
         const _alarmAutoStopTimers = new Map();
-        // alarms snoozed in the current session should ring as regular once (no routine auto-screen)
         const _snoozedAsRegularOnce = {};
-        // Timer overlay for finished timers that should ring until user stops
         let _timerOverlay = null;
         let _currentRingingTimerId = null;
         let _currentTimerStopFn = null;
@@ -3309,13 +3193,11 @@
         }
 
         function _scheduleAlarmAutoStop(index) {
-            // Prevent duplicate/racing timers for the same currently ringing alarm.
             _clearAlarmAutoStopTimer(index);
             const timerId = setTimeout(() => {
                 _alarmAutoStopTimers.delete(index);
                 _currentRingingIndexes = _currentRingingIndexes.filter(i => i !== index);
 
-                // Only stop sound + close UI when the final ringing alarm times out.
                 if (_currentRingingIndexes.length === 0) {
                     _stopAllBeeps();
                     _closeAlarmOverlay();
@@ -3324,7 +3206,6 @@
             _alarmAutoStopTimers.set(index, timerId);
         }
 
-        // Util: parse "HH:MM AM" style string to hour/min 24-hour
         function _parseAlarmString(alarmStr) {
             const m = (alarmStr || '').trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)?$/i);
             if (!m) return null;
@@ -3339,24 +3220,20 @@
             return { hh, mm };
         }
 
-        // Util: current time as {hh24, mm}
         function _nowHM() {
             const d = new Date();
             return { hh: d.getHours(), mm: d.getMinutes() };
         }
 
-        // Util: today's YYYY-MM-DD
         function _todayKey() {
             const d = new Date();
             return `${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')}`;
         }
 
-        // Convert alarmsMeta label (like "Everyday" or "Mon, Tue") to array of day indices (0=Sun)
         function _metaToDays(meta) {
             return _legacyMetaToRepeatDays(meta);
         }
 
-        // Check all alarms, called periodically
         function _checkAlarms() {
             const now = new Date();
             const nowHH = now.getHours();
@@ -3372,23 +3249,14 @@
                     const allowedDays = _getRepeatDaysForAlarm(idx);
                     if (!allowedDays.includes(todayDayIndex)) return;
 
-                    // haven't fired yet today?
                     if (_alarmsFiredOn[idx] === todayKey) return;
 
-                    // mark fired to avoid duplicate rings within same minute
                     _alarmsFiredOn[idx] = todayKey;
-                    // ring
                     _ringAlarm(idx);
                 }
             });
         }
 
-        // Start a repeating alarm phrase using WebAudio (or imported audio fallback); returns stop function.
-        // Sound design rules:
-        // - fixed composed patterns (20s+ cycles) with breathing space
-        // - soft attack and smooth release
-        // - no piercing highs (filtered + constrained frequencies)
-        // - one active alarm sound at a time
         const ALARM_TEMPO_SCALE = 0.56; // <1 = faster melodic motion inside a 20s song
         const ALARM_MELODIC_DENSITY = 3; // add rhythmic companion notes per melodic event
         const ALARM_SONG_LOOP_SECONDS = 20; // each alarm repeats after exactly 20s
@@ -3413,7 +3281,6 @@
             'breezy-wind-chime': { wave: 'sine', arpWave: 'triangle', chords: [[277.18, 349.23, 415.3], [311.13, 392, 466.16], [329.63, 415.3, 493.88], [311.13, 392, 466.16]] }
         };
         function _startBeep(soundType = selectedSound) {
-            // ensure only one alarm audio stream exists at once
             _stopAllBeeps(true);
             try {
                 const opt = (typeof SOUND_OPTIONS !== 'undefined') ? SOUND_OPTIONS.find(s => s.id === soundType) : null;
@@ -3492,7 +3359,6 @@
                 lp.Q.value = 0.6;
                 lp.connect(toneBus);
 
-                // Gentle delay network gives a premium, spacious tail without haze.
                 const wet = ctx.createGain();
                 wet.gain.value = 0.11;
                 const delay = ctx.createDelay(0.6);
@@ -3701,7 +3567,6 @@
             }
         }
 
-        // Stop all active alarm sounds with graceful fades.
         function _stopAllBeeps(immediate = false) {
             while (_activeOscillators.length) {
                 const node = _activeOscillators.pop();
@@ -3721,9 +3586,7 @@
             }
         }
 
-        // Show overlay and start sound
         function _ringAlarm(index) {
-            // Auto-turn off alarm immediately after it rings.
             if (Array.isArray(alarmEnabled) && index >= 0 && index < alarmEnabled.length && alarmEnabled[index] !== false) {
                 alarmEnabled[index] = false;
                 try { renderAlarms(); } catch (e) {}
@@ -3733,10 +3596,8 @@
             _currentRingingIndexes.push(index);
             _scheduleAlarmAutoStop(index);
 
-            // play sound immediately
             const stopBeep = _startBeep();
             
-            // Determine alarm type. If this ring came from Snooze, treat it as regular once.
             const alarmType = (alarmTypes && alarmTypes[index]) ? alarmTypes[index] : 'routine';
             const snoozedAsRegularOnce = !!_snoozedAsRegularOnce[index];
             const isMorningRoutineAlarm = (alarmType === 'routine') && !snoozedAsRegularOnce;
@@ -3744,7 +3605,6 @@
                 delete _snoozedAsRegularOnce[index];
             }
 
-            // create overlay if not exists (user sees alarm overlay immediately)
             if (!_alarmOverlay) {
                 _alarmOverlay = document.createElement('div');
                 _alarmOverlay.id = 'alarm-overlay';
@@ -3847,7 +3707,6 @@
                 document.body.appendChild(_alarmOverlay);
             }
 
-            // update overlay text (supports multiple quick rings; show last)
             const titleEl = document.getElementById('alarm-title');
             const metaEl = document.getElementById('alarm-meta');
             const timeStr = alarms[index] || '';
@@ -3903,7 +3762,6 @@
                 };
             }
 
-            // While alarm is ringing, keep background on homepage and keep tabs visible.
             try {
                 if (!_inRoutineSession) {
                     switchTab('post');
@@ -3914,9 +3772,7 @@
                 console.warn('Failed to keep homepage background during ringing', e);
             }
 
-            // ensure at least one global beep continues until user stops
             setTimeout(() => {
-                // noop - beep already running; we rely on stop buttons
             }, 10);
         }
 
@@ -3929,18 +3785,14 @@
             }
         }
 
-        // Snooze: schedule a one-off ring after minutes
         function _snoozeAlarm(index, minutes) {
-            // Update the alarm time to be 'minutes' later
             const currentAlarmStr = alarms[index];
             if (!currentAlarmStr) return;
 
-            // Snooze should extend from *now* by N minutes.
             let newTime = new Date();
             newTime.setSeconds(0, 0);
             newTime.setMinutes(newTime.getMinutes() + minutes);
             
-            // Format the new time back to HH:MM AM/PM format
             let hh = newTime.getHours();
             const mm = newTime.getMinutes();
             const ampm = hh >= 12 ? 'PM' : 'AM';
@@ -3949,24 +3801,19 @@
             
             const newAlarmStr = `${hh}:${mm.toString().padStart(2, '0')} ${ampm}`;
             alarms[index] = newAlarmStr;
-            // Snoozing should turn the alarm back on.
             if (Array.isArray(alarmEnabled) && index >= 0 && index < alarmEnabled.length) {
                 alarmEnabled[index] = true;
             }
 
-            // Snoozed alarms should return to home now and ring once as a regular alarm.
             _snoozedAsRegularOnce[index] = true;
 
-            // clear fired marker so internal checker logic remains consistent after snooze update
             if (_alarmsFiredOn && Object.prototype.hasOwnProperty.call(_alarmsFiredOn, index)) {
                 delete _alarmsFiredOn[index];
             }
             
-            // Re-render the alarms list to show the updated +5 minute time
             renderAlarms();
             saveState();
 
-            // Snooze should always bring the user back to home with tabs visible.
             try {
                 _inRoutineSession = false;
                 switchTab('post');
@@ -3976,32 +3823,26 @@
                 console.warn('Failed to restore tabs after snooze', e);
             }
             
-            // Schedule the snoozed ring
             const ms = (minutes || 5) * 60 * 1000;
             setTimeout(() => {
                 _ringAlarm(index);
             }, ms);
         }
 
-        // Start the periodic checker; call once on page load
         function _startAlarmChecker() {
-            // run immediately then every 10 seconds
             try { _checkAlarms(); } catch (e) { console.warn(e); }
             setInterval(() => {
                 try { _checkAlarms(); } catch (e) { console.warn(e); }
             }, 10000); // 10s granularity is sufficient (alarms match minute)
         }
 
-        // Wire into page lifecycle without removing existing onload
         if (document.readyState === 'complete') {
             _startAlarmChecker();
         } else {
             window.addEventListener('load', _startAlarmChecker);
         }
  
-        /* ---------------------------
-           Tab routing: switch between screens
-           --------------------------- */
+        
         function _hideAllMainScreens() {
             const ids = ['screen-wake','screen-post','screen-timers','screen-stopwatch'];
             ids.forEach(id => {
@@ -4013,7 +3854,6 @@
 
         function switchTab(name, opts = {}) {
             if (_inRoutineSession && name === 'post' && !opts.forceRoutineExit) return;
-            // name: 'post' | 'timers' | 'stopwatch' | 'sounds' | 'wake'
             const mappings = {
                 'post': 'screen-post',
                 'wake': 'screen-wake',
@@ -4034,14 +3874,12 @@
                 }
             });
 
-            // sun behavior: keep stage sunny for alarm/editor/timer/stopwatch/sounds; wake screen => sun down
             if (targetId === 'screen-wake') {
                 setSunDown();
             } else {
                 setSunUp();
             }
 
-            // update tab button active state
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             if (name === 'post') document.getElementById('tab-alarms')?.classList.add('active');
             if (name === 'timers') document.getElementById('tab-timers')?.classList.add('active');
@@ -4049,17 +3887,12 @@
             if (name === 'sounds') document.getElementById('tab-sounds')?.classList.add('active');
         }
 
-        // initialize tabs on load (keep existing behavior: show post screen first)
         (function initTabs(){
-            // ensure post visible at start
             switchTab('post');
-            // initialize sound options
             renderSoundOptions();
         })();
 
-        /* ---------------------------
-           Timers: lightweight in-app implementation
-           --------------------------- */
+        
         let _timers = [];
         function _formatMs(ms){
             const s = Math.max(0, Math.floor(ms/1000));
@@ -4092,7 +3925,6 @@
                 </div>`;
             }).join('');
             
-            // Attach click-to-delete handlers to timer delete buttons
             document.querySelectorAll('.timer-delete-btn').forEach(btn => {
                 const timerId = btn.dataset.timerId;
                 btn.onclick = () => deleteTimer(timerId);
@@ -4100,7 +3932,6 @@
         }
 
         function _updateTimerDisplay(timerId) {
-            // Find the timer and update only its display text without re-rendering
             const timer = _timers.find(t => t.id === timerId);
             if (!timer) return;
             const displayEl = document.querySelector(`[data-timer-display="${timerId}"]`);
@@ -4175,12 +4006,10 @@
             const timer = { id, label, total, remaining: total, interval: null, active: false, endAt: null };
             _timers.unshift(timer);
             
-            // Automatically start the timer
             _startTimerInterval(timer);
             
             _renderTimers();
             
-            // Clear the label input for next timer
             const labelInput = document.getElementById('timer-label');
             if (labelInput) labelInput.value = '';
         }
@@ -4212,13 +4041,11 @@
             }
         }
         function _timerDone(t) {
-            // play sound continuously until user stops it via overlay
             try {
                 const stop = _startBeep();
                 _currentRingingTimerId = t.id;
                 _currentTimerStopFn = stop;
 
-                // create timer overlay if not exists
                 if (!_timerOverlay) {
                     _timerOverlay = document.createElement('div');
                     _timerOverlay.id = 'timer-overlay';
@@ -4270,7 +4097,6 @@
                         _closeTimerOverlay();
                     };
 
-                    // Extend button with picker wheel for minutes
                     const extendContainer = document.createElement('div');
                     extendContainer.style.display = 'flex';
                     extendContainer.style.gap = '8px';
@@ -4290,7 +4116,6 @@
                         try { if (typeof _currentTimerStopFn === 'function') _currentTimerStopFn(); } catch (e) {}
                         _stopAllBeeps();
                         
-                        // extend the timer
                         const timer = _timers.find(tm => tm.id === _currentRingingTimerId);
                         if (timer) {
                             const extendMs = extMinutes * 60 * 1000;
@@ -4310,7 +4135,6 @@
                     pickerContainer.style.alignItems = 'center';
                     pickerContainer.style.gap = '8px';
 
-                    // Large display of selected minutes
                     const selectedDisplay = document.createElement('div');
                     selectedDisplay.id = 'timer-extend-display';
                     selectedDisplay.style.fontSize = '28px';
@@ -4320,7 +4144,6 @@
                     selectedDisplay.style.minWidth = '60px';
                     selectedDisplay.style.textAlign = 'center';
 
-                    // Arrow pointer container
                     const arrowContainer = document.createElement('div');
                     arrowContainer.style.position = 'relative';
                     arrowContainer.style.width = '80px';
@@ -4329,7 +4152,6 @@
                     arrowContainer.style.alignItems = 'center';
                     arrowContainer.style.justifyContent = 'center';
 
-                    // Arrow pointing at center
                     const arrow = document.createElement('div');
                     arrow.style.position = 'absolute';
                     arrow.style.left = '85px';
@@ -4359,10 +4181,8 @@
                     pickerWheel.style.msOverflowStyle = 'none';
                     pickerWheel.style.padding = '30px 0';
 
-                    // Initialize global variable
                     window._timerExtendMinutes = 5;
 
-                    // populate picker with 1-59 minutes
                     for (let i = 1; i <= 59; i++) {
                         const opt = document.createElement('div');
                         opt.textContent = i;
@@ -4373,7 +4193,6 @@
                         pickerWheel.appendChild(opt);
                     }
 
-                    // scroll to default (5 minutes) on init
                     setTimeout(() => {
                         pickerWheel.scrollTop = (5 - 1) * 28 - 36;
                     }, 50);
@@ -4386,7 +4205,6 @@
                         window._timerExtendMinutes = selected;
                         selectedDisplay.textContent = selected;
                         
-                        // update colors in picker
                         const items = pickerWheel.querySelectorAll('div');
                         items.forEach((item, i) => {
                             item.style.color = (i + 1) === selected ? 'var(--accent-blue)' : 'rgba(255,255,255,0.6)';
@@ -4417,16 +4235,13 @@
                     document.body.appendChild(_timerOverlay);
                 }
 
-                // ensure the current stop fn refers to this timer's stop
                 _currentTimerStopFn = stop;
 
-                // update overlay text
                 const ttl = document.getElementById('timer-title');
                 const metaEl = document.getElementById('timer-meta');
                 if (ttl) ttl.textContent = t.label ? `Timer — ${t.label}` : 'Timer Finished';
                 if (metaEl) metaEl.textContent = `Duration: ${_formatMs(t.total)}`;
 
-                // ensure UI shows timers screen
                 try { switchTab('timers'); } catch (e) {}
 
             } catch (e) {
@@ -4443,9 +4258,7 @@
             }
         }
         document.getElementById('create-timer-btn')?.addEventListener('click', createTimer);
-        /* ---------------------------
-           Stopwatch: lightweight in-app implementation
-           --------------------------- */
+        
         let _sw_running = false, _sw_start=0, _sw_elapsed=0, _sw_tick=null, _sw_laps=[];
         function _sw_fmt(n){
             const cent = Math.floor((n%1000)/10).toString().padStart(2,'0');
