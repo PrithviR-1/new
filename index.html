@@ -734,14 +734,6 @@
             transition: background .2s ease, color .2s ease;
         }
         .alarm-edit-btn:hover { background: rgba(255,255,255,0.12); }
-        .alarm-edit-btn.editing-active {
-            color: #a7b0ba;
-            background: rgba(158, 167, 178, 0.2);
-        }
-        .alarm-edit-btn.editing-active:hover { background: rgba(158, 167, 178, 0.2); }
-        .alarm-row.alarm-editing {
-            animation: alarm-editing-pulse 2s ease-in-out infinite;
-        }
         .alarm-repeat-trigger {
             display: inline-flex;
             align-items: center;
@@ -1048,24 +1040,6 @@
             }
         }
 
-        @keyframes alarm-editing-pulse {
-            0% {
-                box-shadow: 0 0 0 rgba(255, 206, 90, 0), 0 0 0 rgba(255, 200, 74, 0);
-                outline: 1px solid rgba(255, 223, 128, 0.42);
-            }
-            25% {
-                box-shadow: 0 0 0 3px rgba(255, 224, 122, 0.24), 0 0 22px rgba(255, 207, 86, 0.45), 0 0 38px rgba(255, 200, 74, 0.18);
-                outline: 1px solid rgba(255, 233, 156, 0.9);
-            }
-            50% {
-                box-shadow: 0 0 0 rgba(255, 206, 90, 0), 0 0 0 rgba(255, 200, 74, 0);
-                outline: 1px solid rgba(255, 223, 128, 0.42);
-            }
-            100% {
-                box-shadow: 0 0 0 rgba(255, 206, 90, 0), 0 0 0 rgba(255, 200, 74, 0);
-                outline: 1px solid rgba(255, 223, 128, 0.42);
-            }
-        }
 
         .day-active #stage { background: var(--sky-day); }
         .day-active .sun-system { transform: translate(-50%, -100px); }
@@ -1348,7 +1322,6 @@
                     </div>
                 </div>
                 <button id="set-alarm-btn" class="btn-add" style="width:100%; height: 64px; font-size: 17px;" onclick="addAlarm()">Set New Alarm</button>
-                <button id="cancel-edit-alarm-btn" class="btn-primary" style="display:none; width:100%; margin-top:10px; height:52px; font-size:15px; background: var(--accent-red); color: #fff;" onclick="cancelAlarmEdit()">Cancel Edit</button>
             </section>
 
             <div class="divider-glass"></div>
@@ -1637,6 +1610,7 @@
         let _sceneWindDirection = 1; // 1 => left-to-right, -1 => right-to-left
         let _setAlarmGlowTimeout = null;
         let _isRoutineTransitioning = false;
+        let _inRoutineSession = false;
         let _taskIdCounter = 0;
         let _isRenderingApplication = false;
         let _isRenderingRoutineEditor = false;
@@ -1796,7 +1770,6 @@
                 alarmTypes = [];
                 alarmEnabled = [];
                 selectedAlarmType = 'routine';
-                editingAlarmIndex = null;
                 selectedSound = DEFAULT_SOUND_ID;
                 _timers.splice(0, _timers.length);
                 _sw_running = false;
@@ -1830,7 +1803,6 @@
             alarmsMeta = alarmsRepeatDays.map(days => _formatRepeatDays(days));
 
             selectedAlarmType = state.selectedAlarmType === 'regular' ? 'regular' : 'routine';
-            editingAlarmIndex = null;
 
             const customSounds = Array.isArray(state.customSounds) ? state.customSounds : [];
             customSounds.forEach(cs => {
@@ -1911,7 +1883,6 @@
             initPickerWheels();
             renderApplication();
             renderAlarms();
-            _updateAlarmEditorButtons();
             renderSoundOptions();
             _renderTimers();
             _sw_render();
@@ -2505,6 +2476,7 @@
         function executeMorningTransition() {
             if (_isRoutineTransitioning) return;
             _isRoutineTransitioning = true;
+            _inRoutineSession = false;
             console.log("Transition: Sequence Start");
             setTimeout(() => {
                 // sun comes up when transitioning to post screen
@@ -2565,33 +2537,6 @@
             return Math.max(0, timeMs);
         }
 
-        function _updateAlarmEditorButtons() {
-            const setBtn = document.getElementById('set-alarm-btn');
-            const cancelBtn = document.getElementById('cancel-edit-alarm-btn');
-            if (setBtn) setBtn.textContent = editingAlarmIndex === null ? 'Set New Alarm' : 'Save Alarm Changes';
-            if (cancelBtn) cancelBtn.style.display = editingAlarmIndex === null ? 'none' : 'block';
-        }
-
-        function _clearEditingAlarmVisuals() {
-            document.querySelectorAll('.alarm-row.alarm-editing').forEach(row => row.classList.remove('alarm-editing'));
-            document.querySelectorAll('.alarm-edit-btn.editing-active').forEach(btn => {
-                btn.classList.remove('editing-active');
-                btn.textContent = 'Edit';
-            });
-        }
-
-        function _applyEditingAlarmVisual(index) {
-            _clearEditingAlarmVisuals();
-            if (!Number.isInteger(index) || index < 0) return;
-            const row = document.querySelector(`.alarm-row[data-alarm-idx="${index}"]`);
-            const btn = document.querySelector(`.alarm-edit-btn[data-alarm-idx="${index}"]`);
-            if (row) row.classList.add('alarm-editing');
-            if (btn) {
-                btn.classList.add('editing-active');
-                btn.textContent = 'Editing';
-            }
-        }
-
         function _scrollWheelToValue(wheelId, value) {
             const wheel = document.getElementById(wheelId);
             if (!wheel) return;
@@ -2604,10 +2549,8 @@
 
         function editAlarm(index) {
             if (!Number.isInteger(index) || index < 0 || index >= alarms.length) return;
-            _closeRepeatPopover();
             editingAlarmIndex = index;
-            _applyEditingAlarmVisual(index);
-            _updateAlarmEditorButtons();
+            _closeRepeatPopover();
 
             const parsed = _parseAlarmString(alarms[index] || '');
             if (parsed) {
@@ -2628,15 +2571,12 @@
 
             const wheelContainer = document.querySelector('#screen-post .picker-container');
             if (wheelContainer) {
-                wheelContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const rect = wheelContainer.getBoundingClientRect();
+                const centerDelta = Math.abs((rect.top + (rect.height / 2)) - (window.innerHeight / 2));
+                if (centerDelta > 24) {
+                    wheelContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
             }
-        }
-
-        function cancelAlarmEdit() {
-            editingAlarmIndex = null;
-            _clearEditingAlarmVisuals();
-            _closeRepeatPopover();
-            _updateAlarmEditorButtons();
         }
 
         function _closeRepeatPopover() {
@@ -2760,7 +2700,11 @@
 
             document.querySelectorAll('.alarm-edit-btn').forEach(btn => {
                 const idx = parseInt(btn.dataset.alarmIdx);
-                btn.onclick = () => editAlarm(idx);
+                btn.onclick = (evt) => {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    editAlarm(idx);
+                };
             });
             document.querySelectorAll('.alarm-repeat-trigger').forEach(btn => {
                 const idx = parseInt(btn.dataset.alarmIdx);
@@ -2780,7 +2724,6 @@
                 btn.onclick = () => deleteAlarm(idx);
             });
 
-            _applyEditingAlarmVisual(editingAlarmIndex);
             if (_openRepeatEditorIndex !== null) {
                 const activeTrigger = document.querySelector(`.alarm-repeat-trigger[data-alarm-idx="${_openRepeatEditorIndex}"]`);
                 if (!activeTrigger) _closeRepeatPopover();
@@ -2836,16 +2779,15 @@
             const d = document.querySelector('#d-wheel .active')?.innerText || "Everyday";
             
             const newAlarm = `${h}:${m} ${p}`;
-            const isEditing = editingAlarmIndex !== null && editingAlarmIndex >= 0 && editingAlarmIndex < alarms.length;
             const parsedDay = DAY_LABELS.findIndex(label => label === d);
             const selectedDaysForCreate = parsedDay >= 0 ? [parsedDay] : [...ALL_DAY_INDICES];
-            if (isEditing) {
+            if (editingAlarmIndex !== null && editingAlarmIndex >= 0 && editingAlarmIndex < alarms.length) {
                 alarms[editingAlarmIndex] = newAlarm;
-                alarmsRepeatDays[editingAlarmIndex] = _getRepeatDaysForAlarm(editingAlarmIndex);
+                alarmsRepeatDays[editingAlarmIndex] = _normalizeRepeatDays(selectedDaysForCreate);
                 alarmsMeta[editingAlarmIndex] = _formatRepeatDays(alarmsRepeatDays[editingAlarmIndex]);
                 alarmTypes[editingAlarmIndex] = selectedAlarmType;
                 alarmEnabled[editingAlarmIndex] = alarmEnabled[editingAlarmIndex] !== false;
-                cancelAlarmEdit();
+                editingAlarmIndex = null;
             } else {
                 alarms.push(newAlarm);
                 alarmsRepeatDays.push(selectedDaysForCreate);
@@ -2867,7 +2809,7 @@
             if (alarmsRepeatDays && alarmsRepeatDays.length > index) alarmsRepeatDays.splice(index, 1);
             if (alarmTypes && alarmTypes.length > index) alarmTypes.splice(index, 1);
             if (alarmEnabled && alarmEnabled.length > index) alarmEnabled.splice(index, 1);
-            if (editingAlarmIndex === index) cancelAlarmEdit();
+            if (editingAlarmIndex === index) editingAlarmIndex = null;
             if (editingAlarmIndex !== null && index < editingAlarmIndex) editingAlarmIndex -= 1;
             if (_openRepeatEditorIndex === index) _closeRepeatPopover();
             if (_openRepeatEditorIndex !== null && index < _openRepeatEditorIndex) _openRepeatEditorIndex -= 1;
@@ -3153,6 +3095,7 @@
         function restart() {
             console.log("System Reset initiated...");
             _isRoutineTransitioning = false;
+            _inRoutineSession = false;
             tasks.forEach(t => t.done = false);
             
             document.getElementById('body').classList.remove('day-active');
@@ -3180,11 +3123,12 @@
         function forceStopRoutine() {
             try {
                 _isRoutineTransitioning = false;
+                _inRoutineSession = false;
                 tasks.forEach(t => t.done = false);
                 if (typeof setTabsLocked === 'function') setTabsLocked(false);
                 switchTab('post');
-                setSunUp();
-                showTabs();
+                setSunUp({ force: true });
+                showTabs(true);
                 renderApplication();
                 renderAlarms();
                 saveState();
@@ -3229,7 +3173,8 @@
         }
 
         // SUN CONTROLS: centralize sun up / down behavior and animation
-        function setSunUp() {
+        function setSunUp(opts = {}) {
+            if (_inRoutineSession && !opts.force) return;
             const bodyEl = document.getElementById('body');
             const sun = document.getElementById('sun-system');
             if (bodyEl) bodyEl.classList.add('day-active');
@@ -3249,11 +3194,17 @@
 
         // TAB VISIBILITY HELPERS
         function hideTabs() {
-            // Tabs should always remain visible.
-            showTabs();
+            const nav = document.querySelector('.bottom-nav');
+            if (!nav) return;
+            nav.style.display = 'none';
+            nav.style.visibility = 'hidden';
+            nav.style.opacity = '0';
+            nav.style.pointerEvents = 'none';
+            nav.setAttribute('aria-hidden', 'true');
         }
         
-        function showTabs() {
+        function showTabs(force = false) {
+            if (_inRoutineSession && !force) return;
             const nav = document.querySelector('.bottom-nav');
             if (!nav) return;
             // restore original layout
@@ -3273,6 +3224,7 @@
 
         // MORNING ROUTINE SESSION HELPER
         function startMorningRoutineSession(resetTasks = false) {
+            _inRoutineSession = true;
             if (resetTasks) {
                 tasks.forEach(t => { t.done = false; });
             }
@@ -3918,9 +3870,10 @@
                             startMorningRoutineSession(true);
                             setSunDown();
                         } else {
+                            _inRoutineSession = false;
                             switchTab('post');
-                            setSunUp();
-                            showTabs();
+                            setSunUp({ force: true });
+                            showTabs(true);
                         }
                     } catch (e) {
                         console.warn('Failed to handle alarm stop flow', e);
@@ -3940,8 +3893,9 @@
                     _snoozeAlarm(index, snoozeMinutes);
 
                     try {
+                        _inRoutineSession = false;
                         switchTab('post');
-                        setSunUp();
+                        setSunUp({ force: true });
                         restoreTabsAfterAlarmAction();
                     } catch (e) {
                         console.warn('Failed to return to home page', e);
@@ -3951,9 +3905,11 @@
 
             // While alarm is ringing, keep background on homepage and keep tabs visible.
             try {
-                switchTab('post');
-                setSunUp();
-                restoreTabsAfterAlarmAction();
+                if (!_inRoutineSession) {
+                    switchTab('post');
+                    setSunUp({ force: true });
+                    restoreTabsAfterAlarmAction();
+                }
             } catch (e) {
                 console.warn('Failed to keep homepage background during ringing', e);
             }
@@ -4012,8 +3968,9 @@
 
             // Snooze should always bring the user back to home with tabs visible.
             try {
+                _inRoutineSession = false;
                 switchTab('post');
-                setSunUp();
+                setSunUp({ force: true });
                 restoreTabsAfterAlarmAction();
             } catch (e) {
                 console.warn('Failed to restore tabs after snooze', e);
@@ -4054,7 +4011,8 @@
             });
         }
 
-        function switchTab(name) {
+        function switchTab(name, opts = {}) {
+            if (_inRoutineSession && name === 'post' && !opts.forceRoutineExit) return;
             // name: 'post' | 'timers' | 'stopwatch' | 'sounds' | 'wake'
             const mappings = {
                 'post': 'screen-post',
