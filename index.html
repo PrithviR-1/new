@@ -1339,7 +1339,25 @@
         </div>
 
         <div id="screen-post" class="glass-card hidden">
-            <h2 style="color: var(--sun-main);">Day Activated.</h2>
+            <h2 aria-label="Sun and moon" style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:24px;">
+                <svg viewBox="0 0 24 24" width="38" height="38" aria-hidden="true">
+                    <circle cx="12" cy="12" r="5" fill="#FFD34E"></circle>
+                    <g stroke="#FFD34E" stroke-width="2" stroke-linecap="round">
+                        <line x1="12" y1="1.5" x2="12" y2="4"></line>
+                        <line x1="12" y1="20" x2="12" y2="22.5"></line>
+                        <line x1="1.5" y1="12" x2="4" y2="12"></line>
+                        <line x1="20" y1="12" x2="22.5" y2="12"></line>
+                        <line x1="4.6" y1="4.6" x2="6.4" y2="6.4"></line>
+                        <line x1="17.6" y1="17.6" x2="19.4" y2="19.4"></line>
+                        <line x1="17.6" y1="6.4" x2="19.4" y2="4.6"></line>
+                        <line x1="4.6" y1="19.4" x2="6.4" y2="17.6"></line>
+                    </g>
+                </svg>
+                <span aria-hidden="true" style="width:2px; height:20px; border-radius:999px; background:rgba(255,255,255,0.55); display:inline-block;"></span>
+                <svg viewBox="0 0 24 24" width="34" height="34" aria-hidden="true">
+                    <path d="M14.2 2.5a9.3 9.3 0 1 0 7.3 14.9 8 8 0 1 1-7.3-14.9z" fill="#DDEBFF"></path>
+                </svg>
+            </h2>
             
             <section style="margin-bottom: 45px;">
                 <p style="text-transform: uppercase; font-size: 11px; font-weight: 900; color: var(--text-secondary); margin-bottom: 20px; letter-spacing: 2px;">Upcoming Alarms</p>
@@ -1352,7 +1370,7 @@
                 <div id="alarms-screen-layout">
                     <div id="alarm-create-panel">
                         <div style="margin-bottom: 20px; display: flex; gap: 12px;">
-                            <button class="alarm-type-btn" id="btn-routine" onclick="setAlarmType('routine')" style="flex: 1; padding: 12px; border-radius: 12px; font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,211,78,0.25); color: var(--sun-main); cursor: pointer; transition: all 0.3s; border-color: var(--sun-main);">Morning Routine</button>
+                            <button class="alarm-type-btn" id="btn-routine" onclick="setAlarmType('routine')" style="flex: 1; padding: 12px; border-radius: 12px; font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,211,78,0.25); color: var(--sun-main); cursor: pointer; transition: all 0.3s; border-color: var(--sun-main);">Routine</button>
                             <button class="alarm-type-btn" id="btn-regular" onclick="setAlarmType('regular')" style="flex: 1; padding: 12px; border-radius: 12px; font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); color: var(--text-primary); cursor: pointer; transition: all 0.3s;">Regular Alarm</button>
                         </div>
                         
@@ -2852,7 +2870,7 @@
                 const repeatLabel = _formatRepeatDays(_getRepeatDaysForAlarm(i));
                 const alarmType = (alarmTypes && alarmTypes[i]) ? alarmTypes[i] : 'routine';
                 const isEnabled = !(Array.isArray(alarmEnabled) && alarmEnabled[i] === false);
-                const typeLabel = alarmType === 'routine' ? 'Morning Routine' : 'Regular';
+                const typeLabel = alarmType === 'routine' ? 'Routine' : 'Regular';
                 const typeColor = alarmType === 'routine' ? 'var(--sun-main)' : 'var(--accent-blue)';
                 const timeUntil = _timeUntilAlarm(a, i);
                 const isCloseToRinging = isEnabled && timeUntil < 300000; // within 5 minutes
