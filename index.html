@@ -690,9 +690,52 @@
         .alarm-time-row {
             width: 100%;
             display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+        .alarm-time-main {
+            display: inline-flex;
             align-items: baseline;
             gap: 10px;
             min-width: 0;
+        }
+        .alarm-time-right {
+            margin-left: auto;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .alarm-expand-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid rgba(255,255,255,0.14);
+            border-radius: 8px;
+            background: rgba(255,255,255,0.04);
+            color: #dbe9ff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background .2s ease, border-color .2s ease, transform .2s ease;
+        }
+        .alarm-expand-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.28);
+        }
+        .alarm-expand-btn svg {
+            transition: transform .2s ease;
+            transform: rotate(0deg);
+        }
+        .alarm-expand-btn[aria-expanded="true"] svg {
+            transform: rotate(180deg);
+        }
+        .alarm-details {
+            display: none;
+            gap: 8px;
+        }
+        .alarm-details.open {
+            display: grid;
         }
         .alarm-controls-row {
             display: flex;
@@ -843,6 +886,29 @@
             background: #0a84ff;
             color: #fff;
             cursor: pointer;
+        }
+
+        .routine-edit-row {
+            position: relative;
+            overflow: hidden;
+        }
+        .routine-edit-row.routine-delete-anim {
+            pointer-events: none;
+            animation: routine-row-fade-out 640ms ease forwards;
+        }
+        .routine-edit-row.routine-delete-anim::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 50%;
+            height: 3px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, rgba(255, 69, 58, 0.95), rgba(255, 120, 100, 0.98));
+            transform: translateY(-50%) scaleX(0);
+            transform-origin: left center;
+            animation: routine-strike-sweep 640ms cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
+            box-shadow: 0 0 10px rgba(255, 69, 58, 0.5);
         }
 
         input[type="text"] {
@@ -1013,6 +1079,17 @@
             }
         }
 
+        @keyframes routine-strike-sweep {
+            0% { transform: translateY(-50%) scaleX(0); opacity: 0.95; }
+            70% { transform: translateY(-50%) scaleX(1); opacity: 1; }
+            100% { transform: translateY(-50%) scaleX(1); opacity: 0.9; }
+        }
+
+        @keyframes routine-row-fade-out {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-6px); }
+        }
+
         .day-active #stage { background: var(--sky-day); }
         .day-active .sun-system { transform: translate(-50%, -100px); }
         #body:not(.day-active) .cloud-container {
@@ -1022,6 +1099,27 @@
         .day-active .cloud-container {
             opacity: 1;
             transform: translate3d(0, 0, 0);
+        }
+
+        #body.bg-animations-paused .starfield,
+        #body.bg-animations-paused .shooting-starfield,
+        #body.bg-animations-paused .birds-layer,
+        #body.bg-animations-paused .wind-layer,
+        #body.bg-animations-paused .cloud-container {
+            display: none !important;
+        }
+
+        #body.bg-animations-paused .star,
+        #body.bg-animations-paused .diamond,
+        #body.bg-animations-paused .shooting-star,
+        #body.bg-animations-paused .bird,
+        #body.bg-animations-paused .bird-svg,
+        #body.bg-animations-paused .wing,
+        #body.bg-animations-paused .wind-streak,
+        #body.bg-animations-paused .sun-icon .sun-rotor,
+        #body.bg-animations-paused .sun-glow,
+        #body.bg-animations-paused .sun-lightcast {
+            animation-play-state: paused !important;
         }
 
         
@@ -1118,6 +1216,193 @@
         
         .glass-card.aux { padding: 22px; max-width: 640px; }
 
+        .background-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .background-option {
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.06);
+            color: var(--text-primary);
+            border-radius: 14px;
+            padding: 14px 16px;
+            text-align: left;
+            cursor: pointer;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            transition: border-color 0.2s ease, background 0.2s ease, transform 0.15s ease;
+        }
+
+        .background-option:hover { transform: translateY(-1px); }
+
+        .background-option.active {
+            border-color: rgba(0,122,255,0.85);
+            background: rgba(0,122,255,0.16);
+        }
+
+        #body.theme-light {
+            --text-primary: #101418;
+            --text-secondary: #4d5a68;
+            --glass-bg: rgba(255, 255, 255, 0.82);
+            --glass-stroke: rgba(16, 20, 24, 0.14);
+        }
+
+        #body.theme-light .glass-card {
+            background: rgba(255, 255, 255, 0.92);
+            border-color: rgba(16, 20, 24, 0.14);
+            box-shadow: 0 20px 60px rgba(16, 20, 24, 0.16);
+            color: #101418;
+        }
+        #body.theme-light .glass-card h2,
+        #body.theme-light .glass-card p,
+        #body.theme-light .glass-card span,
+        #body.theme-light .glass-card small,
+        #body.theme-light .glass-card label {
+            color: var(--text-primary);
+        }
+
+        #body.theme-light .divider-glass {
+            background: rgba(16, 20, 24, 0.16);
+        }
+
+        #body.theme-light .item {
+            background: rgba(16, 20, 24, 0.05);
+            border-color: rgba(16, 20, 24, 0.1);
+        }
+        #body.theme-light .item:hover {
+            background: rgba(16, 20, 24, 0.1);
+            border-color: rgba(16, 20, 24, 0.18);
+        }
+        #body.theme-light .item span {
+            color: #101418;
+        }
+        #body.theme-light .check-circle {
+            border-color: rgba(16, 20, 24, 0.28);
+            color: #101418;
+        }
+
+        #body.theme-light .picker-container {
+            background: rgba(16, 20, 24, 0.06);
+            border-color: rgba(16, 20, 24, 0.14);
+        }
+        #body.theme-light .picker-container::before {
+            background: rgba(16, 20, 24, 0.08);
+            border-top-color: rgba(16, 20, 24, 0.14);
+            border-bottom-color: rgba(16, 20, 24, 0.14);
+        }
+        #body.theme-light .wheel div {
+            color: #5f6c7c;
+        }
+        #body.theme-light .wheel div.active {
+            color: #0a66ff;
+        }
+
+        #body.theme-light input[type="text"],
+        #body.theme-light #timer-label,
+        #body.theme-light .alarm-name-input {
+            background: rgba(255, 255, 255, 0.95) !important;
+            color: #101418 !important;
+            border-color: rgba(16, 20, 24, 0.2) !important;
+        }
+        #body.theme-light input[type="text"]::placeholder,
+        #body.theme-light #timer-label::placeholder,
+        #body.theme-light .alarm-name-input::placeholder {
+            color: #5f6c7c !important;
+        }
+
+        #body.theme-light #next-alarm-summary {
+            background: rgba(16, 20, 24, 0.05);
+            border-color: rgba(16, 20, 24, 0.12);
+        }
+        #body.theme-light #next-alarm-summary .next-alarm-time {
+            color: #101418;
+        }
+        #body.theme-light #next-alarm-summary .next-alarm-rail {
+            background: rgba(16, 20, 24, 0.12);
+        }
+
+        #body.theme-light #alarms-screen-layout {
+            background: rgba(16, 20, 24, 0.04);
+            border-color: rgba(16, 20, 24, 0.12);
+        }
+        #body.theme-light #alarm-create-panel {
+            background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(247,249,252,0.96) 100%);
+            border-bottom-color: rgba(16, 20, 24, 0.12);
+        }
+        #body.theme-light .alarm-row {
+            border-color: rgba(16, 20, 24, 0.12) !important;
+        }
+        #body.theme-light .alarm-edit-btn,
+        #body.theme-light .alarm-expand-btn {
+            background: rgba(16, 20, 24, 0.06);
+            color: #0a66ff;
+            border-color: rgba(16, 20, 24, 0.16);
+        }
+        #body.theme-light .alarm-repeat-trigger {
+            background: rgba(16, 20, 24, 0.05);
+            border-color: rgba(16, 20, 24, 0.16);
+            color: #4d5a68;
+        }
+        #body.theme-light .alarm-delete-btn {
+            background: rgba(255, 69, 58, 0.12) !important;
+        }
+        #body.theme-light .alarm-repeat-popover {
+            background: #ffffff;
+            border-color: rgba(16, 20, 24, 0.16);
+            box-shadow: 0 16px 34px rgba(16, 20, 24, 0.18);
+        }
+        #body.theme-light .alarm-repeat-popover-title {
+            color: #5f6c7c;
+        }
+        #body.theme-light .alarm-repeat-popover .day-check {
+            color: #101418;
+        }
+        #body.theme-light .alarm-repeat-popover .day-check:hover {
+            background: rgba(16, 20, 24, 0.08);
+        }
+
+        #body.theme-light .background-option {
+            background: rgba(16, 20, 24, 0.06);
+            border-color: rgba(16, 20, 24, 0.16);
+            color: #101418;
+        }
+
+        #body.theme-light .bottom-nav .nav-inner {
+            background: rgba(255, 255, 255, 0.96);
+            border-color: rgba(16, 20, 24, 0.14);
+            box-shadow: 0 10px 30px rgba(16, 20, 24, 0.2);
+        }
+        #body.theme-light .tab-btn {
+            color: #3f4b5a;
+        }
+        #body.theme-light .tab-btn.active {
+            color: #ffffff;
+            box-shadow: 0 8px 20px rgba(10, 102, 255, 0.26);
+        }
+
+        #body.theme-light #previous-timers-list * {
+            color: #101418 !important;
+        }
+        #body.theme-light #timers-list [style] {
+            color: #101418 !important;
+            border-color: rgba(16, 20, 24, 0.14) !important;
+            background: rgba(16, 20, 24, 0.05) !important;
+        }
+        #body.theme-light #sw-laps [style] {
+            border-color: rgba(16, 20, 24, 0.14) !important;
+            background: rgba(16, 20, 24, 0.04) !important;
+            color: #101418 !important;
+        }
+
+        #body.theme-dark {
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --glass-bg: #111214;
+            --glass-stroke: rgba(255, 255, 255, 0.08);
+        }
+
         /* ===== ALARM LAYOUT (SINGLE SCROLL) START ===== */
         #next-alarm-summary {
             margin-bottom: 12px;
@@ -1187,7 +1472,7 @@
         /* ===== ALARM LAYOUT (SINGLE SCROLL) END ===== */
     </style>
 </head>
-<body id="body">
+<body id="body" class="theme-dark">
 
     <svg style="position: absolute; width: 0; height: 0;">
         <filter id="cloud-filter">
@@ -1446,26 +1731,31 @@
                 
             </div>
         </div>
+
+        <div id="screen-background" class="glass-card hidden aux" style="max-width:480px;">
+            <h2 style="font-size:28px; margin-bottom:18px;">Background</h2>
+            <p style="text-transform: uppercase; font-size: 11px; font-weight: 900; color: var(--text-secondary); margin-bottom: 20px; letter-spacing: 2px;">Choose App Background</p>
+            <div id="background-options" class="background-options"></div>
+        </div>
     </div>
 
     
     <div class="bottom-nav" aria-hidden="false">
         <div class="nav-inner">
-            <button class="tab-btn" id="tab-alarms" onclick="switchTab('post')" aria-label="Alarms">
+            <button class="tab-btn" id="tab-alarms" onclick="switchTab('post')" aria-label="Home">
+                <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M3 10.5 12 3l9 7.5"></path>
+                    <path d="M5 9.5V21h14V9.5"></path>
+                    <path d="M10 21v-6h4v6"></path>
+                </svg>
+                <span class="tab-label">Home</span>
+            </button>
+            <button class="tab-btn" id="tab-timers" onclick="switchTab('timers')" aria-label="Timers">
                 <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M14 21a2 2 0 0 1-4 0"></path>
                     <path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 2h16z"></path>
                     <path d="M7.5 5 5 3"></path>
                     <path d="m16.5 5 2.5-2"></path>
-                </svg>
-                <span class="tab-label">Alarms</span>
-            </button>
-            <button class="tab-btn" id="tab-timers" onclick="switchTab('timers')" aria-label="Timers">
-                <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="14" r="7"></circle>
-                    <path d="M9 3h6"></path>
-                    <path d="M12 7v3"></path>
-                    <path d="m12 14 3-2"></path>
                 </svg>
                 <span class="tab-label">Timers</span>
             </button>
@@ -1485,6 +1775,14 @@
                     <path d="M18.7 7a7.5 7.5 0 0 1 0 10"></path>
                 </svg>
                 <span class="tab-label">Sounds</span>
+            </button>
+            <button class="tab-btn" id="tab-background" onclick="switchTab('background')" aria-label="Background">
+                <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+                    <circle cx="9" cy="9" r="1.5"></circle>
+                    <path d="M21 16l-5-5-4 4-2-2-7 7"></path>
+                </svg>
+                <span class="tab-label">Background</span>
             </button>
         </div>
     </div>
@@ -1568,9 +1866,23 @@
         let _renamingAlarmIndex = null;
         let originalAlarmDraft = null;
         let _openRepeatEditorIndex = null;
+        let _expandedAlarmIndex = null;
         let _repeatPopover = null;
 
         let selectedSound = DEFAULT_SOUND_ID; // default sound
+        const DEFAULT_BACKGROUND_ID = 'none';
+        const BACKGROUND_OPTIONS = [
+            { id: 'day', name: 'White With Background', type: 'image', value: 'images/day.jpg', theme: 'light' },
+            { id: 'white', name: 'All White', type: 'color', value: '#ffffff', theme: 'light' },
+            { id: 'lightgrey', name: 'All Light Grey', type: 'color', value: '#e0e0e0', theme: 'light' },
+            { id: 'black', name: 'All Black', type: 'color', value: '#000000', theme: 'dark' },
+            { id: 'darkgrey', name: 'All Dark Grey', type: 'color', value: '#333333', theme: 'dark' },
+            { id: 'none', name: 'Black With Background', type: 'none', theme: 'dark' }
+        ];
+        let selectedBackground = DEFAULT_BACKGROUND_ID;
+        let _backgroundAnimationsEnabled = true;
+        let _birdsLoopTimeout = null;
+        let _cloudRafId = null;
         const MOON_PHASES = [
             { cls: 'phase-crescent-right', weight: 14, label: 'crescent-right' },
             { cls: 'phase-crescent-left', weight: 12, label: 'crescent-left' },
@@ -2021,6 +2333,7 @@
                     alarmEnabled: Array.isArray(alarmEnabled) ? alarmEnabled.map(v => !!v) : [],
                     selectedAlarmType: selectedAlarmType === 'regular' ? 'regular' : 'routine',
                     selectedSound: String(selectedSound || DEFAULT_SOUND_ID),
+                    selectedBackground: String(selectedBackground || DEFAULT_BACKGROUND_ID),
                     customSounds,
                     timers: _serializeTimersForState(),
                     previousTimerHistory: Array.isArray(previousTimerHistory)
@@ -2071,6 +2384,8 @@
                 if (_sw_tick) { clearInterval(_sw_tick); _sw_tick = null; }
                 const swBtn = document.getElementById('sw-start');
                 if (swBtn) swBtn.textContent = 'Start';
+                selectedBackground = DEFAULT_BACKGROUND_ID;
+                applyBackground(selectedBackground, false);
                 return;
             }
 
@@ -2120,6 +2435,9 @@
 
             const soundExists = SOUND_OPTIONS.some(s => s.id === state.selectedSound);
             selectedSound = soundExists ? state.selectedSound : DEFAULT_SOUND_ID;
+            const bgExists = BACKGROUND_OPTIONS.some(bg => bg.id === state.selectedBackground);
+            selectedBackground = bgExists ? state.selectedBackground : DEFAULT_BACKGROUND_ID;
+            applyBackground(selectedBackground, false);
 
             _timers.splice(0, _timers.length);
             const now = Date.now();
@@ -2183,6 +2501,7 @@
             renderApplication();
             renderAlarms();
             renderSoundOptions();
+            renderBackgroundOptions();
             _renderTimers();
             _renderPreviousTimers();
             _sw_render();
@@ -2234,7 +2553,40 @@
             }, 180);
         });
 
+        function _shouldEnableBackgroundAnimations(backgroundId) {
+            return !['white', 'lightgrey', 'darkgrey', 'black'].includes(String(backgroundId || ''));
+        }
+
+        function _setBackgroundAnimationMode(enabled) {
+            const body = document.getElementById('body');
+            const nextEnabled = !!enabled;
+            const changed = _backgroundAnimationsEnabled !== nextEnabled;
+            _backgroundAnimationsEnabled = nextEnabled;
+
+            if (body) body.classList.toggle('bg-animations-paused', !_backgroundAnimationsEnabled);
+
+            if (!_backgroundAnimationsEnabled) {
+                if (_birdsLoopTimeout) {
+                    clearTimeout(_birdsLoopTimeout);
+                    _birdsLoopTimeout = null;
+                }
+                if (_cloudRafId) {
+                    cancelAnimationFrame(_cloudRafId);
+                    _cloudRafId = null;
+                }
+                return;
+            }
+
+            if (changed) {
+                initNightSky();
+                initWindFX();
+                initDayBirds();
+                initCloudsMotion();
+            }
+        }
+
         function initWindFX() {
+            if (!_backgroundAnimationsEnabled) return;
             const body = document.getElementById('body');
             const stage = document.getElementById('stage');
             if (!body || !stage) return;
@@ -2391,6 +2743,7 @@
         }
 
         function initNightSky() {
+            if (!_backgroundAnimationsEnabled) return;
             const starfield = document.getElementById('starfield');
             const shootingField = document.getElementById('shooting-starfield');
             if (!starfield || !shootingField) return;
@@ -2503,10 +2856,16 @@
         }
 
         function initDayBirds() {
+            if (_birdsLoopTimeout) {
+                clearTimeout(_birdsLoopTimeout);
+                _birdsLoopTimeout = null;
+            }
+            if (!_backgroundAnimationsEnabled) return;
             const layer = document.getElementById('birds-layer');
             if (!layer) return;
 
             function spawnGroup() {
+                if (!_backgroundAnimationsEnabled) return;
                 if (!document.getElementById('body')?.classList.contains('day-active')) return;
 
                 const groupSize = 1 + Math.floor(Math.random() * 4); // 1..4
@@ -2558,15 +2917,24 @@
             }
 
             function loop() {
+                if (!_backgroundAnimationsEnabled) {
+                    _birdsLoopTimeout = null;
+                    return;
+                }
                 spawnGroup();
                 const nextMs = 4800 + Math.random() * 7600;
-                setTimeout(loop, nextMs);
+                _birdsLoopTimeout = setTimeout(loop, nextMs);
             }
 
-            setTimeout(loop, 900);
+            _birdsLoopTimeout = setTimeout(loop, 900);
         }
 
         function initCloudsMotion() {
+            if (_cloudRafId) {
+                cancelAnimationFrame(_cloudRafId);
+                _cloudRafId = null;
+            }
+            if (!_backgroundAnimationsEnabled) return;
             const clouds = Array.from(document.querySelectorAll('.cloud'));
             if (!clouds.length) return;
             const windDir = _sceneWindDirection || 1;
@@ -2604,6 +2972,10 @@
 
             let last = performance.now();
             function step(now) {
+                if (!_backgroundAnimationsEnabled) {
+                    _cloudRafId = null;
+                    return;
+                }
                 const dt = Math.min(100, now - last) / 1000; last = now;
 
                 clouds.forEach(el => {
@@ -2657,7 +3029,7 @@
                     }
                 }
 
-                requestAnimationFrame(step);
+                _cloudRafId = requestAnimationFrame(step);
             }
 
             function reinitCloud(el) {
@@ -2677,7 +3049,7 @@
                 el.style.transform = (d.baseTransform ? d.baseTransform + ' ' : '') + ` translate3d(${d.x}px, ${d.y}px, 0)`;
             }
 
-            requestAnimationFrame(step);
+            _cloudRafId = requestAnimationFrame(step);
         }
 
         function renderApplication() {
@@ -3020,6 +3392,7 @@
                 const rowDisabledStyle = !isEnabled ? 'background:rgba(130,130,130,0.12); border:1px solid rgba(180,180,180,0.2);' : '';
                 const contentDisabledStyle = !isEnabled ? 'opacity:0.46; filter:grayscale(1);' : '';
                 const nameTextDisabledStyle = !isEnabled ? 'opacity:0.46; filter:grayscale(1);' : '';
+                const isExpanded = _expandedAlarmIndex === i;
                 return `
                 <div class="alarm-row" data-alarm-idx="${i}" style="padding:22px 0; border-bottom:1px solid rgba(255,255,255,0.1);${highlightStyle}${rowDisabledStyle}padding:20px;border-radius:12px;margin-bottom:8px;">
                     <div style="display:flex; align-items:center; gap:8px; margin-bottom:2px;">
@@ -3035,20 +3408,31 @@
                         </button>
                     </div>
                     <div class="alarm-time-row" style="${contentDisabledStyle}">
-                        <span style="font-size:36px; font-weight:300; letter-spacing:2px; margin-right:10px;">${a.split(' ')[0]}</span>
-                        <span style="font-size:14px; font-weight:900; opacity:0.5;">${a.split(' ')[1]}</span>
-                        <span style="margin-left:auto; font-size:12px; font-weight:700; color:${typeColor}; opacity:0.9; white-space:nowrap;">${typeLabel}</span>
+                        <span class="alarm-time-main">
+                            <span style="font-size:36px; font-weight:300; letter-spacing:2px;">${a.split(' ')[0]}</span>
+                            <span style="font-size:14px; font-weight:900; opacity:0.5;">${a.split(' ')[1]}</span>
+                        </span>
+                        <span class="alarm-time-right">
+                            <span style="font-size:12px; font-weight:700; color:${typeColor}; opacity:0.9; white-space:nowrap;">${typeLabel}</span>
+                            <button class="alarm-toggle-btn" data-alarm-idx="${i}" aria-label="${isEnabled ? 'Turn alarm off' : 'Turn alarm on'}" style="position:relative; width:56px; height:32px; border:none; border-radius:999px; cursor:pointer; background:${isEnabled ? '#10d176' : '#7a7f88'}; transition:background .2s ease;">
+                                <span style="position:absolute; top:3px; left:${isEnabled ? '27px' : '3px'}; width:26px; height:26px; border-radius:50%; background:#fff; transition:left .2s ease;"></span>
+                            </button>
+                            <button class="alarm-expand-btn" data-alarm-idx="${i}" aria-label="${isExpanded ? 'Collapse alarm options' : 'Expand alarm options'}" aria-expanded="${isExpanded ? 'true' : 'false'}">
+                                <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="display:block; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;">
+                                    <path d="M6 9l6 6 6-6"></path>
+                                </svg>
+                            </button>
+                        </span>
                     </div>
-                    <div class="alarm-controls-row">
-                        <button class="alarm-edit-btn" data-alarm-idx="${i}">Edit</button>
-                        <button class="alarm-toggle-btn" data-alarm-idx="${i}" aria-label="${isEnabled ? 'Turn alarm off' : 'Turn alarm on'}" style="position:relative; width:56px; height:32px; border:none; border-radius:999px; cursor:pointer; background:${isEnabled ? '#10d176' : '#7a7f88'}; transition:background .2s ease;">
-                            <span style="position:absolute; top:3px; left:${isEnabled ? '27px' : '3px'}; width:26px; height:26px; border-radius:50%; background:#fff; transition:left .2s ease;"></span>
+                    <div class="alarm-details ${isExpanded ? 'open' : ''}" style="${contentDisabledStyle}">
+                        <div class="alarm-controls-row">
+                            <button class="alarm-edit-btn" data-alarm-idx="${i}">Edit</button>
+                            <button class="alarm-delete-btn" data-alarm-idx="${i}" style="background:none; border:none; color:var(--accent-red); font-weight:900; font-size:11px; cursor:pointer; text-transform:uppercase; letter-spacing:1.5px;">Remove</button>
+                        </div>
+                        <button type="button" class="alarm-repeat-trigger" data-alarm-idx="${i}" aria-label="Edit repeating days for ${a}">
+                            <span class="alarm-repeat-label">Repeating: ${repeatLabel}</span>
                         </button>
-                        <button class="alarm-delete-btn" data-alarm-idx="${i}" style="background:none; border:none; color:var(--accent-red); font-weight:900; font-size:11px; cursor:pointer; text-transform:uppercase; letter-spacing:1.5px;">Remove</button>
                     </div>
-                    <button type="button" class="alarm-repeat-trigger" data-alarm-idx="${i}" aria-label="Edit repeating days for ${a}">
-                        <span class="alarm-repeat-label">Repeating: ${repeatLabel}</span>
-                    </button>
                 </div>
             `}).join('');
 
@@ -3101,6 +3485,14 @@
                 const idx = parseInt(btn.dataset.alarmIdx);
                 btn.onclick = () => toggleAlarmEnabled(idx);
             });
+            document.querySelectorAll('.alarm-expand-btn').forEach(btn => {
+                const idx = parseInt(btn.dataset.alarmIdx, 10);
+                btn.onclick = (evt) => {
+                    evt.preventDefault();
+                    evt.stopPropagation();
+                    toggleAlarmDetails(idx);
+                };
+            });
 
             document.querySelectorAll('.alarm-delete-btn').forEach(btn => {
                 const idx = parseInt(btn.dataset.alarmIdx);
@@ -3114,6 +3506,14 @@
                 else if (_repeatPopover) _positionRepeatPopover(activeTrigger, _repeatPopover);
             }
             _updateNextAlarmSummary();
+        }
+
+        function toggleAlarmDetails(index) {
+            if (!Number.isInteger(index) || index < 0 || index >= alarms.length) return;
+            const nextExpanded = _expandedAlarmIndex === index ? null : index;
+            if (_openRepeatEditorIndex !== null && _openRepeatEditorIndex !== nextExpanded) _closeRepeatPopover();
+            _expandedAlarmIndex = nextExpanded;
+            renderAlarms();
         }
 
         function toggleAlarmEnabled(index) {
@@ -3242,6 +3642,8 @@
             if (alarmsRepeatDays && alarmsRepeatDays.length > index) alarmsRepeatDays.splice(index, 1);
             if (alarmTypes && alarmTypes.length > index) alarmTypes.splice(index, 1);
             if (alarmEnabled && alarmEnabled.length > index) alarmEnabled.splice(index, 1);
+            if (_expandedAlarmIndex === index) _expandedAlarmIndex = null;
+            if (_expandedAlarmIndex !== null && index < _expandedAlarmIndex) _expandedAlarmIndex -= 1;
             if (_renamingAlarmIndex === index) _renamingAlarmIndex = null;
             if (_renamingAlarmIndex !== null && index < _renamingAlarmIndex) _renamingAlarmIndex -= 1;
             if (editingAlarmIndex === index) {
@@ -3266,6 +3668,8 @@
             list.innerHTML = '';
             tasks.forEach(t => {
                 const row = document.createElement('div');
+                row.className = 'routine-edit-row';
+                row.dataset.taskId = String(t.id);
                 row.style.display = 'flex';
                 row.style.justifyContent = 'space-between';
                 row.style.alignItems = 'center';
@@ -3321,6 +3725,17 @@
 
         function deleteTask(id) {
             const target = String(id);
+            const row = document.querySelector(`#edit-list .routine-edit-row[data-task-id="${target}"]`);
+            if (row && !row.classList.contains('routine-delete-anim')) {
+                row.classList.add('routine-delete-anim');
+                setTimeout(() => {
+                    _applyTaskMutation(() => {
+                        const idx = tasks.findIndex(t => String(t.id) === target);
+                        if (idx >= 0) tasks.splice(idx, 1); // remove exactly one
+                    }, { renderMode: 'routine_only' });
+                }, 640);
+                return;
+            }
             _applyTaskMutation(() => {
                 const idx = tasks.findIndex(t => String(t.id) === target);
                 if (idx >= 0) tasks.splice(idx, 1); // remove exactly one
@@ -3351,6 +3766,52 @@
         }
 
         let SOUND_OPTIONS = BASE_SOUND_OPTIONS.map(s => ({ ...s }));
+
+        function applyBackground(backgroundId, persist = true) {
+            const app = document.getElementById('app-ui');
+            const bodyEl = document.getElementById('body');
+            if (!app || !bodyEl) return;
+
+            const opt = BACKGROUND_OPTIONS.find(o => o.id === backgroundId) || BACKGROUND_OPTIONS.find(o => o.id === DEFAULT_BACKGROUND_ID);
+            selectedBackground = opt.id;
+
+            app.style.backgroundImage = '';
+            app.style.backgroundSize = '';
+            app.style.backgroundPosition = '';
+            app.style.backgroundRepeat = '';
+            app.style.backgroundColor = '';
+
+            if (opt.type === 'image') {
+                app.style.backgroundImage = `url('${opt.value}')`;
+                app.style.backgroundSize = 'cover';
+                app.style.backgroundPosition = 'center';
+                app.style.backgroundRepeat = 'no-repeat';
+            } else if (opt.type === 'color') {
+                app.style.backgroundColor = opt.value;
+            }
+
+            bodyEl.classList.remove('theme-dark', 'theme-light');
+            bodyEl.classList.add(opt.theme === 'light' ? 'theme-light' : 'theme-dark');
+            _setBackgroundAnimationMode(_shouldEnableBackgroundAnimations(opt.id));
+
+            if (persist) saveState();
+        }
+
+        function renderBackgroundOptions() {
+            const container = document.getElementById('background-options');
+            if (!container) return;
+
+            container.innerHTML = BACKGROUND_OPTIONS.map(opt => `
+                <button class="background-option ${selectedBackground === opt.id ? 'active' : ''}" type="button" onclick="selectBackground('${opt.id}')">
+                    ${opt.name}
+                </button>
+            `).join('');
+        }
+
+        function selectBackground(backgroundId) {
+            applyBackground(backgroundId, true);
+            renderBackgroundOptions();
+        }
 
         function renderSoundOptions() {
             const container = document.getElementById('sound-options');
@@ -4868,10 +5329,11 @@
                 'wake': 'screen-wake',
                 'timers': 'screen-timers',
                 'stopwatch': 'screen-stopwatch',
-                'sounds': 'screen-sounds'
+                'sounds': 'screen-sounds',
+                'background': 'screen-background'
             };
             const targetId = mappings[name] || 'screen-post';
-            ['screen-wake','screen-post','screen-timers','screen-stopwatch','screen-sounds'].forEach(id => {
+            ['screen-wake','screen-post','screen-timers','screen-stopwatch','screen-sounds','screen-background'].forEach(id => {
                 const el = document.getElementById(id);
                 if (!el) return;
                 if (id === targetId) {
@@ -4894,11 +5356,13 @@
             if (name === 'timers') document.getElementById('tab-timers')?.classList.add('active');
             if (name === 'stopwatch') document.getElementById('tab-stopwatch')?.classList.add('active');
             if (name === 'sounds') document.getElementById('tab-sounds')?.classList.add('active');
+            if (name === 'background') document.getElementById('tab-background')?.classList.add('active');
         }
 
         (function initTabs(){
             switchTab('post');
             renderSoundOptions();
+            renderBackgroundOptions();
         })();
 
         
