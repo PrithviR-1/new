@@ -669,6 +669,11 @@
             scroll-snap-type: y mandatory;
             padding: 90px 0;
             z-index: 2;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: pan-y;
+            overscroll-behavior-y: contain;
+            cursor: ns-resize;
         }
         .wheel::-webkit-scrollbar { display: none; }
         .wheel div { 
@@ -682,11 +687,12 @@
             font-weight: 400;
         }
         .wheel div.active {
-            color: var(--action-grad-start);
+            color: transparent;
+            background: linear-gradient(135deg, var(--action-grad-start) 0%, var(--action-grad-end) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
             font-weight: 600;
             transform: scale(1.4);
-            text-shadow: 0 0 8px rgba(149, 192, 234, 0.9), 0 0 18px rgba(196, 231, 199, 0.75);
-            filter: drop-shadow(0 0 6px rgba(149, 192, 234, 0.45));
         }
 
         
@@ -744,7 +750,7 @@
             position: relative;
             transition: box-shadow .2s ease;
             padding: 24px 20px !important;
-            margin-bottom: 12px !important;
+            margin-bottom: 22px !important;
             border-radius: 14px !important;
             display: flex !important;
             flex-direction: column !important;
@@ -752,12 +758,56 @@
             gap: 14px !important;
             overflow: hidden;
         }
+        .alarm-row::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 20%;
+            background: linear-gradient(
+                180deg,
+                rgba(149, 192, 234, 0) 0%,
+                rgba(149, 192, 234, 0.03) 60%,
+                rgba(196, 231, 199, 0.055) 100%
+            );
+            pointer-events: none;
+            z-index: 0;
+        }
+        .alarm-row > * {
+            position: relative;
+            z-index: 1;
+        }
         .alarm-time-row {
             width: 100%;
             display: flex;
             align-items: center;
             gap: 10px;
             min-width: 0;
+        }
+        .alarm-name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            min-width: 0;
+        }
+        .alarm-name-main {
+            flex: 1;
+            min-width: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .alarm-name-row .alarm-type-toggle {
+            margin-left: 10px;
+            flex: 0 0 auto;
+        }
+        .alarm-name-main .alarm-name-text {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
         .alarm-time-main {
             display: inline-flex;
@@ -832,10 +882,13 @@
             width: 100%;
             min-width: 0;
         }
-        .alarm-controls-row .alarm-edit-btn,
-        .alarm-controls-row .alarm-delete-btn {
-            flex: 1 1 0;
+        .alarm-controls-row .alarm-edit-btn {
+            flex: 1 1 auto;
             min-width: 0;
+        }
+        .alarm-controls-row .alarm-delete-btn {
+            flex: 0 0 54px;
+            min-width: 54px;
         }
         .alarm-controls-row .alarm-toggle-btn {
             flex: 0 0 56px;
@@ -857,6 +910,13 @@
             transition: background .2s ease, color .2s ease;
         }
         .alarm-edit-btn:hover { background: rgba(255,255,255,0.12); }
+        .alarm-edit-label {
+            background: linear-gradient(135deg, var(--action-grad-start) 0%, var(--action-grad-end) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
+        }
         #body.theme-light .alarm-name-text {
             color: #101418 !important;
         }
@@ -888,6 +948,11 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             max-width: 100%;
+            background: linear-gradient(135deg, var(--action-grad-start) 0%, var(--action-grad-end) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            color: transparent;
         }
         .alarm-row .alarm-toggle-btn {
             --toggle-track-height: 32px;
@@ -923,14 +988,27 @@
         }
         .alarm-row .alarm-delete-btn {
             min-height: 44px;
-            min-width: 88px;
-            padding: 10px 12px !important;
+            min-width: 54px;
+            padding: 8px 10px !important;
             border-radius: 10px !important;
-            background: rgba(255,69,58,0.08) !important;
+            background: #ff3b30 !important;
+            color: #ffffff !important;
             letter-spacing: 1.1px !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         .alarm-row .alarm-delete-btn:hover {
-            background: rgba(255,69,58,0.15) !important;
+            background: #e0352d !important;
+        }
+        .alarm-row .alarm-delete-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
         .alarm-repeat-popover {
             position: fixed;
@@ -1165,21 +1243,6 @@
             }
         }
 
-        @keyframes click-radar {
-            0% {
-                opacity: 0.95;
-                transform: translate(-50%, -50%) scale(0.2);
-            }
-            60% {
-                opacity: 0.45;
-                transform: translate(-50%, -50%) scale(4.6);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(6.8);
-            }
-        }
-
         @keyframes routine-strike-sweep {
             0% { transform: translateY(-50%) scaleX(0); opacity: 0.95; }
             70% { transform: translateY(-50%) scaleX(1); opacity: 1; }
@@ -1245,6 +1308,10 @@
             #app-ui { padding: 50px 16px calc(130px + env(safe-area-inset-bottom)); }
             .input-action-row { gap: 10px; }
             .input-action-row .btn-add { min-width: 72px; padding: 14px 16px; }
+            .bottom-nav .nav-inner { padding: 7px; gap: 4px; border-radius: 22px; }
+            .tab-btn { padding: 7px 4px; font-size: 9px; gap: 4px; }
+            .tab-label { font-size: 8px; letter-spacing: 0.35px; }
+            .tab-icon { width: 17px; height: 17px; }
         }
 
         
@@ -1255,9 +1322,9 @@
         
         .bottom-nav {
             position: fixed;
-            left: 0;
-            right: 0;
-            bottom: 18px;
+            left: max(8px, env(safe-area-inset-left));
+            right: max(8px, env(safe-area-inset-right));
+            bottom: calc(10px + env(safe-area-inset-bottom));
             display: flex;
             justify-content: center;
             z-index: 200;
@@ -1265,10 +1332,12 @@
         }
         .bottom-nav .nav-inner {
             display: flex;
-            gap: 10px;
+            width: min(100%, 540px);
+            max-width: 100%;
+            gap: 6px;
             background: #111214;
             border: 1px solid rgba(255,255,255,0.06);
-            padding: 10px;
+            padding: 8px;
             border-radius: 28px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             backdrop-filter: none;
@@ -1276,22 +1345,23 @@
         .tab-btn {
             background: transparent;
             color: var(--text-primary);
-            padding: 8px 12px;
+            padding: 8px 6px;
             border-radius: 14px;
             font-weight: 800;
             cursor: pointer;
             border: none;
-            font-size: 11px;
+            font-size: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             gap: 5px;
-            min-width: 72px;
+            min-width: 0;
+            flex: 1 1 0;
         }
         .tab-icon {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             stroke: currentColor;
             fill: none;
             stroke-width: 2;
@@ -1299,8 +1369,10 @@
             stroke-linejoin: round;
         }
         .tab-label {
+            font-size: 10px;
             letter-spacing: 0.5px;
             text-transform: uppercase;
+            white-space: nowrap;
         }
         .tab-btn.active {
             background: linear-gradient(135deg, var(--action-grad-start) 0%, var(--action-grad-end) 100%);
@@ -1317,18 +1389,11 @@
             border: 1px solid var(--action-border) !important;
             box-shadow: inset 0 1px 0 rgba(255,255,255,0.65), 0 8px 18px rgba(111, 132, 157, 0.22);
         }
-        .click-radar {
-            position: fixed;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            border: 2px solid rgba(110, 187, 255, 0.85);
-            background: rgba(110, 187, 255, 0.1);
-            transform: translate(-50%, -50%) scale(0.2);
-            pointer-events: none;
-            z-index: 12000;
-            animation: click-radar 620ms cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
-            box-shadow: 0 0 22px rgba(110, 187, 255, 0.55);
+        button {
+            transition: filter 0.12s ease;
+        }
+        button:active {
+            filter: brightness(0.92);
         }
         
         .glass-card.aux { padding: 22px; max-width: 640px; }
@@ -1436,9 +1501,10 @@
             color: #5f6c7c;
         }
         #body.theme-light .wheel div.active {
-            color: var(--action-grad-start);
-            text-shadow: 0 0 8px rgba(149, 192, 234, 0.85), 0 0 14px rgba(196, 231, 199, 0.6);
-            filter: drop-shadow(0 0 5px rgba(149, 192, 234, 0.35));
+            color: transparent;
+            background: linear-gradient(135deg, var(--action-grad-start) 0%, var(--action-grad-end) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
         }
 
         #body.theme-light input[type="text"],
@@ -1476,8 +1542,12 @@
         #body.theme-light .alarm-row {
             border-color: rgba(16, 20, 24, 0.12) !important;
         }
-        #body.theme-light .alarm-edit-btn,
         #body.theme-light .alarm-expand-btn {
+            background: rgba(16, 20, 24, 0.06);
+            color: #0a66ff;
+            border-color: rgba(16, 20, 24, 0.16);
+        }
+        #body.theme-light .alarm-edit-btn {
             background: rgba(16, 20, 24, 0.06);
             color: #0a66ff;
             border-color: rgba(16, 20, 24, 0.16);
@@ -2642,7 +2712,6 @@
             initDayBirds();
             initWindFX();
             initCloudsMotion();
-            initClickRadar();
             initRepeatPopoverDismiss();
             const alarmCommitBtn = document.getElementById('set-alarm-btn') || document.getElementById('alarm-commit-btn');
             if (alarmCommitBtn) {
@@ -2813,6 +2882,12 @@
 
             Object.values(wheels).forEach(wheel => {
                 if (wheel) {
+                    wheel.addEventListener('dragstart', (evt) => {
+                        evt.preventDefault();
+                    });
+                    wheel.addEventListener('pointerdown', (evt) => {
+                        if (evt.pointerType === 'mouse') evt.preventDefault();
+                    });
                     wheel.addEventListener('scroll', () => {
                         clearTimeout(wheel.snapTimeout);
                         wheel.snapTimeout = setTimeout(() => handleWheelSnap(wheel), 150);
@@ -2855,23 +2930,6 @@
                 const w = document.getElementById(id);
                 if (w) w.scrollTop = 1; // Trigger initial calculation
             });
-        }
-
-        function initClickRadar() {
-            const appRoot = document.getElementById('app-ui');
-            document.addEventListener('pointerdown', (evt) => {
-                if (evt.button !== 0 || !evt.isPrimary) return;
-                if (appRoot && !appRoot.contains(evt.target)) return;
-
-                const ring = document.createElement('span');
-                ring.className = 'click-radar';
-                ring.style.left = `${evt.clientX}px`;
-                ring.style.top = `${evt.clientY}px`;
-                document.body.appendChild(ring);
-                ring.addEventListener('animationend', () => {
-                    try { if (ring.parentNode) ring.parentNode.removeChild(ring); } catch (e) {}
-                }, { once: true });
-            }, { passive: true });
         }
 
         function initNightSky() {
@@ -3535,18 +3593,21 @@
                 const nameTextDisabledStyle = !isEnabled ? 'opacity:0.46; filter:grayscale(1);' : '';
                 const isExpanded = _expandedAlarmIndex === i;
                 return `
-                <div class="alarm-row" data-alarm-idx="${i}" style="padding:22px 0; border-bottom:1px solid rgba(255,255,255,0.1);${highlightStyle}${rowDisabledStyle}padding:20px;border-radius:12px;margin-bottom:8px;">
-                    <div style="display:flex; align-items:center; gap:8px; margin-bottom:2px;">
-                        ${isRenaming
-                            ? `<input type="text" class="alarm-name-input" data-alarm-idx="${i}" value="${alarmName.replace(/"/g, '&quot;')}" maxlength="40" style="flex:1; min-width:0; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); border-radius:8px; color:#fff; padding:8px 10px; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; ${nameTextDisabledStyle}">`
-                            : `<div class="alarm-name-text" style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; font-weight:900; color:rgba(255,255,255,0.72); ${nameTextDisabledStyle}">${alarmName}</div>`
-                        }
-                        <button class="alarm-rename-btn" data-alarm-idx="${i}" aria-label="Rename alarm" title="Rename alarm" style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border:none; border-radius:8px; background:rgba(255,255,255,0.06); color:#dbe9ff; cursor:pointer;">
-                            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="display:block; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;">
-                                <path d="M12 20h9"></path>
-                                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path>
-                            </svg>
-                        </button>
+                <div class="alarm-row" data-alarm-idx="${i}" style="padding:22px 0; border-bottom:1px solid rgba(255,255,255,0.1);${highlightStyle}${rowDisabledStyle}padding:20px;border-radius:12px;margin-bottom:18px;">
+                    <div class="alarm-name-row" style="${contentDisabledStyle}">
+                        <span class="alarm-name-main">
+                            ${isRenaming
+                                ? `<input type="text" class="alarm-name-input" data-alarm-idx="${i}" value="${alarmName.replace(/"/g, '&quot;')}" maxlength="40" style="flex:1; min-width:0; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.2); border-radius:8px; color:#fff; padding:8px 10px; font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:1px; ${nameTextDisabledStyle}">`
+                                : `<div class="alarm-name-text" style="font-size:11px; text-transform:uppercase; letter-spacing:1.2px; font-weight:900; color:rgba(255,255,255,0.72); ${nameTextDisabledStyle}">${alarmName}</div>`
+                            }
+                            <button class="alarm-rename-btn" data-alarm-idx="${i}" aria-label="Rename alarm" title="Rename alarm" style="display:inline-flex; align-items:center; justify-content:center; width:28px; height:28px; border:none; border-radius:8px; background:rgba(255,255,255,0.06); color:#dbe9ff; cursor:pointer;">
+                                <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" style="display:block; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round;">
+                                    <path d="M12 20h9"></path>
+                                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"></path>
+                                </svg>
+                            </button>
+                        </span>
+                        <button class="alarm-type-toggle" data-alarm-idx="${i}" style="color:${typeColor}; opacity:0.95;">${typeLabel}</button>
                     </div>
                     <div class="alarm-time-row" style="${contentDisabledStyle}">
                         <span class="alarm-time-main">
@@ -3554,7 +3615,6 @@
                             <span style="font-size:14px; font-weight:900; opacity:0.5;">${a.split(' ')[1]}</span>
                         </span>
                         <span class="alarm-time-right">
-                            <button class="alarm-type-toggle" data-alarm-idx="${i}" style="color:${typeColor}; opacity:0.95;">${typeLabel}</button>
                             <button class="alarm-toggle-btn" data-alarm-idx="${i}" aria-label="${isEnabled ? 'Turn alarm off' : 'Turn alarm on'}" style="position:relative; width:56px; height:32px; border:none; border-radius:999px; cursor:pointer; background:${isEnabled ? '#10d176' : '#7a7f88'}; transition:background .2s ease;">
                                 <span style="position:absolute; top:3px; left:${isEnabled ? '27px' : '3px'}; width:26px; height:26px; border-radius:50%; background:#fff; transition:left .2s ease;"></span>
                             </button>
@@ -3567,8 +3627,14 @@
                     </div>
                     <div class="alarm-details ${isExpanded ? 'open' : ''}" style="${contentDisabledStyle}">
                         <div class="alarm-controls-row">
-                            <button class="alarm-edit-btn" data-alarm-idx="${i}">Edit</button>
-                            <button class="alarm-delete-btn" data-alarm-idx="${i}" style="background:none; border:none; color:var(--accent-red); font-weight:900; font-size:11px; cursor:pointer; text-transform:uppercase; letter-spacing:1.5px;">Remove</button>
+                            <button class="alarm-edit-btn" data-alarm-idx="${i}"><span class="alarm-edit-label">Edit</span></button>
+                            <button class="alarm-delete-btn" data-alarm-idx="${i}" aria-label="Delete alarm" title="Delete alarm" style="background:none; border:none; color:var(--accent-red); font-weight:900; font-size:11px; cursor:pointer; text-transform:uppercase; letter-spacing:1.5px;">
+                                <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path d="M3 6h18"></path>
+                                    <path d="M8 6V4h8v2"></path>
+                                    <path d="M7 6l1 14h8l1-14"></path>
+                                </svg>
+                            </button>
                         </div>
                         <button type="button" class="alarm-repeat-trigger" data-alarm-idx="${i}" aria-label="Edit repeating days for ${a}">
                             <span class="alarm-repeat-label">Repeating: ${repeatLabel}</span>
