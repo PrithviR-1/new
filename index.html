@@ -35,7 +35,7 @@
             --action-text: #6f7c8a;
             
             
-            --glass-bg: #111214;
+            --glass-bg: #000000;
             --glass-stroke: rgba(255, 255, 255, 0.08);
             --text-primary: #ffffff;
             --text-secondary: #94a3b8;
@@ -109,7 +109,7 @@
         
         .moon-system {
             position: absolute;
-            top: 3%;
+            top: 12.3%;
             left: 50%;
             width: 116px;
             height: 116px;
@@ -121,6 +121,7 @@
             align-items: center;
             justify-content: center;
             opacity: 0;
+            animation: moon-float-y 6s ease-in-out infinite;
         }
 
         #body:not(.day-active) .moon-system {
@@ -489,7 +490,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 60px 24px calc(140px + env(safe-area-inset-bottom));
+            padding: 0 8px calc(140px + env(safe-area-inset-bottom));
             overflow-y: auto;
             overflow-x: hidden;
             z-index: 100; 
@@ -500,12 +501,38 @@
 
         #app-ui::-webkit-scrollbar { display: none; }
 
+        .app-top-toast {
+            position: fixed;
+            top: calc(62px + env(safe-area-inset-top));
+            left: 50%;
+            transform: translateX(-50%) translateY(-12px);
+            z-index: 1200;
+            background: rgba(12, 20, 32, 0.9);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #f5f8ff;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 0.7px;
+            text-transform: uppercase;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.28s ease, transform 0.28s ease;
+            white-space: nowrap;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.36);
+        }
+        .app-top-toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
         .glass-card {
             background: var(--glass-bg);
             border: 1px solid var(--glass-stroke);
             border-radius: 44px;
             width: 100%;
-            max-width: 480px;
+            max-width: 568px;
             padding: 44px;
             box-shadow: var(--card-shadow);
             opacity: 1;
@@ -521,6 +548,90 @@
             transform: translateY(120px) scale(0.92);
             pointer-events: none;
             display: none;
+        }
+
+        #body.no-background-mode #stage {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #body.no-background-mode #app-ui {
+            align-items: center;
+            padding: 0 8px calc(140px + env(safe-area-inset-bottom));
+            background: #000000;
+        }
+
+        #body.no-background-mode .glass-card {
+            max-width: 568px !important;
+            width: 100%;
+            border-radius: 0;
+            margin-bottom: 40px;
+        }
+        #body.clear-background-mode #app-ui {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0.28) 100%);
+        }
+        #body.clear-background-mode .glass-card {
+            background: rgba(5, 12, 22, 0.5);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 24px 56px rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(10px) saturate(120%);
+            -webkit-backdrop-filter: blur(10px) saturate(120%);
+        }
+        #body.clear-background-mode .bottom-nav .nav-inner {
+            background: rgba(5, 12, 22, 0.56);
+            border-color: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(10px) saturate(120%);
+            -webkit-backdrop-filter: blur(10px) saturate(120%);
+        }
+        #body.clear-background-mode #next-alarm-summary {
+            background: rgba(5, 12, 22, 0.5) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+        #body.clear-background-mode #alarms-screen-layout {
+            background: rgba(5, 12, 22, 0.5) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+        #body.clear-background-mode #alarm-create-panel {
+            background: transparent !important;
+            border-bottom-color: rgba(255, 255, 255, 0.2) !important;
+            backdrop-filter: blur(10px) saturate(120%);
+            -webkit-backdrop-filter: blur(10px) saturate(120%);
+        }
+        #body.clear-background-mode #alarms-screen-layout #alarm-list {
+            background: transparent !important;
+        }
+        #body.clear-background-mode #alarm-create-panel .picker-container,
+        #body.clear-background-mode .picker-container {
+            background: rgba(5, 12, 22, 0.5) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+        #body.clear-background-mode #screen-post .wheel {
+            background: transparent !important;
+        }
+        #body.clear-background-mode .picker-container::before {
+            background: rgba(5, 12, 22, 0.5);
+            border-top-color: rgba(255, 255, 255, 0.18);
+            border-bottom-color: rgba(255, 255, 255, 0.18);
+        }
+        #body.clear-background-mode #alarm-create-panel .routine-limit-btn {
+            background: rgba(5, 12, 22, 0.5) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            color: #eaf4ff !important;
+        }
+        #body.clear-background-mode #alarm-create-panel .routine-limit-btn.active {
+            background: rgba(255, 211, 78, 0.36) !important;
+            border-color: rgba(255, 211, 78, 0.72) !important;
+            color: #fff7d1 !important;
+        }
+        #body.clear-background-mode #alarm-create-panel .alarm-type-btn {
+            background: rgba(5, 12, 22, 0.5) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+        #body.clear-background-mode input[type="text"],
+        #body.clear-background-mode #timer-label,
+        #body.clear-background-mode .alarm-name-input {
+            background: rgba(5, 12, 22, 0.5) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
         }
 
         h2 { 
@@ -652,6 +763,70 @@
             overflow: hidden;
             border: 1px solid rgba(255,255,255,0.08);
         }
+        #alarm-create-panel .picker-container.alarm-picker-horizontal {
+            height: auto;
+            padding: 8px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-radius: 24px;
+        }
+        #alarm-create-panel .picker-container.alarm-picker-horizontal::before {
+            display: none;
+        }
+        .picker-container.picker-horizontal {
+            height: auto;
+            padding: 8px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border-radius: 24px;
+        }
+        .picker-container.picker-horizontal::before {
+            display: none;
+        }
+        .alarm-picker-controls {
+            display: grid;
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 8px;
+        }
+        .alarm-picker-control-row {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 8px;
+            justify-content: center;
+        }
+        #alarm-day-row {
+            gap: 4px;
+            justify-content: space-between;
+        }
+        .alarm-picker-btn {
+            border: 1px solid rgba(255,255,255,0.22);
+            border-radius: 999px;
+            background: rgba(255,255,255,0.07);
+            color: var(--text-primary);
+            font-size: 12px;
+            font-weight: 900;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            padding: 8px 12px;
+            min-width: 46px;
+            cursor: pointer;
+            transition: background .2s ease, border-color .2s ease, color .2s ease;
+        }
+        .alarm-day-btn {
+            flex: 1 1 0;
+            min-width: 0;
+            font-size: 10px;
+            letter-spacing: 0.2px;
+            padding: 7px 4px;
+        }
+        .alarm-picker-btn.active {
+            border-color: rgba(149, 192, 234, 0.85);
+            background: rgba(149, 192, 234, 0.24);
+            color: #d8ecff;
+        }
         .picker-container::before {
             content: "";
             position: absolute;
@@ -666,7 +841,7 @@
             flex: 1;
             overflow-y: scroll;
             scrollbar-width: none;
-            scroll-snap-type: y mandatory;
+            scroll-snap-type: none;
             padding: 90px 0;
             z-index: 2;
             user-select: none;
@@ -674,17 +849,49 @@
             touch-action: pan-y;
             overscroll-behavior-y: contain;
             cursor: ns-resize;
+            -webkit-overflow-scrolling: touch;
+            will-change: scroll-position;
+        }
+        .wheel.wheel-horizontal {
+            flex: 0 0 auto;
+            width: 100%;
+            height: 56px;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            padding: 0 90px;
+            white-space: nowrap;
+            touch-action: pan-x;
+            overscroll-behavior-x: contain;
+            cursor: ew-resize;
         }
         .wheel::-webkit-scrollbar { display: none; }
         .wheel div { 
             height: 40px; 
             line-height: 40px; 
             text-align: center; 
-            scroll-snap-align: center;
             font-size: 24px;
             color: var(--text-secondary);
-            transition: all 0.4s ease;
+            transition: color 0.12s ease, transform 0.12s ease;
             font-weight: 400;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 4px;
+        }
+        .wheel.wheel-horizontal .wheel-item {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 70px;
+            height: 56px;
+            line-height: 56px;
+            font-size: 24px;
+            padding: 0;
+        }
+        .wheel.wheel-horizontal .wheel-spacer {
+            display: inline-flex;
+            width: 72px;
+            height: 56px;
         }
         .wheel div.active {
             color: transparent;
@@ -692,7 +899,7 @@
             -webkit-background-clip: text;
             background-clip: text;
             font-weight: 600;
-            transform: scale(1.4);
+            transform: scale(1.22);
         }
 
         
@@ -749,9 +956,9 @@
         .alarm-row {
             position: relative;
             transition: box-shadow .2s ease;
-            padding: 24px 20px !important;
-            margin-bottom: 22px !important;
-            border-radius: 14px !important;
+            padding: 30px 24px !important;
+            margin-bottom: 28px !important;
+            border-radius: 22px !important;
             display: flex !important;
             flex-direction: column !important;
             align-items: stretch !important;
@@ -954,6 +1161,46 @@
             -webkit-text-fill-color: transparent;
             color: transparent;
         }
+        .routine-limit-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .routine-limit-label {
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+        .routine-limit-options {
+            display: flex;
+            gap: 8px;
+            flex: 1;
+        }
+        .routine-limit-btn {
+            flex: 1;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.06);
+            color: var(--text-primary);
+            border-radius: 10px;
+            padding: 8px 0;
+            font-size: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: background .2s ease, border-color .2s ease, color .2s ease;
+        }
+        .routine-limit-btn:hover {
+            background: rgba(255,255,255,0.11);
+            border-color: rgba(255,255,255,0.3);
+        }
+        .routine-limit-btn.active {
+            background: rgba(255,211,78,0.22);
+            border-color: var(--sun-main);
+            color: var(--sun-main);
+        }
         .alarm-row .alarm-toggle-btn {
             --toggle-track-height: 32px;
             --toggle-track-padding: 4px;
@@ -1060,6 +1307,59 @@
             position: relative;
             overflow: hidden;
         }
+        .routine-overview {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .routine-stat {
+            border-radius: 14px;
+            padding: 12px 10px;
+            background: linear-gradient(160deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03));
+            border: 1px solid rgba(255,255,255,0.12);
+            text-align: center;
+        }
+        .routine-stat-value {
+            display: block;
+            font-size: 20px;
+            font-weight: 900;
+            color: #fff;
+            line-height: 1.1;
+        }
+        .routine-stat-label {
+            display: block;
+            margin-top: 4px;
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            font-weight: 800;
+        }
+        .routine-edit-shell {
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.02));
+            padding: 12px;
+        }
+        .routine-empty {
+            text-align: center;
+            padding: 24px 14px;
+            border-radius: 14px;
+            border: 1px dashed rgba(255,255,255,0.22);
+            background: rgba(255,255,255,0.03);
+            color: var(--text-secondary);
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        #stopwatch-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--text-primary);
+            letter-spacing: -0.5px;
+            margin-bottom: 10px;
+            text-transform: none;
+        }
         .routine-edit-row.routine-delete-anim {
             pointer-events: none;
             animation: routine-row-fade-out 640ms ease forwards;
@@ -1102,6 +1402,11 @@
         @keyframes moon-glow {
             0% { transform: scale(1); opacity: 0.68; }
             100% { transform: scale(1.18); opacity: 0.92; }
+        }
+        @keyframes moon-float-y {
+            0% { margin-top: 0; }
+            50% { margin-top: -10px; }
+            100% { margin-top: 0; }
         }
         @keyframes float {
             0% { transform: translate(0, 0) scale(1); }
@@ -1302,10 +1607,10 @@
             .sun-glow { width: 152px; height: 152px; }
             .sun-lightcast { width: 260px; height: 260px; }
             .bird { width: 18px; height: 11px; }
-            .moon-system { width: 100px; height: 100px; top: 4%; left: 50%; }
+            .moon-system { width: 100px; height: 100px; top: 11.9%; left: 50%; }
             .moon-body { width: 64px; height: 64px; }
             .moon-shadow { width: 64px; height: 64px; }
-            #app-ui { padding: 50px 16px calc(130px + env(safe-area-inset-bottom)); }
+            #app-ui { padding: 0 6px calc(130px + env(safe-area-inset-bottom)); }
             .input-action-row { gap: 10px; }
             .input-action-row .btn-add { min-width: 72px; padding: 14px 16px; }
             .bottom-nav .nav-inner { padding: 7px; gap: 4px; border-radius: 22px; }
@@ -1335,7 +1640,7 @@
             width: min(100%, 540px);
             max-width: 100%;
             gap: 6px;
-            background: #111214;
+            background: #000000;
             border: 1px solid rgba(255,255,255,0.06);
             padding: 8px;
             border-radius: 28px;
@@ -1374,6 +1679,17 @@
             text-transform: uppercase;
             white-space: nowrap;
         }
+        #tab-settings .settings-gear {
+            width: 15px;
+            height: 15px;
+            display: block;
+            margin: 0 auto;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.9;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
         .tab-btn.active {
             background: linear-gradient(135deg, var(--action-grad-start) 0%, var(--action-grad-end) 100%);
             color: var(--action-text);
@@ -1402,6 +1718,24 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 10px;
+        }
+        .settings-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .settings-block {
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03));
+            padding: 14px;
+        }
+        .settings-block .settings-title {
+            font-size: 24px;
+            font-weight: 900;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            letter-spacing: -0.4px;
         }
 
         .background-option {
@@ -1580,6 +1914,37 @@
             border-color: rgba(16, 20, 24, 0.16);
             color: #101418;
         }
+        #body.theme-light .settings-block {
+            border-color: rgba(16,20,24,0.14);
+            background: linear-gradient(180deg, rgba(16,20,24,0.05), rgba(16,20,24,0.02));
+        }
+        #body.theme-light .routine-stat {
+            background: linear-gradient(160deg, rgba(16,20,24,0.08), rgba(16,20,24,0.03));
+            border-color: rgba(16,20,24,0.16);
+        }
+        #body.theme-light .routine-stat-value,
+        #body.theme-light #stopwatch-title {
+            color: #101418;
+        }
+        #body.theme-light .routine-edit-shell {
+            border-color: rgba(16,20,24,0.14);
+            background: linear-gradient(180deg, rgba(16,20,24,0.05), rgba(16,20,24,0.02));
+        }
+        #body.theme-light .routine-empty {
+            border-color: rgba(16,20,24,0.2);
+            background: rgba(16,20,24,0.04);
+            color: rgba(16,20,24,0.65);
+        }
+        #body.theme-light .routine-limit-btn {
+            background: rgba(16,20,24,0.06);
+            border-color: rgba(16,20,24,0.16);
+            color: #101418;
+        }
+        #body.theme-light .routine-limit-btn.active {
+            background: rgba(10,132,255,0.18);
+            border-color: rgba(10,132,255,0.5);
+            color: #0a66ff;
+        }
 
         #body.theme-light .bottom-nav .nav-inner {
             background: rgba(255, 255, 255, 0.96);
@@ -1607,17 +1972,233 @@
             border-color: rgba(16, 20, 24, 0.14) !important;
             background: rgba(16, 20, 24, 0.05) !important;
         }
-        #body.theme-light #sw-laps [style] {
-            border-color: rgba(16, 20, 24, 0.14) !important;
-            background: rgba(16, 20, 24, 0.04) !important;
-            color: #101418 !important;
-        }
-
         #body.theme-dark {
             --text-primary: #ffffff;
             --text-secondary: #94a3b8;
-            --glass-bg: #111214;
+            --glass-bg: #000000;
             --glass-stroke: rgba(255, 255, 255, 0.08);
+        }
+
+        .alarm-composer-trigger-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 72px 0 20px 0;
+        }
+        .home-analog-clock-wrap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0 34px;
+        }
+        .home-analog-clock {
+            position: relative;
+            --clock-size: min(66vw, 220px);
+            --tick-radius: calc((var(--clock-size) / 2) - 16px);
+            --num-radius: calc((var(--clock-size) / 2) + 14px);
+            --sun-grad-start: var(--action-grad-start);
+            --sun-grad-end: var(--action-grad-end);
+            --gold-light: #ffe88a;
+            --gold-mid: #f2c949;
+            --gold-dark: #b98300;
+            width: var(--clock-size);
+            height: var(--clock-size);
+            border-radius: 50%;
+            border: 2px solid rgba(190, 224, 255, 0.75);
+            background: transparent;
+            box-shadow: none;
+            overflow: visible;
+        }
+        .home-analog-clock::before {
+            display: none;
+        }
+        .home-analog-orbit {
+            display: none;
+        }
+        .home-analog-orbit-mark {
+            display: none;
+        }
+        .home-analog-mark {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 2px;
+            height: 11px;
+            margin-left: -1px;
+            border-radius: 999px;
+            background: linear-gradient(145deg, var(--sun-grad-start) 0%, var(--sun-grad-end) 100%);
+            transform: translate(-50%, -50%) rotate(var(--a, 0deg)) translateY(calc(-1 * var(--tick-radius)));
+            z-index: 2;
+        }
+        .home-analog-mark.major {
+            width: 3px;
+            height: 28px;
+            margin-left: -1.5px;
+            background: linear-gradient(145deg, var(--sun-grad-start) 0%, var(--sun-grad-end) 100%);
+        }
+        .home-analog-num {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            color: transparent;
+            background: linear-gradient(145deg, var(--sun-grad-start) 0%, var(--sun-grad-end) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            font-size: clamp(38px, 8vw, 52px);
+            font-weight: 800;
+            letter-spacing: -1px;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.35), 0 2px 4px rgba(0,0,0,0.16);
+            transform: translate(-50%, -50%) rotate(var(--a, 0deg)) translateY(calc(-1 * var(--num-radius))) rotate(calc(-1 * var(--a, 0deg)));
+        }
+        .home-analog-num.n12 { --a: 0deg; }
+        .home-analog-num.n3 { --a: 90deg; }
+        .home-analog-num.n6 { --a: 180deg; }
+        .home-analog-num.n9 { --a: 270deg; }
+        .home-analog-hand {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 50%;
+            height: 4px;
+            transform-origin: 0% 50%;
+            transform: rotate(-90deg);
+            z-index: 5;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.28));
+        }
+        .home-analog-hand::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--gold-light) 0%, var(--gold-mid) 58%, var(--gold-dark) 100%);
+            box-shadow: 0 0 0 1px rgba(10,18,28,0.55), 0 4px 10px rgba(0,0,0,0.45);
+        }
+        .home-analog-hand.hour::before {
+            width: 48%;
+            height: 4px;
+            background: linear-gradient(90deg, #ffec98 0%, #e0b52d 52%, #9e6e00 100%);
+        }
+        .home-analog-hand.minute::before {
+            width: 60%;
+            height: 3px;
+            background: linear-gradient(90deg, #fff0a9 0%, #efc64a 56%, #ad7a00 100%);
+        }
+        .home-analog-hand.second::before {
+            width: 70%;
+            height: 2px;
+            background: linear-gradient(90deg, #fff7c8 0%, #f5d96e 54%, #bc8a0a 100%);
+            box-shadow: 0 0 0 1px rgba(10,18,28,0.45), 0 3px 8px rgba(0,0,0,0.4);
+        }
+        .home-analog-dot {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 18px;
+            height: 18px;
+            margin-left: -9px;
+            margin-top: -9px;
+            border-radius: 50%;
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.62);
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.2), 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 7;
+        }
+        /* Clock window cutout: only affects #screen-post card background */
+        #screen-post.glass-card {
+            --clock-hole-size: min(66vw, 220px);
+            --clock-hole-radius: calc((var(--clock-hole-size) / 2) - 1px);
+            --clock-hole-center-x: 50%;
+            --clock-hole-center-y: calc(54px + (var(--clock-hole-size) / 2));
+            background: transparent;
+            position: relative;
+            isolation: isolate;
+            overflow: visible;
+        }
+        #screen-post.glass-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: var(--glass-bg);
+            pointer-events: none;
+            z-index: 0;
+            -webkit-mask: radial-gradient(
+                circle var(--clock-hole-radius) at var(--clock-hole-center-x) var(--clock-hole-center-y),
+                transparent 99%,
+                #000 100%
+            );
+            mask: radial-gradient(
+                circle var(--clock-hole-radius) at var(--clock-hole-center-x) var(--clock-hole-center-y),
+                transparent 99%,
+                #000 100%
+            );
+        }
+        #screen-post.glass-card > * {
+            position: relative;
+            z-index: 1;
+        }
+        .alarm-composer-btn {
+            position: relative;
+            width: 58px;
+            height: 58px;
+            padding: 0;
+            border: none;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #fff2ad 0%, #f2c949 52%, #b98300 100%);
+            color: #5b3f00;
+            font-size: 0;
+            font-weight: 500;
+            line-height: 1;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+            box-shadow: 0 0 0 1px rgba(255, 223, 126, 0.8), 0 8px 20px rgba(188, 138, 10, 0.35);
+            overflow: visible;
+        }
+        .alarm-composer-glyph {
+            display: block;
+            font-size: 40px;
+            line-height: 1;
+            font-weight: 600;
+            transform: translateY(-1px);
+            color: #5b3f00;
+            text-align: center;
+            width: 1em;
+            height: 1em;
+        }
+        .alarm-composer-btn::before,
+        .alarm-composer-btn::after {
+            content: "";
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 218, 115, 0.68);
+            animation: radar-pulse 1.8s ease-out infinite;
+            pointer-events: none;
+        }
+        .alarm-composer-btn::after {
+            animation-delay: 0.9s;
+        }
+        .alarm-composer-btn.open {
+            background: linear-gradient(145deg, #fff4bf 0%, #f1c33f 54%, #b67f00 100%);
+            color: #4f3600;
+        }
+        .alarm-composer-btn.open::before,
+        .alarm-composer-btn.open::after {
+            animation-play-state: paused;
+            opacity: 0;
+        }
+        .alarm-composer-btn.cooldown {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: saturate(0.75);
+        }
+        @keyframes radar-pulse {
+            0% { transform: scale(0.9); opacity: 0.8; }
+            100% { transform: scale(1.7); opacity: 0; }
         }
 
         /* ===== ALARM LAYOUT (SINGLE SCROLL) START ===== */
@@ -1625,7 +2206,7 @@
             margin-bottom: 12px;
             padding: 12px 14px;
             border-radius: 12px;
-            background: rgba(255,255,255,0.04);
+            background: rgba(0,0,0,0.65);
             border: 1px solid rgba(255,255,255,0.08);
         }
         #next-alarm-summary .next-alarm-title {
@@ -1660,18 +2241,38 @@
             display: block;
             border-radius: 22px;
             border: 1px solid rgba(255,255,255,0.06);
-            background: rgba(255,255,255,0.02);
+            background: rgba(0,0,0,0.72);
             overflow: visible;
         }
 
 #alarm-create-panel {
     position: relative;
     z-index: 50;
-    padding: 14px 14px 12px;
-    background: linear-gradient(180deg, rgba(17,18,20,0.98) 0%, rgba(17,18,20,0.9) 100%);
-    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 0 14px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.98) 0%, rgba(0,0,0,0.9) 100%);
+    border-bottom: 1px solid rgba(255,255,255,0);
     backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(-36px);
+    transform-origin: top center;
+    pointer-events: none;
+    transition: max-height 1.35s cubic-bezier(0.22, 0.8, 0.24, 1),
+                opacity 1.0s ease,
+                transform 1.35s cubic-bezier(0.22, 0.8, 0.24, 1),
+                padding 1.1s ease,
+                border-color 0.35s ease;
+    will-change: max-height, transform, opacity;
+        }
+        #alarms-screen-layout.composer-open #alarm-create-panel {
+            max-height: 920px;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            padding: 14px 14px 12px;
+            border-bottom-color: rgba(255,255,255,0.08);
         }
 
         #alarm-create-panel .picker-container {
@@ -1797,6 +2398,7 @@
     </div>
 
     <div id="app-ui">
+        <div id="app-top-toast" class="app-top-toast" role="status" aria-live="polite"></div>
         <div id="screen-wake" class="glass-card">
             <h2>Good Morning.</h2>
             <div style="display:flex; justify-content:flex-end; margin: -8px 0 10px 0;">
@@ -1826,25 +2428,59 @@
         </div>
 
         <div id="screen-post" class="glass-card hidden">
-            <h2 aria-label="Sun and moon" style="display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:24px;">
-                <svg viewBox="0 0 24 24" width="38" height="38" aria-hidden="true">
-                    <circle cx="12" cy="12" r="5" fill="#FFD34E"></circle>
-                    <g stroke="#FFD34E" stroke-width="2" stroke-linecap="round">
-                        <line x1="12" y1="1.5" x2="12" y2="4"></line>
-                        <line x1="12" y1="20" x2="12" y2="22.5"></line>
-                        <line x1="1.5" y1="12" x2="4" y2="12"></line>
-                        <line x1="20" y1="12" x2="22.5" y2="12"></line>
-                        <line x1="4.6" y1="4.6" x2="6.4" y2="6.4"></line>
-                        <line x1="17.6" y1="17.6" x2="19.4" y2="19.4"></line>
-                        <line x1="17.6" y1="6.4" x2="19.4" y2="4.6"></line>
-                        <line x1="4.6" y1="19.4" x2="6.4" y2="17.6"></line>
-                    </g>
-                </svg>
-                <span aria-hidden="true" style="width:2px; height:20px; border-radius:999px; background:rgba(255,255,255,0.55); display:inline-block;"></span>
-                <svg viewBox="0 0 24 24" width="34" height="34" aria-hidden="true">
-                    <path d="M14.2 2.5a9.3 9.3 0 1 0 7.3 14.9 8 8 0 1 1-7.3-14.9z" fill="#DDEBFF"></path>
-                </svg>
-            </h2>
+            <div class="home-analog-clock-wrap">
+                <div class="home-analog-clock" aria-label="Current time analog clock">
+                    <div class="home-analog-orbit" aria-hidden="true">
+                        <span class="home-analog-orbit-mark" style="--a:0deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:15deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:30deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:45deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:60deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:75deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:90deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:105deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:120deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:135deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:150deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:165deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:180deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:195deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:210deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:225deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:240deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:255deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:270deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:285deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:300deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:315deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:330deg;"></span>
+                        <span class="home-analog-orbit-mark" style="--a:345deg;"></span>
+                    </div>
+                    <span class="home-analog-mark major" style="--a:0deg;"></span>
+                    <span class="home-analog-mark" style="--a:30deg;"></span>
+                    <span class="home-analog-mark" style="--a:60deg;"></span>
+                    <span class="home-analog-mark major" style="--a:90deg;"></span>
+                    <span class="home-analog-mark" style="--a:120deg;"></span>
+                    <span class="home-analog-mark" style="--a:150deg;"></span>
+                    <span class="home-analog-mark major" style="--a:180deg;"></span>
+                    <span class="home-analog-mark" style="--a:210deg;"></span>
+                    <span class="home-analog-mark" style="--a:240deg;"></span>
+                    <span class="home-analog-mark major" style="--a:270deg;"></span>
+                    <span class="home-analog-mark" style="--a:300deg;"></span>
+                    <span class="home-analog-mark" style="--a:330deg;"></span>
+                    <span class="home-analog-num n12">12</span>
+                    <span class="home-analog-num n3">3</span>
+                    <span class="home-analog-num n6">6</span>
+                    <span class="home-analog-num n9">9</span>
+                    <span class="home-analog-hand hour" id="home-clock-hour"></span>
+                    <span class="home-analog-hand minute" id="home-clock-minute"></span>
+                    <span class="home-analog-hand second" id="home-clock-second"></span>
+                    <span class="home-analog-dot"></span>
+                </div>
+            </div>
+            <div class="alarm-composer-trigger-wrap">
+                <button id="alarm-composer-btn" class="alarm-composer-btn" type="button" aria-label="Expand alarm creator" aria-expanded="false" title="Expand alarm creator" onclick="toggleAlarmComposer()"><span id="alarm-composer-glyph" class="alarm-composer-glyph">+</span></button>
+            </div>
             
             <section style="margin-bottom: 45px;">
                 <p style="text-transform: uppercase; font-size: 11px; font-weight: 900; color: var(--text-secondary); margin-bottom: 20px; letter-spacing: 2px;">Upcoming Alarms</p>
@@ -1856,17 +2492,37 @@
                 <!-- ===== ALARM LAYOUT (SINGLE SCROLL) START ===== -->
                 <div id="alarms-screen-layout">
                     <div id="alarm-create-panel">
+                        <div class="routine-limit-row">
+                            <span class="routine-limit-label">Max Routine Alarms:</span>
+                            <div class="routine-limit-options">
+                                <button class="routine-limit-btn" id="routine-limit-1" type="button" onclick="setRoutineAlarmLimit(1)">1</button>
+                                <button class="routine-limit-btn" id="routine-limit-2" type="button" onclick="setRoutineAlarmLimit(2)">2</button>
+                                <button class="routine-limit-btn" id="routine-limit-3" type="button" onclick="setRoutineAlarmLimit(3)">3</button>
+                            </div>
+                        </div>
                         <div style="margin-bottom: 20px; display: flex; gap: 12px;">
                             <button class="alarm-type-btn" id="btn-routine" onclick="setAlarmType('routine')" style="flex: 1; padding: 12px; border-radius: 12px; font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,211,78,0.25); color: var(--sun-main); cursor: pointer; transition: all 0.3s; border-color: var(--sun-main);">Routine</button>
                             <button class="alarm-type-btn" id="btn-regular" onclick="setAlarmType('regular')" style="flex: 1; padding: 12px; border-radius: 12px; font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.06); color: var(--text-primary); cursor: pointer; transition: all 0.3s;">Regular Alarm</button>
                         </div>
                         
-                        <div class="picker-container">
-                            <div class="wheel" id="h-wheel"></div>
-                            <div class="wheel" id="m-wheel"></div>
-                            <div class="wheel" id="d-wheel"></div>
-                            <div class="wheel" id="p-wheel">
-                                <div></div><div>AM</div><div>PM</div><div></div>
+                        <div class="picker-container alarm-picker-horizontal">
+                            <div class="wheel wheel-horizontal" id="h-wheel"></div>
+                            <div class="wheel wheel-horizontal" id="m-wheel"></div>
+                        </div>
+                        <div class="alarm-picker-controls">
+                            <div class="alarm-picker-control-row" id="alarm-period-row">
+                                <button type="button" class="alarm-picker-btn" id="alarm-period-am" onclick="setCreatorPeriodSelection('AM')">AM</button>
+                                <button type="button" class="alarm-picker-btn" id="alarm-period-pm" onclick="setCreatorPeriodSelection('PM')">PM</button>
+                            </div>
+                            <div class="alarm-picker-control-row" id="alarm-day-row">
+                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-all" onclick="setCreatorDaySelection('All')">All</button>
+                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-mon" onclick="setCreatorDaySelection('Mon')">Mon</button>
+                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-tue" onclick="setCreatorDaySelection('Tue')">Tue</button>
+                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-wed" onclick="setCreatorDaySelection('Wed')">Wed</button>
+                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-thu" onclick="setCreatorDaySelection('Thu')">Thu</button>
+                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-fri" onclick="setCreatorDaySelection('Fri')">Fri</button>
+                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-sat" onclick="setCreatorDaySelection('Sat')">Sat</button>
+                                <button type="button" class="alarm-picker-btn alarm-day-btn" id="alarm-day-sun" onclick="setCreatorDaySelection('Sun')">Sun</button>
                             </div>
                         </div>
                         <button id="set-alarm-btn" class="btn-add" style="width:100%; height: 64px; font-size: 17px;" onclick="addAlarm()">Set New Alarm</button>
@@ -1877,31 +2533,43 @@
                 <!-- ===== ALARM LAYOUT (SINGLE SCROLL) END ===== -->
             </section>
 
-            <div class="divider-glass"></div>
+        </div>
 
+        <div id="screen-routine" class="glass-card hidden aux" style="max-width:568px;">
+            <h2 style="font-size:28px; margin-bottom:18px;">Routine</h2>
             <section style="margin-bottom: 45px;">
                 <p style="text-transform: uppercase; font-size: 11px; font-weight: 900; color: var(--text-secondary); margin-bottom: 20px; letter-spacing: 2px;">Modify Routine</p>
-                <div id="edit-list"></div>
+                <div class="routine-overview">
+                    <div class="routine-stat">
+                        <span class="routine-stat-value" id="routine-count">0</span>
+                        <span class="routine-stat-label">Habits</span>
+                    </div>
+                    <div class="routine-stat">
+                        <span class="routine-stat-value" id="routine-alarm-info">0/1</span>
+                        <span class="routine-stat-label">Routine Alarms</span>
+                    </div>
+                </div>
+                <div class="routine-edit-shell">
+                    <div id="edit-list"></div>
+                </div>
                 <div class="input-action-row" style="margin-top: 25px;">
                     <input type="text" id="task-in" placeholder="Add new morning habit...">
                     <button class="btn-add" onclick="addTask()">Add</button>
                 </div>
             </section>
-
-            
         </div>
 
         
-        <div id="screen-timers" class="glass-card hidden aux" style="max-width:480px;">
+        <div id="screen-timers" class="glass-card hidden aux" style="max-width:568px;">
             <h2 style="font-size:28px; margin-bottom:18px;">Timers</h2>
             <div class="input-action-row" style="margin-bottom:12px;">
                 <input id="timer-label" type="text" placeholder="Label" style="flex:1; padding:12px; border-radius:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); color:#fff;">
                 <button class="btn-add" id="create-timer-btn">Create</button>
             </div>
-            <div class="picker-container">
-                <div class="wheel" id="timer-hour-wheel"></div>
-                <div class="wheel" id="timer-min-wheel"></div>
-                <div class="wheel" id="timer-sec-wheel"></div>
+            <div class="picker-container picker-horizontal">
+                <div class="wheel wheel-horizontal" id="timer-hour-wheel"></div>
+                <div class="wheel wheel-horizontal" id="timer-min-wheel"></div>
+                <div class="wheel wheel-horizontal" id="timer-sec-wheel"></div>
             </div>
             <div style="display:flex; justify-content:space-around; margin-top:8px; margin-bottom:12px;">
                 <span style="font-size:12px; color:var(--text-secondary); font-weight:600;">Hours</span>
@@ -1913,78 +2581,65 @@
                 <p style="text-transform: uppercase; font-size: 10px; font-weight: 900; color: var(--text-secondary); margin-bottom: 8px; letter-spacing: 1.5px;">Previous Timers</p>
                 <div id="previous-timers-list" style="display:flex; flex-direction:column; gap:8px;"></div>
             </div>
-        </div>
-        
-        <div id="screen-stopwatch" class="glass-card hidden aux" style="max-width:480px;">
-            <h2 style="font-size:28px; margin-bottom:18px;">Stopwatch</h2>
+            <div class="divider-glass"></div>
+            <p id="stopwatch-title">Stopwatch</p>
             <div style="font-weight:900; font-size:36px; text-align:center; margin-bottom:12px;" id="sw-display">00:00.00</div>
             <div style="display:flex; gap:10px; justify-content:center; margin-bottom:12px;">
                 <button class="btn-add" id="sw-start">Start</button>
-                <button class="btn-add" id="sw-lap">Lap</button>
                 <button class="btn-add" id="sw-reset">Reset</button>
             </div>
-            <div id="sw-laps" style="display:flex; flex-direction:column; gap:8px; max-height:200px; overflow:auto;"></div>
         </div>
         
-        <div id="screen-sounds" class="glass-card hidden aux" style="max-width:480px;">
-            <h2 style="font-size:28px; margin-bottom:18px;">Alarm Sounds</h2>
-            <p style="text-transform: uppercase; font-size: 11px; font-weight: 900; color: var(--text-secondary); margin-bottom: 20px; letter-spacing: 2px;">Choose Your Alarm Sound</p>
-            <div id="sound-options" style="display:flex; flex-direction:column; gap:12px;">
-                
+        <div id="screen-sounds" class="glass-card hidden aux" style="max-width:568px;">
+            <h2 style="font-size:28px; margin-bottom:18px;">Settings</h2>
+            <div class="settings-stack">
+                <div class="settings-block">
+                    <p class="settings-title">Sound Testing</p>
+                    <div id="sound-options" style="display:flex; flex-direction:column; gap:12px;"></div>
+                </div>
+                <div class="settings-block">
+                    <p class="settings-title">Background</p>
+                    <div id="background-options" class="background-options"></div>
+                </div>
             </div>
-        </div>
-
-        <div id="screen-background" class="glass-card hidden aux" style="max-width:480px;">
-            <h2 style="font-size:28px; margin-bottom:18px;">Background</h2>
-            <p style="text-transform: uppercase; font-size: 11px; font-weight: 900; color: var(--text-secondary); margin-bottom: 20px; letter-spacing: 2px;">Choose App Background</p>
-            <div id="background-options" class="background-options"></div>
         </div>
     </div>
 
     
     <div class="bottom-nav" aria-hidden="false">
         <div class="nav-inner">
-            <button class="tab-btn" id="tab-alarms" onclick="switchTab('post')" aria-label="Home">
+            <button class="tab-btn" id="tab-alarms" onclick="switchTab('post')" aria-label="Alarms">
                 <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M3 10.5 12 3l9 7.5"></path>
-                    <path d="M5 9.5V21h14V9.5"></path>
-                    <path d="M10 21v-6h4v6"></path>
+                    <circle cx="12" cy="12" r="8"></circle>
+                    <path d="M12 12V8.5"></path>
+                    <path d="M12 12L15 14"></path>
+                    <path d="M8.8 3.6h6.4"></path>
+                    <path d="M17.3 6.3 19 4.6"></path>
+                    <path d="M6.7 6.3 5 4.6"></path>
                 </svg>
-                <span class="tab-label">Home</span>
+                <span class="tab-label">Alarms</span>
             </button>
-            <button class="tab-btn" id="tab-timers" onclick="switchTab('timers')" aria-label="Timers">
+            <button class="tab-btn" id="tab-routine" onclick="switchTab('routine')" aria-label="Routine">
+                <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="8"></circle>
+                    <path d="m9.2 12.1 2 2 3.6-3.6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <span class="tab-label">Routine</span>
+            </button>
+            <button class="tab-btn" id="tab-timers" onclick="switchTab('timers')" aria-label="Timing">
                 <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M14 21a2 2 0 0 1-4 0"></path>
                     <path d="M18 16v-5a6 6 0 1 0-12 0v5l-2 2h16z"></path>
                     <path d="M7.5 5 5 3"></path>
                     <path d="m16.5 5 2.5-2"></path>
                 </svg>
-                <span class="tab-label">Timers</span>
+                <span class="tab-label">Clocks</span>
             </button>
-            <button class="tab-btn" id="tab-stopwatch" onclick="switchTab('stopwatch')" aria-label="Stopwatch">
-                <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <circle cx="12" cy="13" r="8"></circle>
-                    <path d="M12 13 15 10"></path>
-                    <path d="M9 2h6"></path>
-                    <path d="M15.5 5.5 17 4"></path>
+            <button class="tab-btn" id="tab-settings" onclick="switchTab('settings')" aria-label="Settings">
+                <svg class="tab-icon settings-gear" viewBox="0 0 16 16" aria-hidden="true">
+                    <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.7-2.686.705-1.987 1.987l.169.311a1.464 1.464 0 0 1-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.699 1.283.705 2.686 1.988 1.987l.31-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.699 2.686-.705 1.987-1.988l-.169-.31a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.699-1.283-.705-2.686-1.988-1.987l-.31.169a1.464 1.464 0 0 1-2.105-.872zM8 10.45A2.45 2.45 0 1 1 8 5.55a2.45 2.45 0 0 1 0 4.9z"></path>
                 </svg>
-                <span class="tab-label">Stopwatch</span>
-            </button>
-            <button class="tab-btn" id="tab-sounds" onclick="switchTab('sounds')" aria-label="Sounds">
-                <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M11 6 7.8 9H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h2.8L11 18a1 1 0 0 0 1.7-.7V6.7A1 1 0 0 0 11 6z"></path>
-                    <path d="M16 9.5a4 4 0 0 1 0 5"></path>
-                    <path d="M18.7 7a7.5 7.5 0 0 1 0 10"></path>
-                </svg>
-                <span class="tab-label">Sounds</span>
-            </button>
-            <button class="tab-btn" id="tab-background" onclick="switchTab('background')" aria-label="Background">
-                <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true">
-                    <rect x="3" y="3" width="18" height="18" rx="3"></rect>
-                    <circle cx="9" cy="9" r="1.5"></circle>
-                    <path d="M21 16l-5-5-4 4-2-2-7 7"></path>
-                </svg>
-                <span class="tab-label">Background</span>
+                <span class="tab-label">Settings</span>
             </button>
         </div>
     </div>
@@ -2057,29 +2712,39 @@
         let alarmNames = [];
 
         const DAY_LABELS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const DAY_WHEEL_LABELS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+        const EVERY_DAY_LABEL = 'All';
         const ALL_DAY_INDICES = [0,1,2,3,4,5,6];
         let alarmsMeta = alarms.map(() => 'Everyday');
         let alarmsRepeatDays = alarms.map(() => [...ALL_DAY_INDICES]);
         
         let alarmTypes = alarms.map(() => 'routine'); // default to routine
+        let alarmSoundIds = alarms.map(() => DEFAULT_SOUND_ID); // per-alarm sound selection
         let alarmEnabled = alarms.map(() => true); // per-alarm on/off state
         let selectedAlarmType = 'routine'; // currently selected type for new alarms
+        let creatorDaySelection = EVERY_DAY_LABEL;
+        let creatorPeriodSelection = 'AM';
+        let maxRoutineAlarms = 1; // configurable max routine alarms (1..3)
+        let _alarmComposerOpen = false;
+        let _alarmComposerToggleCooldownUntil = 0;
+        let _alarmComposerToggleCooldownTimer = null;
+        let _homeClockAnimationFrame = null;
+        let _homeClockPreviewMode = false;
         let editingAlarmIndex = null;
         let _renamingAlarmIndex = null;
         let originalAlarmDraft = null;
         let _openRepeatEditorIndex = null;
+        let _openSoundEditorIndex = null;
         let _expandedAlarmIndex = null;
         let _repeatPopover = null;
+        let _appToastHideTimer = null;
 
         let selectedSound = DEFAULT_SOUND_ID; // default sound
-        const DEFAULT_BACKGROUND_ID = 'none';
+        const DEFAULT_BACKGROUND_ID = 'black-bg';
         const BACKGROUND_OPTIONS = [
-            { id: 'day', name: 'White With Background', type: 'image', value: 'images/day.jpg', theme: 'light' },
-            { id: 'white', name: 'All White', type: 'color', value: '#ffffff', theme: 'light' },
-            { id: 'lightgrey', name: 'All Light Grey', type: 'color', value: '#e0e0e0', theme: 'light' },
-            { id: 'black', name: 'All Black', type: 'color', value: '#000000', theme: 'dark' },
-            { id: 'darkgrey', name: 'All Dark Grey', type: 'color', value: '#333333', theme: 'dark' },
-            { id: 'none', name: 'Black With Background', type: 'none', theme: 'dark' }
+            { id: 'black-bg', name: 'Black With Background', type: 'stage-night', theme: 'dark' },
+            { id: 'white-bg', name: 'White With Background', type: 'stage-day', theme: 'light' },
+            { id: 'no-bg', name: 'No Background', type: 'fullscreen-none', theme: 'dark' }
         ];
         let selectedBackground = DEFAULT_BACKGROUND_ID;
         let _backgroundAnimationsEnabled = true;
@@ -2096,6 +2761,7 @@
         let _sceneWindDirection = 1; // 1 => left-to-right, -1 => right-to-left
         let _isRoutineTransitioning = false;
         let _inRoutineSession = false;
+        let _routineDayModeActive = false;
         let _taskIdCounter = 0;
         let _isRenderingApplication = false;
         let _isRenderingRoutineEditor = false;
@@ -2187,6 +2853,39 @@
             return normalized.map(d => DAY_LABELS[d]).join(', ');
         }
 
+        function _normalizeAlarmSoundId(soundId) {
+            const normalized = String(soundId || '').trim();
+            if (!normalized) return DEFAULT_SOUND_ID;
+            const exists = Array.isArray(SOUND_OPTIONS) && SOUND_OPTIONS.some(s => s && s.id === normalized);
+            return exists ? normalized : DEFAULT_SOUND_ID;
+        }
+
+        function _getAlarmSoundId(index) {
+            if (!Array.isArray(alarmSoundIds) || index < 0 || index >= alarmSoundIds.length) return DEFAULT_SOUND_ID;
+            return _normalizeAlarmSoundId(alarmSoundIds[index]);
+        }
+
+        function _getSoundNameById(soundId) {
+            const normalized = _normalizeAlarmSoundId(soundId);
+            const match = Array.isArray(SOUND_OPTIONS) ? SOUND_OPTIONS.find(s => s && s.id === normalized) : null;
+            return match ? String(match.name || 'Default') : 'Default';
+        }
+
+        function showAppTopToast(message, durationMs = 2000) {
+            const toast = document.getElementById('app-top-toast');
+            if (!toast) return;
+            if (_appToastHideTimer) {
+                clearTimeout(_appToastHideTimer);
+                _appToastHideTimer = null;
+            }
+            toast.textContent = String(message || '');
+            toast.classList.add('show');
+            _appToastHideTimer = setTimeout(() => {
+                toast.classList.remove('show');
+                _appToastHideTimer = null;
+            }, Math.max(300, Number(durationMs) || 2000));
+        }
+
         function _setAlarmButtonBusy(isBusy) {
             const btn = document.getElementById('set-alarm-btn') || document.getElementById('alarm-commit-btn');
             if (!btn) return;
@@ -2194,6 +2893,45 @@
             btn.style.opacity = isBusy ? '0.6' : '1';
             btn.style.pointerEvents = isBusy ? 'none' : 'auto';
             if (!isBusy) _syncAlarmCommitButtonLimitState();
+        }
+
+        function _renderCreatorSelectionButtons() {
+            const periodMap = {
+                AM: document.getElementById('alarm-period-am'),
+                PM: document.getElementById('alarm-period-pm')
+            };
+            Object.entries(periodMap).forEach(([k, el]) => {
+                if (!el) return;
+                el.classList.toggle('active', creatorPeriodSelection === k);
+            });
+
+            const dayMap = {
+                All: document.getElementById('alarm-day-all'),
+                Mon: document.getElementById('alarm-day-mon'),
+                Tue: document.getElementById('alarm-day-tue'),
+                Wed: document.getElementById('alarm-day-wed'),
+                Thu: document.getElementById('alarm-day-thu'),
+                Fri: document.getElementById('alarm-day-fri'),
+                Sat: document.getElementById('alarm-day-sat'),
+                Sun: document.getElementById('alarm-day-sun')
+            };
+            Object.entries(dayMap).forEach(([k, el]) => {
+                if (!el) return;
+                el.classList.toggle('active', creatorDaySelection === k);
+            });
+        }
+
+        function setCreatorPeriodSelection(nextPeriod) {
+            creatorPeriodSelection = (String(nextPeriod).toUpperCase() === 'PM') ? 'PM' : 'AM';
+            _renderCreatorSelectionButtons();
+            _syncHomeClockWithCreatorSelection();
+        }
+
+        function setCreatorDaySelection(nextDay) {
+            const raw = String(nextDay || '').trim();
+            const normalized = raw.toLowerCase() === 'all' ? EVERY_DAY_LABEL : raw;
+            creatorDaySelection = [EVERY_DAY_LABEL, ...DAY_WHEEL_LABELS].includes(normalized) ? normalized : EVERY_DAY_LABEL;
+            _renderCreatorSelectionButtons();
         }
 
         function _syncAlarmCommitButtonLimitState() {
@@ -2225,6 +2963,7 @@
             if (!Array.isArray(alarmsRepeatDays)) alarmsRepeatDays = [];
             if (!Array.isArray(alarmsMeta)) alarmsMeta = [];
             if (!Array.isArray(alarmTypes)) alarmTypes = [];
+            if (!Array.isArray(alarmSoundIds)) alarmSoundIds = [];
             if (!Array.isArray(alarmEnabled)) alarmEnabled = [];
 
             const len = alarms.length;
@@ -2234,7 +2973,16 @@
             alarmNames = alarms.map((_, i) => _normalizeAlarmName(alarmNames[i], i));
             alarmsRepeatDays = alarms.map((_, i) => _normalizeRepeatDays(alarmsRepeatDays[i]));
             alarmsMeta = alarms.map((_, i) => _formatRepeatDays(alarmsRepeatDays[i]));
-            alarmTypes = alarms.map((_, i) => (alarmTypes[i] === 'regular' ? 'regular' : 'routine'));
+            let routineCount = 0;
+            alarmTypes = alarms.map((_, i) => {
+                const normalized = alarmTypes[i] === 'regular' ? 'regular' : 'routine';
+                if (normalized === 'routine') {
+                    routineCount += 1;
+                    if (routineCount > maxRoutineAlarms) return 'regular';
+                }
+                return normalized;
+            });
+            alarmSoundIds = alarms.map((_, i) => _normalizeAlarmSoundId(alarmSoundIds[i]));
             alarmEnabled = alarms.map((_, i) => alarmEnabled[i] !== false);
 
             if (targetLen !== len && Number.isInteger(editingAlarmIndex) && editingAlarmIndex >= targetLen) {
@@ -2259,6 +3007,7 @@
                 repeatDays: _normalizeRepeatDays(alarmsRepeatDays[i]),
                 meta: String(alarmsMeta[i] || ''),
                 type: alarmTypes[i] === 'regular' ? 'regular' : 'routine',
+                soundId: _normalizeAlarmSoundId(alarmSoundIds[i]),
                 enabled: alarmEnabled[i] !== false,
                 originalIndex: i
             }));
@@ -2274,6 +3023,7 @@
             alarmsRepeatDays = combined.map(x => x.repeatDays);
             alarmsMeta = combined.map(x => _formatRepeatDays(x.repeatDays));
             alarmTypes = combined.map(x => x.type);
+            alarmSoundIds = combined.map(x => x.soundId);
             alarmEnabled = combined.map(x => x.enabled);
         }
 
@@ -2488,6 +3238,38 @@
             const meta = (alarmsMeta && alarmsMeta[index]) ? alarmsMeta[index] : 'Everyday';
             return _legacyMetaToRepeatDays(meta);
         }
+        function _normalizeRoutineAlarmLimit(value) {
+            const n = Number(value);
+            if (!Number.isInteger(n)) return 1;
+            return Math.max(1, Math.min(3, n));
+        }
+        function _countRoutineAlarms(excludeIndex = null) {
+            if (!Array.isArray(alarmTypes)) return 0;
+            return alarmTypes.reduce((count, t, idx) => (
+                (idx !== excludeIndex && t === 'routine') ? (count + 1) : count
+            ), 0);
+        }
+        function _canSelectRoutineType(excludeIndex = null) {
+            return _countRoutineAlarms(excludeIndex) < maxRoutineAlarms;
+        }
+        function _updateRoutineLimitControls() {
+            [1, 2, 3].forEach(n => {
+                const btn = document.getElementById(`routine-limit-${n}`);
+                if (!btn) return;
+                btn.classList.toggle('active', maxRoutineAlarms === n);
+            });
+        }
+        function setRoutineAlarmLimit(limit) {
+            maxRoutineAlarms = _normalizeRoutineAlarmLimit(limit);
+            _normalizeAlarmCollections();
+            _updateRoutineLimitControls();
+            if (selectedAlarmType === 'routine' && !_canSelectRoutineType(Number.isInteger(editingAlarmIndex) ? editingAlarmIndex : null)) {
+                selectedAlarmType = 'regular';
+            }
+            setAlarmType(selectedAlarmType);
+            renderAlarms();
+            saveState();
+        }
 
         function _serializeTimersForState() {
             if (!Array.isArray(_timers)) return [];
@@ -2507,8 +3289,7 @@
             const elapsedNow = _sw_elapsed + (_sw_running ? (Date.now() - _sw_start) : 0);
             return {
                 running: !!_sw_running,
-                elapsed: Math.max(0, elapsedNow),
-                laps: Array.isArray(_sw_laps) ? _sw_laps.filter(v => Number.isFinite(Number(v))).map(v => Math.max(0, Number(v))).slice(0, 100) : []
+                elapsed: Math.max(0, elapsedNow)
             };
         }
 
@@ -2532,8 +3313,10 @@
                     alarmsMeta: Array.isArray(alarmsMeta) ? alarmsMeta.map(d => String(d || 'Everyday')) : [],
                     alarmsRepeatDays: Array.isArray(alarmsRepeatDays) ? alarmsRepeatDays.map(days => _normalizeRepeatDays(days)) : [],
                     alarmTypes: Array.isArray(alarmTypes) ? alarmTypes.map(t => (t === 'regular' ? 'regular' : 'routine')) : [],
+                    alarmSoundIds: Array.isArray(alarmSoundIds) ? alarmSoundIds.map(id => _normalizeAlarmSoundId(id)) : [],
                     alarmEnabled: Array.isArray(alarmEnabled) ? alarmEnabled.map(v => !!v) : [],
                     selectedAlarmType: selectedAlarmType === 'regular' ? 'regular' : 'routine',
+                    maxRoutineAlarms: _normalizeRoutineAlarmLimit(maxRoutineAlarms),
                     selectedSound: String(selectedSound || DEFAULT_SOUND_ID),
                     selectedBackground: String(selectedBackground || DEFAULT_BACKGROUND_ID),
                     customSounds,
@@ -2574,15 +3357,16 @@
                 alarmsMeta = [];
                 alarmsRepeatDays = [];
                 alarmTypes = [];
+                alarmSoundIds = [];
                 alarmEnabled = [];
                 previousTimerHistory = [];
                 selectedAlarmType = 'routine';
+                maxRoutineAlarms = 1;
                 selectedSound = DEFAULT_SOUND_ID;
                 _timers.splice(0, _timers.length);
                 _sw_running = false;
                 _sw_elapsed = 0;
                 _sw_start = 0;
-                _sw_laps = [];
                 if (_sw_tick) { clearInterval(_sw_tick); _sw_tick = null; }
                 const swBtn = document.getElementById('sw-start');
                 if (swBtn) swBtn.textContent = 'Start';
@@ -2599,7 +3383,11 @@
                 ? state.alarmsRepeatDays.map(_normalizeRepeatDays)
                 : alarms.map((_, idx) => _legacyMetaToRepeatDays(alarmsMeta[idx]));
             alarmTypes = Array.isArray(state.alarmTypes) ? state.alarmTypes.map(v => (v === 'regular' ? 'regular' : 'routine')) : [];
+            alarmSoundIds = Array.isArray(state.alarmSoundIds) ? state.alarmSoundIds.map(_normalizeAlarmSoundId) : [];
             alarmEnabled = Array.isArray(state.alarmEnabled) ? state.alarmEnabled.map(v => !!v) : [];
+            maxRoutineAlarms = _normalizeRoutineAlarmLimit(
+                state.maxRoutineAlarms !== undefined ? state.maxRoutineAlarms : state.dailyAlarmLimit
+            );
             previousTimerHistory = Array.isArray(state.previousTimerHistory)
                 ? state.previousTimerHistory.map(_normalizeTimerHistoryEntry).filter(Boolean).slice(0, MAX_TIMER_HISTORY)
                 : [];
@@ -2608,15 +3396,19 @@
             while (alarmsMeta.length < alarms.length) alarmsMeta.push('Everyday');
             while (alarmsRepeatDays.length < alarms.length) alarmsRepeatDays.push([...ALL_DAY_INDICES]);
             while (alarmTypes.length < alarms.length) alarmTypes.push('routine');
+            while (alarmSoundIds.length < alarms.length) alarmSoundIds.push(DEFAULT_SOUND_ID);
             while (alarmEnabled.length < alarms.length) alarmEnabled.push(true);
             if (alarmNames.length > alarms.length) alarmNames = alarmNames.slice(0, alarms.length);
             if (alarmsMeta.length > alarms.length) alarmsMeta = alarmsMeta.slice(0, alarms.length);
             if (alarmsRepeatDays.length > alarms.length) alarmsRepeatDays = alarmsRepeatDays.slice(0, alarms.length);
             if (alarmTypes.length > alarms.length) alarmTypes = alarmTypes.slice(0, alarms.length);
+            if (alarmSoundIds.length > alarms.length) alarmSoundIds = alarmSoundIds.slice(0, alarms.length);
             if (alarmEnabled.length > alarms.length) alarmEnabled = alarmEnabled.slice(0, alarms.length);
             alarmNames = alarmNames.map((n, i) => _normalizeAlarmName(n, i));
             alarmsRepeatDays = alarmsRepeatDays.map(_normalizeRepeatDays);
             alarmsMeta = alarmsRepeatDays.map(days => _formatRepeatDays(days));
+            alarmSoundIds = alarmSoundIds.map(_normalizeAlarmSoundId);
+            _normalizeAlarmCollections();
 
             selectedAlarmType = state.selectedAlarmType === 'regular' ? 'regular' : 'routine';
 
@@ -2676,10 +3468,8 @@
             _sw_running = false;
             _sw_elapsed = 0;
             _sw_start = 0;
-            _sw_laps = [];
             if (state.stopwatch && typeof state.stopwatch === 'object') {
                 _sw_elapsed = Math.max(0, Number(state.stopwatch.elapsed) || 0);
-                _sw_laps = Array.isArray(state.stopwatch.laps) ? state.stopwatch.laps.filter(v => Number.isFinite(Number(v))).map(v => Math.max(0, Number(v))).slice(0, 100) : [];
                 if (state.stopwatch.running) {
                     _sw_running = true;
                     _sw_start = Date.now();
@@ -2699,9 +3489,12 @@
         window.onload = () => {
             setupCamera();
             initializeState();
+            _updateRoutineLimitControls();
             initPickerWheels();
+            _renderCreatorSelectionButtons();
             renderApplication();
             renderAlarms();
+            setAlarmType(selectedAlarmType);
             renderSoundOptions();
             renderBackgroundOptions();
             _renderTimers();
@@ -2713,11 +3506,13 @@
             initWindFX();
             initCloudsMotion();
             initRepeatPopoverDismiss();
+            initHomeAnalogClock();
             const alarmCommitBtn = document.getElementById('set-alarm-btn') || document.getElementById('alarm-commit-btn');
             if (alarmCommitBtn) {
                 alarmCommitBtn.onclick = null;
                 alarmCommitBtn.addEventListener('click', commitAlarmFromPicker);
             }
+            setAlarmComposerOpen(false, { scrollIntoView: false });
             _syncAlarmCommitButtonLimitState();
             _updateNextAlarmSummary();
             setInterval(_updateNextAlarmSummary, 1000);
@@ -2736,7 +3531,7 @@
                     postScreen.style.transform = 'translateY(0) scale(1)';
                 }
 
-                setSunUp();
+                _syncSkyMode();
             } catch (e) {
                 console.warn('Failed to set initial screen to #screen-post', e);
             }
@@ -2755,7 +3550,7 @@
         });
 
         function _shouldEnableBackgroundAnimations(backgroundId) {
-            return !['white', 'lightgrey', 'darkgrey', 'black'].includes(String(backgroundId || ''));
+            return String(backgroundId || '') !== 'no-bg';
         }
 
         function _setBackgroundAnimationMode(enabled) {
@@ -2837,99 +3632,313 @@
             }
         }
 
+        function _renderInfiniteWheel(wheel, values, opts = {}) {
+            if (!wheel) return;
+            const copyCount = Math.max(9, Number(opts.copyCount) || 15);
+            const normalizedValues = Array.isArray(values) ? values.map(v => String(v)) : [];
+            const valueCount = normalizedValues.length;
+            if (valueCount === 0) {
+                wheel.innerHTML = '';
+                return;
+            }
+            let markup = '';
+            for (let copy = 0; copy < copyCount; copy += 1) {
+                for (let idx = 0; idx < valueCount; idx += 1) {
+                    const value = normalizedValues[idx];
+                    markup += `<div class="wheel-item" data-wheel-value="${value}" data-wheel-index="${idx}">${value}</div>`;
+                }
+            }
+            wheel.innerHTML = markup;
+            wheel.dataset.infinite = 'true';
+            wheel.dataset.wheelValueCount = String(valueCount);
+            wheel.dataset.wheelCopyCount = String(copyCount);
+            wheel.dataset.wheelMiddleStart = String(Math.floor(copyCount / 2) * valueCount);
+            wheel._wheelItems = Array.from(wheel.querySelectorAll('.wheel-item'));
+            wheel._wheelRafId = null;
+            wheel._wheelIdleTimeout = null;
+            wheel._wheelActiveItem = null;
+        }
+
+        function _renderFiniteWheel(wheel, values) {
+            if (!wheel) return;
+            const normalizedValues = Array.isArray(values) ? values.map(v => String(v)) : [];
+            let markup = '<div class="wheel-spacer" aria-hidden="true"></div>';
+            normalizedValues.forEach((value, idx) => {
+                markup += `<div class="wheel-item" data-wheel-value="${value}" data-wheel-index="${idx}">${value}</div>`;
+            });
+            markup += '<div class="wheel-spacer" aria-hidden="true"></div>';
+            wheel.innerHTML = markup;
+            delete wheel.dataset.infinite;
+            delete wheel.dataset.wheelValueCount;
+            delete wheel.dataset.wheelCopyCount;
+            delete wheel.dataset.wheelMiddleStart;
+            wheel._wheelItems = Array.from(wheel.querySelectorAll('.wheel-item'));
+            wheel._wheelRafId = null;
+            wheel._wheelIdleTimeout = null;
+            wheel._wheelActiveItem = null;
+        }
+
+        function _getWheelItems(wheel) {
+            if (!wheel) return [];
+            if (Array.isArray(wheel._wheelItems) && wheel._wheelItems.length) return wheel._wheelItems;
+            wheel._wheelItems = Array.from(wheel.querySelectorAll('.wheel-item'));
+            return wheel._wheelItems;
+        }
+
+        function _getWheelGeometry(wheel) {
+            const items = _getWheelItems(wheel);
+            if (!items.length) return null;
+            const first = items[0];
+            const horizontal = wheel.classList.contains('wheel-horizontal');
+            if (horizontal) {
+                const itemWidth = first.offsetWidth || 70;
+                const firstCenter = first.offsetLeft + (itemWidth / 2);
+                return { items, horizontal: true, itemWidth, firstCenter };
+            }
+            const itemHeight = first.offsetHeight || 40;
+            const firstCenter = first.offsetTop + (itemHeight / 2);
+            return { items, horizontal: false, itemHeight, firstCenter };
+        }
+
+        function _getWheelCenteredAbsoluteIndex(wheel) {
+            const geometry = _getWheelGeometry(wheel);
+            if (!geometry) return -1;
+            const centerPoint = geometry.horizontal
+                ? (wheel.scrollLeft + (wheel.clientWidth / 2))
+                : (wheel.scrollTop + (wheel.clientHeight / 2));
+            const unit = geometry.horizontal ? geometry.itemWidth : geometry.itemHeight;
+            const raw = Math.round((centerPoint - geometry.firstCenter) / unit);
+            return Math.max(0, Math.min(geometry.items.length - 1, raw));
+        }
+
+        function _getWheelCenteredItem(wheel) {
+            const items = _getWheelItems(wheel);
+            if (!items.length) return null;
+            const centeredIdx = _getWheelCenteredAbsoluteIndex(wheel);
+            return centeredIdx >= 0 ? items[centeredIdx] : null;
+        }
+
+        function _setWheelActiveItem(wheel, item) {
+            if (!wheel || !item) return;
+            if (wheel._wheelActiveItem === item) return;
+            if (wheel._wheelActiveItem) wheel._wheelActiveItem.classList.remove('active');
+            item.classList.add('active');
+            wheel._wheelActiveItem = item;
+        }
+
+        function _centerWheelOnItem(wheel, item, behavior = 'auto') {
+            if (!wheel || !item) return;
+            const horizontal = wheel.classList.contains('wheel-horizontal');
+            const target = horizontal
+                ? item.offsetLeft - ((wheel.clientWidth - item.offsetWidth) / 2)
+                : item.offsetTop - ((wheel.clientHeight - item.offsetHeight) / 2);
+            const finalPos = Math.max(0, target);
+            const currentPos = horizontal ? wheel.scrollLeft : wheel.scrollTop;
+            if (Math.abs(currentPos - finalPos) < 0.5) return;
+            if (behavior === 'smooth') {
+                wheel.scrollTo(horizontal ? { left: finalPos, behavior: 'smooth' } : { top: finalPos, behavior: 'smooth' });
+                return;
+            }
+            if (horizontal) wheel.scrollLeft = finalPos;
+            else wheel.scrollTop = finalPos;
+        }
+
+        function _recenterInfiniteWheel(wheel) {
+            if (!wheel || wheel.dataset.infinite !== 'true') return;
+            const valueCount = Number(wheel.dataset.wheelValueCount) || 0;
+            const copyCount = Number(wheel.dataset.wheelCopyCount) || 0;
+            if (!valueCount || copyCount < 3) return;
+            const geometry = _getWheelGeometry(wheel);
+            if (!geometry) return;
+            const sourceIdx = _getWheelCenteredAbsoluteIndex(wheel);
+            if (sourceIdx < 0) return;
+            const baseIndex = sourceIdx % valueCount;
+            const cycle = Math.floor(sourceIdx / valueCount);
+            const middleCycle = Math.floor(copyCount / 2);
+            if (Math.abs(cycle - middleCycle) <= 1) return;
+            const targetAbsoluteIdx = (middleCycle * valueCount) + baseIndex;
+            const deltaItems = targetAbsoluteIdx - sourceIdx;
+            if (geometry.horizontal) wheel.scrollLeft += (deltaItems * geometry.itemWidth);
+            else wheel.scrollTop += (deltaItems * geometry.itemHeight);
+        }
+
+        function _maintainInfiniteWheelLoop(wheel) {
+            if (!wheel || wheel.dataset.infinite !== 'true') return;
+            const valueCount = Number(wheel.dataset.wheelValueCount) || 0;
+            const copyCount = Number(wheel.dataset.wheelCopyCount) || 0;
+            if (!valueCount || copyCount < 5) return;
+            const geometry = _getWheelGeometry(wheel);
+            if (!geometry) return;
+            const sourceIdx = _getWheelCenteredAbsoluteIndex(wheel);
+            if (sourceIdx < 0) return;
+            const cycle = Math.floor(sourceIdx / valueCount);
+            const middleCycle = Math.floor(copyCount / 2);
+            const minSafeCycle = 2;
+            const maxSafeCycle = copyCount - 3;
+            if (cycle >= minSafeCycle && cycle <= maxSafeCycle) return;
+            const baseIndex = sourceIdx % valueCount;
+            const targetAbsoluteIdx = (middleCycle * valueCount) + baseIndex;
+            const deltaItems = targetAbsoluteIdx - sourceIdx;
+            if (geometry.horizontal) wheel.scrollLeft += (deltaItems * geometry.itemWidth);
+            else wheel.scrollTop += (deltaItems * geometry.itemHeight);
+        }
+
+        function _updateWheelVisualOnFrame(wheel) {
+            if (!wheel) return;
+            const centered = _getWheelCenteredItem(wheel);
+            if (centered) _setWheelActiveItem(wheel, centered);
+        }
+
+        function _queueWheelVisualUpdate(wheel) {
+            if (!wheel) return;
+            if (wheel._wheelRafId) return;
+            wheel._wheelRafId = requestAnimationFrame(() => {
+                wheel._wheelRafId = null;
+                _updateWheelVisualOnFrame(wheel);
+            });
+        }
+
+        function _finalizeWheelAfterScroll(wheel) {
+            if (!wheel) return;
+            if (wheel.dataset.infinite === 'true') _recenterInfiniteWheel(wheel);
+            const centered = _getWheelCenteredItem(wheel);
+            if (centered) {
+                _centerWheelOnItem(wheel, centered, 'smooth');
+                _setWheelActiveItem(wheel, centered);
+            }
+        }
+
+        function _refreshAllPickerWheels() {
+            const wheelIds = ['h-wheel', 'm-wheel', 'timer-hour-wheel', 'timer-min-wheel', 'timer-sec-wheel'];
+            wheelIds.forEach(id => {
+                const wheel = document.getElementById(id);
+                if (!wheel || wheel.clientHeight <= 0 || wheel.offsetHeight <= 0) return;
+                _finalizeWheelAfterScroll(wheel);
+            });
+        }
+
         function initPickerWheels() {
             const wheels = {
                 h: document.getElementById('h-wheel'),
                 m: document.getElementById('m-wheel'),
-                d: document.getElementById('d-wheel'),
-                p: document.getElementById('p-wheel'),
                 timerHour: document.getElementById('timer-hour-wheel'),
                 timerMin: document.getElementById('timer-min-wheel'),
                 timerSec: document.getElementById('timer-sec-wheel')
             };
 
-            let hMarkup = "<div></div>";
-            for(let i=1; i<=12; i++) hMarkup += `<div>${i}</div>`;
-            wheels.h.innerHTML = hMarkup + "<div></div>";
-
-            let mMarkup = "<div></div>";
-            for (let i = 0; i < 60; i++) {
-                mMarkup += `<div>${i.toString().padStart(2,'0')}</div>`;
-            }
-            wheels.m.innerHTML = mMarkup + "<div></div>";
-
-            let dMarkup = "<div></div>";
-            DAY_LABELS.forEach(d => { dMarkup += `<div>${d}</div>`; });
-            wheels.d.innerHTML = dMarkup + "<div></div>";
-
-            let timerHourMarkup = "<div></div>";
-            for (let i = 0; i <= 23; i++) {
-                timerHourMarkup += `<div>${i}</div>`;
-            }
-            wheels.timerHour.innerHTML = timerHourMarkup + "<div></div>";
-
-            let timerMinMarkup = "<div></div>";
-            for (let i = 0; i < 60; i++) {
-                timerMinMarkup += `<div>${i}</div>`;
-            }
-            wheels.timerMin.innerHTML = timerMinMarkup + "<div></div>";
-
-            let timerSecMarkup = "<div></div>";
-            for (let i = 0; i < 60; i++) {
-                timerSecMarkup += `<div>${i.toString().padStart(2,'0')}</div>`;
-            }
-            wheels.timerSec.innerHTML = timerSecMarkup + "<div></div>";
+            _renderInfiniteWheel(wheels.h, Array.from({ length: 12 }, (_, i) => String(i + 1)));
+            _renderInfiniteWheel(wheels.m, Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0')));
+            _renderInfiniteWheel(wheels.timerHour, Array.from({ length: 24 }, (_, i) => String(i)));
+            _renderInfiniteWheel(wheels.timerMin, Array.from({ length: 60 }, (_, i) => String(i)));
+            _renderInfiniteWheel(wheels.timerSec, Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0')));
 
             Object.values(wheels).forEach(wheel => {
                 if (wheel) {
                     wheel.addEventListener('dragstart', (evt) => {
                         evt.preventDefault();
                     });
-                    wheel.addEventListener('pointerdown', (evt) => {
-                        if (evt.pointerType === 'mouse') evt.preventDefault();
-                    });
                     wheel.addEventListener('scroll', () => {
-                        clearTimeout(wheel.snapTimeout);
-                        wheel.snapTimeout = setTimeout(() => handleWheelSnap(wheel), 150);
+                        _maintainInfiniteWheelLoop(wheel);
+                        _queueWheelVisualUpdate(wheel);
+                        if (_alarmComposerOpen && (wheel.id === 'h-wheel' || wheel.id === 'm-wheel')) {
+                            _syncHomeClockWithCreatorSelection();
+                        }
+                        clearTimeout(wheel._wheelIdleTimeout);
+                        wheel._wheelIdleTimeout = setTimeout(() => _finalizeWheelAfterScroll(wheel), 140);
                     });
                 }
             });
 
             setTimeout(() => {
+                _scrollWheelToValue('h-wheel', '12');
+                _scrollWheelToValue('m-wheel', '00');
+                setCreatorDaySelection(EVERY_DAY_LABEL);
+                setCreatorPeriodSelection('AM');
+                _syncHomeClockWithCreatorSelection();
+                _scrollWheelToValue('timer-hour-wheel', '0');
+                _scrollWheelToValue('timer-min-wheel', '0');
+                _scrollWheelToValue('timer-sec-wheel', '00');
                 Object.values(wheels).forEach(w => {
-                    if (w) handleWheelSnap(w);
+                    if (w) _finalizeWheelAfterScroll(w);
                 });
-                const timerHourWheel = document.getElementById('timer-hour-wheel');
-                const timerMinWheel = document.getElementById('timer-min-wheel');
-                const timerSecWheel = document.getElementById('timer-sec-wheel');
-                if (timerHourWheel) timerHourWheel.scrollTop = 40 * 0; // 0 hours
-                if (timerMinWheel) timerMinWheel.scrollTop = 40 * 0; // 0 minutes
-                if (timerSecWheel) timerSecWheel.scrollTop = 40 * 30; // 30 seconds
+                requestAnimationFrame(() => requestAnimationFrame(_refreshAllPickerWheels));
             }, 120);
         }
 
         function handleWheelSnap(wheel) {
-            const children = wheel.querySelectorAll('div');
-            const centerPoint = wheel.scrollTop + (wheel.clientHeight / 2);
-            
-            children.forEach(child => {
-                const childCenter = child.offsetTop + (child.clientHeight / 2);
-                const isSelected = Math.abs(centerPoint - childCenter) < 25;
-                
-                if (isSelected) {
-                    child.classList.add('active');
-                } else {
-                    child.classList.remove('active');
-                }
-            });
+            const items = _getWheelItems(wheel);
+            if (!items.length) return;
+            _finalizeWheelAfterScroll(wheel);
         }
 
         function attachScrollSnapping() {
-            const wheels = ['h-wheel', 'm-wheel', 'd-wheel', 'p-wheel', 'timer-hour-wheel', 'timer-min-wheel', 'timer-sec-wheel'];
+            const wheels = ['h-wheel', 'm-wheel', 'timer-hour-wheel', 'timer-min-wheel', 'timer-sec-wheel'];
             wheels.forEach(id => {
                 const w = document.getElementById(id);
-                if (w) w.scrollTop = 1; // Trigger initial calculation
+                if (w) handleWheelSnap(w);
             });
+        }
+
+        function _setHomeClockToTime(hours24, minutes = 0, seconds = 0) {
+            const hourHand = document.getElementById('home-clock-hour');
+            const minuteHand = document.getElementById('home-clock-minute');
+            const secondHand = document.getElementById('home-clock-second');
+            if (!hourHand || !minuteHand || !secondHand) return;
+
+            const safeSeconds = Number(seconds) || 0;
+            const safeMinutes = (Number(minutes) || 0) + (safeSeconds / 60);
+            const safeHours = ((Number(hours24) || 0) % 12) + (safeMinutes / 60);
+            hourHand.style.transform = `rotate(${(safeHours * 30) - 90}deg)`;
+            minuteHand.style.transform = `rotate(${(safeMinutes * 6) - 90}deg)`;
+            secondHand.style.transform = `rotate(${(safeSeconds * 6) - 90}deg)`;
+        }
+
+        function _startHomeClockRealtime() {
+            if (_homeClockAnimationFrame) {
+                cancelAnimationFrame(_homeClockAnimationFrame);
+                _homeClockAnimationFrame = null;
+            }
+            _homeClockPreviewMode = false;
+
+            const render = () => {
+                if (_homeClockPreviewMode) return;
+                const now = new Date();
+                _setHomeClockToTime(now.getHours(), now.getMinutes(), now.getSeconds() + (now.getMilliseconds() / 1000));
+
+                _homeClockAnimationFrame = requestAnimationFrame(render);
+            };
+
+            render();
+        }
+
+        function _setHomeClockPreviewAtMidnight() {
+            _homeClockPreviewMode = true;
+            if (_homeClockAnimationFrame) {
+                cancelAnimationFrame(_homeClockAnimationFrame);
+                _homeClockAnimationFrame = null;
+            }
+            _setHomeClockToTime(0, 0, 0);
+        }
+
+        function _syncHomeClockWithCreatorSelection() {
+            if (!_alarmComposerOpen) return;
+            const activeHourText = document.querySelector('#h-wheel .active')?.innerText;
+            const activeMinText = document.querySelector('#m-wheel .active')?.innerText;
+            const displayHour = Math.max(1, Math.min(12, parseInt(String(activeHourText || '12'), 10) || 12));
+            const minute = Math.max(0, Math.min(59, parseInt(String(activeMinText || '00'), 10) || 0));
+            const period = creatorPeriodSelection === 'PM' ? 'PM' : 'AM';
+            let hour24 = displayHour % 12;
+            if (period === 'PM') hour24 += 12;
+            _homeClockPreviewMode = true;
+            if (_homeClockAnimationFrame) {
+                cancelAnimationFrame(_homeClockAnimationFrame);
+                _homeClockAnimationFrame = null;
+            }
+            _setHomeClockToTime(hour24, minute, 0);
+        }
+
+        function initHomeAnalogClock() {
+            _startHomeClockRealtime();
         }
 
         function initNightSky() {
@@ -2940,16 +3949,16 @@
 
             function _pickNightStarTint() {
                 const r = Math.random();
-                if (r < 0.05) return { color: 'rgba(214, 236, 255, 0.98)', glow: 'rgba(176, 212, 255, 0.7)' }; // whitish blue
-                if (r < 0.10) return { color: 'rgba(222, 255, 232, 0.98)', glow: 'rgba(170, 236, 190, 0.68)' }; // whitish green
-                if (r < 0.15) return { color: 'rgba(255, 250, 220, 0.98)', glow: 'rgba(255, 230, 170, 0.72)' }; // yellowish white
+                // 20% bluish-white, 20% reddish-white, remaining neutral white.
+                if (r < 0.20) return { color: 'rgba(214, 236, 255, 0.98)', glow: 'rgba(176, 212, 255, 0.72)' };
+                if (r < 0.40) return { color: 'rgba(255, 226, 234, 0.98)', glow: 'rgba(255, 170, 188, 0.68)' };
                 return null;
             }
 
             const viewportArea = Math.max(window.innerWidth, 320) * Math.max(window.innerHeight, 480);
             const starCount = Math.min(900, Math.max(420, Math.floor(viewportArea / 2200)));
             const diamondCount = Math.max(8, Math.floor(starCount * 0.025));
-            const shootingCount = 7;
+            const shootingCount = 4;
 
             starfield.innerHTML = '';
             shootingField.innerHTML = '';
@@ -2974,7 +3983,11 @@
                 const tint = _pickNightStarTint();
                 if (tint) {
                     star.style.background = tint.color;
-                    star.style.boxShadow = `0 0 8px ${tint.glow}`;
+                    const tintedSize = size * 1.35;
+                    star.style.width = `${tintedSize}px`;
+                    star.style.height = `${tintedSize}px`;
+                    star.style.opacity = `${Math.min(1, 0.68 + Math.random() * 0.32)}`;
+                    star.style.boxShadow = `0 0 14px ${tint.glow}, 0 0 22px ${tint.glow}`;
                 }
                 starfield.appendChild(star);
             }
@@ -2996,7 +4009,8 @@
                 const tint = _pickNightStarTint();
                 if (tint) {
                     diamond.style.background = tint.color;
-                    diamond.style.boxShadow = `0 0 12px ${tint.glow}`;
+                    diamond.style.opacity = `${Math.min(1, 0.78 + Math.random() * 0.22)}`;
+                    diamond.style.boxShadow = `0 0 18px ${tint.glow}, 0 0 28px ${tint.glow}`;
                 }
                 starfield.appendChild(diamond);
             }
@@ -3039,8 +4053,9 @@
                 streak.style.setProperty('--ey', `${ey.toFixed(1)}px`);
                 streak.style.setProperty('--shoot-angle', `${angle.toFixed(2)}deg`);
                 streak.style.setProperty('--trail-length', `${100 + Math.random() * 120}px`);
-                streak.style.setProperty('--shoot-duration', `${7.5 + Math.random() * 7.5}s`);
-                streak.style.setProperty('--shoot-delay', `${Math.random() * 10}s`);
+                // One shooting star begins every 3 seconds.
+                streak.style.setProperty('--shoot-duration', '12s');
+                streak.style.setProperty('--shoot-delay', `${i * 3}s`);
                 shootingField.appendChild(streak);
             }
         }
@@ -3316,8 +4331,9 @@
             if (_isRoutineTransitioning) return;
             _isRoutineTransitioning = true;
             _inRoutineSession = false;
+            _routineDayModeActive = false;
             setTimeout(() => {
-                setSunUp();
+                _syncSkyMode();
                 
                 const wakeScreen = document.getElementById('screen-wake');
                 const postScreen = document.getElementById('screen-post');
@@ -3381,11 +4397,22 @@
         function _scrollWheelToValue(wheelId, value) {
             const wheel = document.getElementById(wheelId);
             if (!wheel) return;
-            const target = Array.from(wheel.querySelectorAll('div')).find(el => el.textContent.trim() === String(value));
-            if (!target) return;
-            const offset = target.offsetTop - ((wheel.clientHeight - target.clientHeight) / 2);
-            wheel.scrollTop = Math.max(0, offset);
-            handleWheelSnap(wheel);
+            const items = _getWheelItems(wheel);
+            const allMatches = items.filter(el => String(el.dataset.wheelValue || el.textContent || '').trim() === String(value));
+            if (!allMatches.length) return;
+            const middleStart = Number(wheel.dataset.wheelMiddleStart);
+            let target = allMatches[0];
+            if (Number.isFinite(middleStart)) {
+                target = allMatches.reduce((best, current) => {
+                    const bestIdx = items.indexOf(best);
+                    const curIdx = items.indexOf(current);
+                    if (bestIdx < 0) return current;
+                    if (curIdx < 0) return best;
+                    return Math.abs(curIdx - middleStart) < Math.abs(bestIdx - middleStart) ? current : best;
+                }, allMatches[0]);
+            }
+            _centerWheelOnItem(wheel, target, 'auto');
+            _setWheelActiveItem(wheel, target);
         }
 
         function _resetTimerPickerToZero() {
@@ -3396,6 +4423,9 @@
 
         /* ===== ALARM LAYOUT (SINGLE SCROLL) START ===== */
         function _scrollAlarmPickerIntoView() {
+            if (!_alarmComposerOpen) {
+                setAlarmComposerOpen(true, { scrollIntoView: false });
+            }
             const createPanel = document.getElementById('alarm-create-panel');
             if (createPanel) {
                 createPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -3407,6 +4437,49 @@
             }
         }
         /* ===== ALARM LAYOUT (SINGLE SCROLL) END ===== */
+
+        function setAlarmComposerOpen(nextOpen, opts = {}) {
+            const shouldOpen = !!nextOpen;
+            _alarmComposerOpen = shouldOpen;
+            const layout = document.getElementById('alarms-screen-layout');
+            const trigger = document.getElementById('alarm-composer-btn');
+            const triggerGlyph = document.getElementById('alarm-composer-glyph');
+            if (layout) layout.classList.toggle('composer-open', shouldOpen);
+            if (shouldOpen) {
+                _setHomeClockPreviewAtMidnight();
+                _scrollWheelToValue('h-wheel', '12');
+                _scrollWheelToValue('m-wheel', '00');
+                setCreatorDaySelection(EVERY_DAY_LABEL);
+                setCreatorPeriodSelection('AM');
+                _syncHomeClockWithCreatorSelection();
+            } else {
+                _startHomeClockRealtime();
+            }
+            if (trigger) {
+                trigger.classList.toggle('open', shouldOpen);
+                trigger.setAttribute('aria-expanded', shouldOpen ? 'true' : 'false');
+                if (triggerGlyph) triggerGlyph.textContent = shouldOpen ? '−' : '+';
+                trigger.setAttribute('aria-label', shouldOpen ? 'Collapse alarm creator' : 'Expand alarm creator');
+                trigger.setAttribute('title', shouldOpen ? 'Collapse alarm creator' : 'Expand alarm creator');
+            }
+            if (opts.scrollIntoView) _scrollAlarmPickerIntoView();
+        }
+
+        function toggleAlarmComposer() {
+            const now = Date.now();
+            if (now < _alarmComposerToggleCooldownUntil) return;
+            _alarmComposerToggleCooldownUntil = now + 4000;
+            const trigger = document.getElementById('alarm-composer-btn');
+            if (trigger) {
+                trigger.classList.add('cooldown');
+                if (_alarmComposerToggleCooldownTimer) clearTimeout(_alarmComposerToggleCooldownTimer);
+                _alarmComposerToggleCooldownTimer = setTimeout(() => {
+                    trigger.classList.remove('cooldown');
+                    _alarmComposerToggleCooldownTimer = null;
+                }, 4000);
+            }
+            setAlarmComposerOpen(!_alarmComposerOpen, { scrollIntoView: !_alarmComposerOpen });
+        }
 
         function _updateAlarmEditActions() {
             const setBtn = document.getElementById('set-alarm-btn');
@@ -3434,6 +4507,7 @@
             };
             _closeRepeatPopover();
             _updateAlarmEditActions();
+            setAlarmComposerOpen(true, { scrollIntoView: false });
 
             const parsed = _parseAlarmString(alarms[index] || '');
             if (parsed) {
@@ -3443,16 +4517,19 @@
                 const displayPeriod = parsed.hh >= 12 ? 'PM' : 'AM';
                 _scrollWheelToValue('h-wheel', String(displayHour));
                 _scrollWheelToValue('m-wheel', displayMinute);
-                _scrollWheelToValue('p-wheel', displayPeriod);
+                setCreatorPeriodSelection(displayPeriod);
             }
 
             const selectedDays = _getRepeatDaysForAlarm(index);
             if (Array.isArray(selectedDays) && selectedDays.length > 0) {
-                const firstDay = DAY_LABELS[selectedDays[0]];
-                _scrollWheelToValue('d-wheel', firstDay);
+                const dayLabel = selectedDays.length === 7
+                    ? EVERY_DAY_LABEL
+                    : DAY_LABELS[selectedDays[0]];
+                setCreatorDaySelection(dayLabel);
             }
             selectedAlarmType = (alarmTypes && alarmTypes[index]) ? alarmTypes[index] : 'routine';
             setAlarmType(selectedAlarmType);
+            _syncHomeClockWithCreatorSelection();
 
             /* ===== ALARM LAYOUT (SINGLE SCROLL) START ===== */
             _scrollAlarmPickerIntoView();
@@ -3478,16 +4555,20 @@
                 if (displayHour === 0) displayHour = 12;
                 _scrollWheelToValue('h-wheel', String(displayHour));
                 _scrollWheelToValue('m-wheel', String(restored.mm).padStart(2, '0'));
-                _scrollWheelToValue('p-wheel', restored.hh >= 12 ? 'PM' : 'AM');
+                setCreatorPeriodSelection(restored.hh >= 12 ? 'PM' : 'AM');
             }
             const restoredDays = _getRepeatDaysForAlarm(idx);
-            _scrollWheelToValue('d-wheel', DAY_LABELS[restoredDays[0] ?? 0]);
+            const restoredDayLabel = Array.isArray(restoredDays) && restoredDays.length === 7
+                ? EVERY_DAY_LABEL
+                : DAY_LABELS[restoredDays[0] ?? 0];
+            setCreatorDaySelection(restoredDayLabel);
             selectedAlarmType = (alarmTypes && alarmTypes[idx]) ? alarmTypes[idx] : 'routine';
             setAlarmType(selectedAlarmType);
 
             editingAlarmIndex = null;
             originalAlarmDraft = null;
             _closeRepeatPopover();
+            setAlarmComposerOpen(false, { scrollIntoView: false });
             renderAlarms();
             saveState();
         }
@@ -3498,6 +4579,7 @@
             }
             _repeatPopover = null;
             _openRepeatEditorIndex = null;
+            _openSoundEditorIndex = null;
         }
 
         function _ensureRepeatPopover() {
@@ -3543,7 +4625,7 @@
                         .sort((a, b) => a - b);
                     alarmsRepeatDays[index] = _normalizeRepeatDays(selected);
                     alarmsMeta[index] = _formatRepeatDays(alarmsRepeatDays[index]);
-                    const labelEl = document.querySelector(`.alarm-repeat-trigger[data-alarm-idx="${index}"] .alarm-repeat-label`);
+                    const labelEl = document.querySelector(`.alarm-repeat-inline-trigger[data-alarm-idx="${index}"] .alarm-repeat-label`);
                     if (labelEl) labelEl.textContent = `Repeating: ${alarmsMeta[index]}`;
                     saveState();
                 });
@@ -3563,11 +4645,56 @@
             _renderRepeatPopoverForAlarm(index, triggerEl);
         }
 
+        function _renderSoundPopoverForAlarm(index, anchorEl) {
+            const popover = _ensureRepeatPopover();
+            const selectedId = _getAlarmSoundId(index);
+            popover.innerHTML = `
+                <div class="alarm-repeat-popover-title">Alarm Sound</div>
+                ${SOUND_OPTIONS.map(sound => `
+                    <label class="day-check">
+                        <input type="checkbox" data-sound-id="${String(sound.id || '').replace(/"/g, '&quot;')}" ${selectedId === sound.id ? 'checked' : ''}>
+                        <span>${String(sound.name || 'Sound')}</span>
+                    </label>
+                `).join('')}
+                <button type="button" class="alarm-repeat-popover-done">Done</button>
+            `;
+            _positionRepeatPopover(anchorEl, popover);
+            _openSoundEditorIndex = index;
+
+            const checkboxes = Array.from(popover.querySelectorAll('input[type="checkbox"]'));
+            checkboxes.forEach(input => {
+                input.addEventListener('change', () => {
+                    checkboxes.forEach(other => {
+                        if (other !== input) other.checked = false;
+                    });
+                    if (!input.checked) input.checked = true;
+                    alarmSoundIds[index] = _normalizeAlarmSoundId(input.dataset.soundId);
+                    const labelEl = document.querySelector(`.alarm-sound-trigger[data-alarm-idx="${index}"] .alarm-repeat-label`);
+                    if (labelEl) labelEl.textContent = `Sound: ${_getSoundNameById(alarmSoundIds[index])}`;
+                    saveState();
+                });
+            });
+
+            const doneBtn = popover.querySelector('.alarm-repeat-popover-done');
+            if (doneBtn) doneBtn.onclick = () => _closeRepeatPopover();
+        }
+
+        function openSoundEditor(index, triggerEl) {
+            if (!Number.isInteger(index) || index < 0 || index >= alarms.length || !triggerEl) return;
+            if (_openSoundEditorIndex === index) {
+                _closeRepeatPopover();
+                return;
+            }
+            _closeRepeatPopover();
+            _renderSoundPopoverForAlarm(index, triggerEl);
+        }
+
         function initRepeatPopoverDismiss() {
             document.addEventListener('click', (evt) => {
                 if (!_repeatPopover) return;
                 if (evt.target.closest('.alarm-repeat-popover')) return;
                 if (evt.target.closest('.alarm-repeat-trigger')) return;
+                if (evt.target.closest('.alarm-sound-trigger')) return;
                 _closeRepeatPopover();
             });
             window.addEventListener('resize', () => { if (_repeatPopover) _closeRepeatPopover(); });
@@ -3581,6 +4708,7 @@
                 const alarmName = _normalizeAlarmName(alarmNames[i], i);
                 const isRenaming = _renamingAlarmIndex === i;
                 const repeatLabel = _formatRepeatDays(_getRepeatDaysForAlarm(i));
+                const soundLabel = _getSoundNameById(_getAlarmSoundId(i));
                 const alarmType = (alarmTypes && alarmTypes[i]) ? alarmTypes[i] : 'routine';
                 const isEnabled = !(Array.isArray(alarmEnabled) && alarmEnabled[i] === false);
                 const typeLabel = alarmType === 'routine' ? 'Routine' : 'Regular';
@@ -3593,7 +4721,7 @@
                 const nameTextDisabledStyle = !isEnabled ? 'opacity:0.46; filter:grayscale(1);' : '';
                 const isExpanded = _expandedAlarmIndex === i;
                 return `
-                <div class="alarm-row" data-alarm-idx="${i}" style="padding:22px 0; border-bottom:1px solid rgba(255,255,255,0.1);${highlightStyle}${rowDisabledStyle}padding:20px;border-radius:12px;margin-bottom:18px;">
+                <div class="alarm-row" data-alarm-idx="${i}" style="border:1px solid rgba(255,255,255,0.12);${highlightStyle}${rowDisabledStyle}padding:30px 24px;border-radius:22px;margin-bottom:28px; min-height:192px;">
                     <div class="alarm-name-row" style="${contentDisabledStyle}">
                         <span class="alarm-name-main">
                             ${isRenaming
@@ -3625,6 +4753,9 @@
                             </button>
                         </span>
                     </div>
+                    <button type="button" class="alarm-repeat-trigger alarm-repeat-inline-trigger" data-alarm-idx="${i}" aria-label="Edit repeating days for ${a}" style="${contentDisabledStyle}">
+                        <span class="alarm-repeat-label">Repeating: ${repeatLabel}</span>
+                    </button>
                     <div class="alarm-details ${isExpanded ? 'open' : ''}" style="${contentDisabledStyle}">
                         <div class="alarm-controls-row">
                             <button class="alarm-edit-btn" data-alarm-idx="${i}"><span class="alarm-edit-label">Edit</span></button>
@@ -3636,8 +4767,8 @@
                                 </svg>
                             </button>
                         </div>
-                        <button type="button" class="alarm-repeat-trigger" data-alarm-idx="${i}" aria-label="Edit repeating days for ${a}">
-                            <span class="alarm-repeat-label">Repeating: ${repeatLabel}</span>
+                        <button type="button" class="alarm-repeat-trigger alarm-sound-trigger" data-alarm-idx="${i}" aria-label="Choose alarm sound for ${a}">
+                            <span class="alarm-repeat-label">Sound: ${soundLabel}</span>
                         </button>
                     </div>
                 </div>
@@ -3655,6 +4786,10 @@
                 const idx = parseInt(btn.dataset.alarmIdx);
                 btn.onclick = (evt) => {
                     evt.stopPropagation();
+                    if (btn.classList.contains('alarm-sound-trigger')) {
+                        openSoundEditor(idx, btn);
+                        return;
+                    }
                     openRepeatEditor(idx, btn);
                 };
             });
@@ -3716,17 +4851,23 @@
             _updateAlarmEditActions();
 
             if (_openRepeatEditorIndex !== null) {
-                const activeTrigger = document.querySelector(`.alarm-repeat-trigger[data-alarm-idx="${_openRepeatEditorIndex}"]`);
+                const activeTrigger = document.querySelector(`.alarm-repeat-inline-trigger[data-alarm-idx="${_openRepeatEditorIndex}"]`);
                 if (!activeTrigger) _closeRepeatPopover();
                 else if (_repeatPopover) _positionRepeatPopover(activeTrigger, _repeatPopover);
             }
+            if (_openSoundEditorIndex !== null) {
+                const activeTrigger = document.querySelector(`.alarm-sound-trigger[data-alarm-idx="${_openSoundEditorIndex}"]`);
+                if (!activeTrigger) _closeRepeatPopover();
+                else if (_repeatPopover) _positionRepeatPopover(activeTrigger, _repeatPopover);
+            }
+            setAlarmType(selectedAlarmType, { save: false });
             _updateNextAlarmSummary();
         }
 
         function toggleAlarmDetails(index) {
             if (!Number.isInteger(index) || index < 0 || index >= alarms.length) return;
             const nextExpanded = _expandedAlarmIndex === index ? null : index;
-            if (_openRepeatEditorIndex !== null && _openRepeatEditorIndex !== nextExpanded) _closeRepeatPopover();
+            if (_openRepeatEditorIndex !== null || _openSoundEditorIndex !== null) _closeRepeatPopover();
             _expandedAlarmIndex = nextExpanded;
             renderAlarms();
         }
@@ -3741,7 +4882,16 @@
         function toggleAlarmType(index) {
             if (!Array.isArray(alarmTypes) || index < 0 || index >= alarms.length) return;
             const current = alarmTypes[index] === 'regular' ? 'regular' : 'routine';
-            alarmTypes[index] = current === 'routine' ? 'regular' : 'routine';
+            const next = current === 'routine' ? 'regular' : 'routine';
+            if (next === 'routine' && !_canSelectRoutineType(index)) {
+                showAppTopToast(`Maximum routine alarms reached (${maxRoutineAlarms})`, 2000);
+                return;
+            }
+            alarmTypes[index] = next;
+            if (selectedAlarmType === 'routine' && !_canSelectRoutineType(Number.isInteger(editingAlarmIndex) ? editingAlarmIndex : null)) {
+                selectedAlarmType = 'regular';
+            }
+            _updateRoutineLimitControls();
             renderAlarms();
             saveState();
         }
@@ -3766,24 +4916,42 @@
             }, { render: true, save: true, renderReason: 'renameAlarm' });
         }
 
-        function setAlarmType(type) {
+        function setAlarmType(type, opts = {}) {
+            const excludeIndex = Number.isInteger(editingAlarmIndex) ? editingAlarmIndex : null;
+            const routineAllowed = _canSelectRoutineType(excludeIndex);
+            if (type === 'routine') {
+                if (!routineAllowed) type = 'regular';
+            }
             selectedAlarmType = type;
             const btnRoutine = document.getElementById('btn-routine');
             const btnRegular = document.getElementById('btn-regular');
             if (btnRoutine && btnRegular) {
+                const routineDisabled = !routineAllowed && selectedAlarmType !== 'routine';
+                btnRoutine.disabled = routineDisabled;
+                btnRoutine.style.pointerEvents = routineDisabled ? 'none' : 'auto';
+                btnRoutine.style.cursor = routineDisabled ? 'not-allowed' : 'pointer';
                 if (type === 'routine') {
                     btnRoutine.style.background = 'rgba(255,211,78,0.25)';
                     btnRoutine.style.borderColor = 'var(--sun-main)';
+                    btnRoutine.style.color = 'var(--sun-main)';
                     btnRegular.style.background = 'rgba(255,255,255,0.06)';
                     btnRegular.style.borderColor = 'rgba(255,255,255,0.2)';
                 } else {
-                    btnRoutine.style.background = 'rgba(255,211,78,0.15)';
-                    btnRoutine.style.borderColor = 'rgba(255,255,255,0.2)';
+                    if (routineDisabled) {
+                        btnRoutine.style.background = 'rgba(130,130,130,0.22)';
+                        btnRoutine.style.borderColor = 'rgba(130,130,130,0.4)';
+                        btnRoutine.style.color = '#b8bec6';
+                    } else {
+                        btnRoutine.style.background = 'rgba(255,211,78,0.15)';
+                        btnRoutine.style.borderColor = 'rgba(255,255,255,0.2)';
+                        btnRoutine.style.color = 'var(--sun-main)';
+                    }
                     btnRegular.style.background = 'rgba(0,122,255,0.2)';
                     btnRegular.style.borderColor = 'var(--accent-blue)';
                 }
             }
-            saveState();
+            _updateRoutineLimitControls();
+            if (opts.save !== false) saveState();
         }
 
         async function commitAlarmFromPicker() {
@@ -3798,18 +4966,39 @@
             }
 
             const now = Date.now();
-            const h = document.querySelector('#h-wheel .active')?.innerText || "6";
-            const m = document.querySelector('#m-wheel .active')?.innerText || "00";
-            const p = document.querySelector('#p-wheel .active')?.innerText || "AM";
-            const d = document.querySelector('#d-wheel .active')?.innerText || "Everyday";
+            const activeHourText = document.querySelector('#h-wheel .active')?.innerText;
+            const activeMinText = document.querySelector('#m-wheel .active')?.innerText;
+            const activePeriodText = creatorPeriodSelection;
+            const activeDayText = creatorDaySelection;
+
+            let h = activeHourText || "12";
+            let m = activeMinText || "00";
+            let p = activePeriodText || "AM";
+            let d = activeDayText || EVERY_DAY_LABEL;
+            if (!activeHourText || !activeMinText || !activePeriodText) {
+                const now = new Date();
+                const displayHour = (now.getHours() % 12) || 12;
+                h = String(displayHour);
+                m = String(now.getMinutes()).padStart(2, '0');
+                p = now.getHours() >= 12 ? 'PM' : 'AM';
+                d = EVERY_DAY_LABEL;
+            }
             
             const newAlarm = `${h}:${m} ${p}`;
             const parsedDay = DAY_LABELS.findIndex(label => label === d);
-            const selectedDaysForCreate = parsedDay >= 0 ? [parsedDay] : [...ALL_DAY_INDICES];
+            const selectedDaysForCreate = (d === EVERY_DAY_LABEL || d === 'Everyday' || parsedDay < 0)
+                ? [...ALL_DAY_INDICES]
+                : [parsedDay];
             const normalizedDays = _normalizeRepeatDays(selectedDaysForCreate);
             const normalizedType = selectedAlarmType === 'regular' ? 'regular' : 'routine';
             const editing = Number.isInteger(editingAlarmIndex) && editingAlarmIndex >= 0 && editingAlarmIndex < alarms.length;
             const editIdx = editing ? editingAlarmIndex : -1;
+            if (normalizedType === 'routine' && !_canSelectRoutineType(editing ? editIdx : null)) {
+                _setAlarmLocked = false;
+                _syncAlarmCommitButtonLimitState();
+                showAppTopToast(`Maximum routine alarms reached (${maxRoutineAlarms})`, 2000);
+                return;
+            }
             if (!editing && Array.isArray(alarms) && alarms.length >= MAX_ALARMS) {
                 _setAlarmLocked = false;
                 _syncAlarmCommitButtonLimitState();
@@ -3834,6 +5023,7 @@
                         alarmsRepeatDays[editIdx] = _normalizeRepeatDays(_getRepeatDaysForAlarm(editIdx));
                         alarmsMeta[editIdx] = _formatRepeatDays(alarmsRepeatDays[editIdx]);
                         alarmTypes[editIdx] = normalizedType;
+                        alarmSoundIds[editIdx] = _normalizeAlarmSoundId(alarmSoundIds[editIdx]);
                         alarmEnabled[editIdx] = alarmEnabled[editIdx] !== false;
                     } else {
                         alarms.push(newAlarm);
@@ -3841,12 +5031,14 @@
                         alarmsRepeatDays.push(normalizedDays);
                         alarmsMeta.push(_formatRepeatDays(normalizedDays));
                         alarmTypes.push(normalizedType);
+                        alarmSoundIds.push(_normalizeAlarmSoundId(selectedSound));
                         alarmEnabled.push(true);
                     }
 
                     editingAlarmIndex = null;
                     originalAlarmDraft = null;
                     _closeRepeatPopover();
+                    setAlarmComposerOpen(false, { scrollIntoView: false });
                 }, { render: true, save: true, renderReason: 'commitAlarmFromPicker' });
             } finally {
                 _setAlarmLocked = false;
@@ -3864,6 +5056,7 @@
             if (alarmsMeta && alarmsMeta.length > index) alarmsMeta.splice(index, 1);
             if (alarmsRepeatDays && alarmsRepeatDays.length > index) alarmsRepeatDays.splice(index, 1);
             if (alarmTypes && alarmTypes.length > index) alarmTypes.splice(index, 1);
+            if (alarmSoundIds && alarmSoundIds.length > index) alarmSoundIds.splice(index, 1);
             if (alarmEnabled && alarmEnabled.length > index) alarmEnabled.splice(index, 1);
             if (_expandedAlarmIndex === index) _expandedAlarmIndex = null;
             if (_expandedAlarmIndex !== null && index < _expandedAlarmIndex) _expandedAlarmIndex -= 1;
@@ -3879,6 +5072,8 @@
             }
             if (_openRepeatEditorIndex === index) _closeRepeatPopover();
             if (_openRepeatEditorIndex !== null && index < _openRepeatEditorIndex) _openRepeatEditorIndex -= 1;
+            if (_openSoundEditorIndex === index) _closeRepeatPopover();
+            if (_openSoundEditorIndex !== null && index < _openSoundEditorIndex) _openSoundEditorIndex -= 1;
             renderAlarms();
             saveState();
         }
@@ -3888,7 +5083,19 @@
             try {
             const list = document.getElementById('edit-list');
             if (!list) return;
+            const totalHabits = Array.isArray(tasks) ? tasks.length : 0;
+            const routineAlarmCount = Array.isArray(alarmTypes)
+                ? alarmTypes.filter(t => t === 'routine').length
+                : 0;
+            const countEl = document.getElementById('routine-count');
+            const routineAlarmInfoEl = document.getElementById('routine-alarm-info');
+            if (countEl) countEl.textContent = String(totalHabits);
+            if (routineAlarmInfoEl) routineAlarmInfoEl.textContent = `${routineAlarmCount}/${maxRoutineAlarms}`;
             list.innerHTML = '';
+            if (totalHabits === 0) {
+                list.innerHTML = `<div class="routine-empty">No routine habits yet. Add one below to start your stack.</div>`;
+                return;
+            }
             tasks.forEach(t => {
                 const row = document.createElement('div');
                 row.className = 'routine-edit-row';
@@ -4008,20 +5215,14 @@
             bodyEl.style.backgroundPosition = '';
             bodyEl.style.backgroundRepeat = '';
             bodyEl.style.backgroundColor = '';
+            bodyEl.classList.toggle('no-background-mode', opt.id === 'no-bg');
+            bodyEl.classList.toggle('clear-background-mode', opt.id === 'clear-bg');
 
-            if (opt.type === 'image') {
-                app.style.backgroundImage = `url('${opt.value}')`;
-                app.style.backgroundSize = 'cover';
-                app.style.backgroundPosition = 'center';
-                app.style.backgroundRepeat = 'no-repeat';
-                bodyEl.style.backgroundImage = `url('${opt.value}')`;
-                bodyEl.style.backgroundSize = 'cover';
-                bodyEl.style.backgroundPosition = 'center';
-                bodyEl.style.backgroundRepeat = 'no-repeat';
-            } else if (opt.type === 'color') {
-                app.style.backgroundColor = opt.value;
-                bodyEl.style.backgroundColor = opt.value;
+            if (opt.type === 'fullscreen-none') {
+                app.style.backgroundColor = '#000000';
+                bodyEl.style.backgroundColor = '#000000';
             }
+            _syncSkyMode();
 
             bodyEl.classList.remove('theme-dark', 'theme-light');
             bodyEl.classList.add(opt.theme === 'light' ? 'theme-light' : 'theme-dark');
@@ -4157,10 +5358,11 @@
             try {
                 _isRoutineTransitioning = false;
                 _inRoutineSession = false;
+                _routineDayModeActive = false;
                 tasks.forEach(t => t.done = false);
                 if (typeof setTabsLocked === 'function') setTabsLocked(false);
                 switchTab('post');
-                setSunUp({ force: true });
+                _syncSkyMode();
                 showTabs(true);
                 renderApplication();
                 renderAlarms();
@@ -4221,6 +5423,14 @@
             return new Promise(resolve => setTimeout(resolve, _getTransitionMs() + 80));
         }
 
+        function _syncSkyMode() {
+            if (_routineDayModeActive || _inRoutineSession) {
+                setSunUp({ force: true });
+            } else {
+                setSunDown();
+            }
+        }
+
         function hideTabs() {
             const nav = document.querySelector('.bottom-nav');
             if (!nav) return;
@@ -4250,11 +5460,13 @@
 
         function startMorningRoutineSession(resetTasks = false) {
             _inRoutineSession = true;
+            _routineDayModeActive = true;
             if (resetTasks) {
                 tasks.forEach(t => { t.done = false; });
             }
 
             switchTab('wake');
+            _syncSkyMode();
             hideTabs();
             if (typeof renderApplication === 'function') renderApplication();
         }
@@ -5304,7 +6516,7 @@
             _currentRingingIndexes.push(index);
             _scheduleAlarmAutoStop(index);
 
-            const stopBeep = _startBeep();
+            const stopBeep = _startBeep(_getAlarmSoundId(index));
             
             const alarmType = (alarmTypes && alarmTypes[index]) ? alarmTypes[index] : 'routine';
             const snoozedAsRegularOnce = !!_snoozedAsRegularOnce[index];
@@ -5435,12 +6647,14 @@
 
                     try {
                         if (isMorningRoutineAlarm) {
+                            _routineDayModeActive = true;
+                            _syncSkyMode();
                             startMorningRoutineSession(true);
-                            setSunDown();
                         } else {
                             _inRoutineSession = false;
+                            _routineDayModeActive = false;
                             switchTab('post');
-                            setSunUp({ force: true });
+                            _syncSkyMode();
                             showTabs(true);
                         }
                     } catch (e) {
@@ -5462,8 +6676,9 @@
 
                     try {
                         _inRoutineSession = false;
+                        _routineDayModeActive = false;
                         switchTab('post');
-                        setSunUp({ force: true });
+                        _syncSkyMode();
                         restoreTabsAfterAlarmAction();
                     } catch (e) {
                         console.warn('Failed to return to home page', e);
@@ -5473,8 +6688,9 @@
 
             try {
                 if (!_inRoutineSession) {
+                    _routineDayModeActive = !!isMorningRoutineAlarm;
                     switchTab('post');
-                    setSunUp({ force: true });
+                    _syncSkyMode();
                     restoreTabsAfterAlarmAction();
                 }
             } catch (e) {
@@ -5528,8 +6744,9 @@
 
             try {
                 _inRoutineSession = false;
+                _routineDayModeActive = false;
                 switchTab('post');
-                setSunUp({ force: true });
+                _syncSkyMode();
                 restoreTabsAfterAlarmAction();
             } catch (e) {
                 console.warn('Failed to restore tabs after snooze', e);
@@ -5559,14 +6776,15 @@
             if (_inRoutineSession && name === 'post' && !opts.forceRoutineExit) return;
             const mappings = {
                 'post': 'screen-post',
+                'routine': 'screen-routine',
                 'wake': 'screen-wake',
                 'timers': 'screen-timers',
-                'stopwatch': 'screen-stopwatch',
                 'sounds': 'screen-sounds',
-                'background': 'screen-background'
+                'settings': 'screen-sounds',
+                'background': 'screen-sounds'
             };
             const targetId = mappings[name] || 'screen-post';
-            ['screen-wake','screen-post','screen-timers','screen-stopwatch','screen-sounds','screen-background'].forEach(id => {
+            ['screen-wake','screen-post','screen-routine','screen-timers','screen-sounds'].forEach(id => {
                 const el = document.getElementById(id);
                 if (!el) return;
                 if (id === targetId) {
@@ -5578,18 +6796,15 @@
                 }
             });
 
-            if (targetId === 'screen-wake') {
-                setSunDown();
-            } else {
-                setSunUp();
-            }
+            _syncSkyMode();
 
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             if (name === 'post') document.getElementById('tab-alarms')?.classList.add('active');
+            if (name === 'routine') document.getElementById('tab-routine')?.classList.add('active');
             if (name === 'timers') document.getElementById('tab-timers')?.classList.add('active');
-            if (name === 'stopwatch') document.getElementById('tab-stopwatch')?.classList.add('active');
-            if (name === 'sounds') document.getElementById('tab-sounds')?.classList.add('active');
-            if (name === 'background') document.getElementById('tab-background')?.classList.add('active');
+            if (name === 'sounds' || name === 'settings' || name === 'background') document.getElementById('tab-settings')?.classList.add('active');
+            if (name === 'routine') renderRoutineEditor();
+            requestAnimationFrame(() => requestAnimationFrame(_refreshAllPickerWheels));
         }
 
         (function initTabs(){
@@ -5719,17 +6934,10 @@
         function getWheelValue(wheelId) {
             const wheel = document.getElementById(wheelId);
             if (!wheel) return 0;
-            const children = wheel.querySelectorAll('div');
-            const centerPoint = wheel.scrollTop + (wheel.clientHeight / 2);
-            
-            for (let i = 0; i < children.length; i++) {
-                const child = children[i];
-                const childCenter = child.offsetTop + (child.clientHeight / 2);
-                if (Math.abs(centerPoint - childCenter) < 25) {
-                    return child.textContent ? parseInt(child.textContent) || 0 : 0;
-                }
-            }
-            return 0;
+            const activeItem = wheel.querySelector('.wheel-item.active') || _getWheelCenteredItem(wheel);
+            if (!activeItem) return 0;
+            const rawValue = String(activeItem.dataset.wheelValue || activeItem.textContent || '').trim();
+            return Number.parseInt(rawValue, 10) || 0;
         }
 
         function createTimer() {
@@ -6034,7 +7242,7 @@
         }
         document.getElementById('create-timer-btn')?.addEventListener('click', createTimer);
         
-        let _sw_running = false, _sw_start=0, _sw_elapsed=0, _sw_tick=null, _sw_laps=[];
+        let _sw_running = false, _sw_start=0, _sw_elapsed=0, _sw_tick=null;
         function _sw_fmt(n){
             const cent = Math.floor((n%1000)/10).toString().padStart(2,'0');
             const s = Math.floor(n/1000);
@@ -6046,8 +7254,6 @@
             const disp = document.getElementById('sw-display'); if(!disp) return;
             const now = _sw_elapsed + (_sw_running ? (Date.now()-_sw_start) : 0);
             disp.textContent = _sw_fmt(now);
-            const lapsEl = document.getElementById('sw-laps');
-            if (lapsEl) lapsEl.innerHTML = _sw_laps.map((l,i)=>`<div style="display:flex;justify-content:space-between;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03)"><div>Lap ${i+1}</div><div>${_sw_fmt(l)}</div></div>`).join('');
         }
         function _sw_startstop(){
             if (_sw_running) {
@@ -6062,10 +7268,8 @@
             _sw_render();
             saveState();
         }
-        function _sw_lap(){ const now = _sw_elapsed + (_sw_running ? (Date.now()-_sw_start) : 0); _sw_laps.unshift(now); _sw_render(); saveState(); try{ const stop=_startBeep(); setTimeout(()=>{ stop(); _stopAllBeeps(); },160);}catch(e){} }
-        function _sw_reset(){ _sw_running=false; clearInterval(_sw_tick); _sw_tick=null; _sw_elapsed=0; _sw_start=0; _sw_laps=[]; document.getElementById('sw-start').textContent='Start'; _sw_render(); saveState(); }
+        function _sw_reset(){ _sw_running=false; clearInterval(_sw_tick); _sw_tick=null; _sw_elapsed=0; _sw_start=0; document.getElementById('sw-start').textContent='Start'; _sw_render(); saveState(); }
         document.getElementById('sw-start')?.addEventListener('click', _sw_startstop);
-        document.getElementById('sw-lap')?.addEventListener('click', _sw_lap);
         document.getElementById('sw-reset')?.addEventListener('click', _sw_reset);
     </script>
     
