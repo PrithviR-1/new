@@ -44,6 +44,7 @@
             
             --transition-speed: 5s;
             --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+            --app-shell-width: min(100vw, 584px);
         }
 
         
@@ -81,7 +82,12 @@
         
         #stage {
             position: fixed;
-            inset: 0;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: var(--app-shell-width);
+            transform: translateX(-50%);
+            overflow: hidden;
             background: var(--sky-night);
             transition: background var(--transition-speed) var(--ease-out-expo);
             z-index: 1;
@@ -109,7 +115,7 @@
         
         .moon-system {
             position: absolute;
-            top: 12.3%;
+            top: 12.6%;
             left: 50%;
             width: 116px;
             height: 116px;
@@ -486,11 +492,12 @@
             height: 100vh;
             min-height: 100dvh;
             max-height: 100dvh;
-            width: 100%;
+            width: var(--app-shell-width);
+            max-width: 100vw;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 0 8px calc(140px + env(safe-area-inset-bottom));
+            padding: 0 0 calc(140px + env(safe-area-inset-bottom));
             overflow-y: auto;
             overflow-x: hidden;
             z-index: 100; 
@@ -532,7 +539,7 @@
             border: 1px solid var(--glass-stroke);
             border-radius: 44px;
             width: 100%;
-            max-width: 568px;
+            max-width: var(--app-shell-width);
             padding: 44px;
             box-shadow: var(--card-shadow);
             opacity: 1;
@@ -557,12 +564,12 @@
 
         #body.no-background-mode #app-ui {
             align-items: center;
-            padding: 0 8px calc(140px + env(safe-area-inset-bottom));
+            padding: 0 0 calc(140px + env(safe-area-inset-bottom));
             background: #000000;
         }
 
         #body.no-background-mode .glass-card {
-            max-width: 568px !important;
+            max-width: var(--app-shell-width) !important;
             width: 100%;
             border-radius: 0;
             margin-bottom: 40px;
@@ -771,6 +778,14 @@
             gap: 8px;
             border-radius: 24px;
         }
+        #alarm-create-panel .picker-container.alarm-picker-horizontal .wheel.wheel-horizontal {
+            min-height: 62px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
+        #alarm-create-panel .picker-container.alarm-picker-horizontal .wheel.wheel-horizontal:not(:last-child) {
+            border-bottom: 1px solid rgba(255,255,255,0.14);
+        }
         #alarm-create-panel .picker-container.alarm-picker-horizontal::before {
             display: none;
         }
@@ -784,6 +799,35 @@
         }
         .picker-container.picker-horizontal::before {
             display: none;
+        }
+        .timer-wheel-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            min-height: 62px;
+            padding: 4px 0;
+            position: relative;
+        }
+        .timer-wheel-row:not(:last-child) {
+            border-bottom: 1px solid rgba(255,255,255,0.14);
+        }
+        .timer-wheel-left-label {
+            flex: 0 0 34px;
+            text-align: center;
+            font-size: 15px;
+            color: #d8e7ff;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-right: 1px solid rgba(255,255,255,0.12);
+            line-height: 1;
+            padding-right: 6px;
+            margin-right: 2px;
+        }
+        .timer-wheel-row .wheel.wheel-horizontal {
+            width: auto;
+            flex: 1 1 auto;
         }
         .alarm-picker-controls {
             display: grid;
@@ -1560,7 +1604,7 @@
         }
 
         .day-active #stage { background: var(--sky-day); }
-        .day-active .sun-system { transform: translate(-50%, -100px); }
+        .day-active .sun-system { transform: translate(-50%, 38px); }
         #body:not(.day-active) .cloud-container {
             opacity: 0;
             transform: translate3d(0, -120%, 0);
@@ -1607,10 +1651,10 @@
             .sun-glow { width: 152px; height: 152px; }
             .sun-lightcast { width: 260px; height: 260px; }
             .bird { width: 18px; height: 11px; }
-            .moon-system { width: 100px; height: 100px; top: 11.9%; left: 50%; }
+            .moon-system { width: 100px; height: 100px; top: 12.2%; left: 50%; }
             .moon-body { width: 64px; height: 64px; }
             .moon-shadow { width: 64px; height: 64px; }
-            #app-ui { padding: 0 6px calc(130px + env(safe-area-inset-bottom)); }
+            #app-ui { padding: 0 0 calc(130px + env(safe-area-inset-bottom)); }
             .input-action-row { gap: 10px; }
             .input-action-row .btn-add { min-width: 72px; padding: 14px 16px; }
             .bottom-nav .nav-inner { padding: 7px; gap: 4px; border-radius: 22px; }
@@ -1627,8 +1671,9 @@
         
         .bottom-nav {
             position: fixed;
-            left: max(8px, env(safe-area-inset-left));
-            right: max(8px, env(safe-area-inset-right));
+            left: 50%;
+            transform: translateX(-50%);
+            width: var(--app-shell-width);
             bottom: calc(10px + env(safe-area-inset-bottom));
             display: flex;
             justify-content: center;
@@ -1719,6 +1764,63 @@
             grid-template-columns: 1fr;
             gap: 10px;
         }
+        .sky-mode-switch {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+            padding: 8px;
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: rgba(255,255,255,0.05);
+        }
+        .sky-mode-switch-label {
+            min-width: 56px;
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        .sky-mode-switch-track {
+            flex: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            padding: 4px;
+            border-radius: 16px;
+            background: rgba(0,0,0,0.18);
+        }
+        .sky-mode-switch-btn {
+            border: none;
+            border-radius: 12px;
+            padding: 12px 14px;
+            background: transparent;
+            color: var(--text-secondary);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+        }
+        .sky-mode-switch-btn.active {
+            background: rgba(255,255,255,0.14);
+            color: var(--text-primary);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.18);
+        }
+        .sky-mode-switch-btn .sky-icon {
+            width: 18px;
+            height: 18px;
+            display: block;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
         .settings-stack {
             display: flex;
             flex-direction: column;
@@ -1793,6 +1895,10 @@
             border-color: rgba(16, 20, 24, 0.14);
             box-shadow: 0 20px 60px rgba(16, 20, 24, 0.16);
             color: #101418;
+        }
+        /* Keep the analog-clock window truly transparent in light mode */
+        #body.theme-light #screen-post.glass-card {
+            background: transparent !important;
         }
         #body.theme-light .glass-card h2,
         #body.theme-light .glass-card p,
@@ -2004,10 +2110,11 @@
             width: var(--clock-size);
             height: var(--clock-size);
             border-radius: 50%;
-            border: 2px solid rgba(190, 224, 255, 0.75);
+            border: 5px solid rgba(186, 218, 248, 0.95);
             background: transparent;
-            box-shadow: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(255,255,255,0.22);
             overflow: visible;
+            transform: translateY(11px);
         }
         .home-analog-clock::before {
             display: none;
@@ -2079,17 +2186,17 @@
         .home-analog-hand.hour::before {
             width: 48%;
             height: 4px;
-            background: linear-gradient(90deg, #ffec98 0%, #e0b52d 52%, #9e6e00 100%);
+            background: linear-gradient(90deg, #ffe7a8 0%, #d4a93a 56%, #8e6407 100%);
         }
         .home-analog-hand.minute::before {
-            width: 60%;
+            width: 74%;
             height: 3px;
-            background: linear-gradient(90deg, #fff0a9 0%, #efc64a 56%, #ad7a00 100%);
+            background: linear-gradient(90deg, #dff5ff 0%, #8fcdf0 58%, #3c79a6 100%);
         }
         .home-analog-hand.second::before {
-            width: 70%;
+            width: 88%;
             height: 2px;
-            background: linear-gradient(90deg, #fff7c8 0%, #f5d96e 54%, #bc8a0a 100%);
+            background: linear-gradient(90deg, #ffd3bf 0%, #ff8a5c 56%, #d84f1f 100%);
             box-shadow: 0 0 0 1px rgba(10,18,28,0.45), 0 3px 8px rgba(0,0,0,0.4);
         }
         .home-analog-dot {
@@ -2535,7 +2642,7 @@
 
         </div>
 
-        <div id="screen-routine" class="glass-card hidden aux" style="max-width:568px;">
+        <div id="screen-routine" class="glass-card hidden aux" style="max-width:var(--app-shell-width);">
             <h2 style="font-size:28px; margin-bottom:18px;">Routine</h2>
             <section style="margin-bottom: 45px;">
                 <p style="text-transform: uppercase; font-size: 11px; font-weight: 900; color: var(--text-secondary); margin-bottom: 20px; letter-spacing: 2px;">Modify Routine</p>
@@ -2560,21 +2667,25 @@
         </div>
 
         
-        <div id="screen-timers" class="glass-card hidden aux" style="max-width:568px;">
+        <div id="screen-timers" class="glass-card hidden aux" style="max-width:var(--app-shell-width);">
             <h2 style="font-size:28px; margin-bottom:18px;">Timers</h2>
             <div class="input-action-row" style="margin-bottom:12px;">
                 <input id="timer-label" type="text" placeholder="Label" style="flex:1; padding:12px; border-radius:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.04); color:#fff;">
                 <button class="btn-add" id="create-timer-btn">Create</button>
             </div>
             <div class="picker-container picker-horizontal">
-                <div class="wheel wheel-horizontal" id="timer-hour-wheel"></div>
-                <div class="wheel wheel-horizontal" id="timer-min-wheel"></div>
-                <div class="wheel wheel-horizontal" id="timer-sec-wheel"></div>
-            </div>
-            <div style="display:flex; justify-content:space-around; margin-top:8px; margin-bottom:12px;">
-                <span style="font-size:12px; color:var(--text-secondary); font-weight:600;">Hours</span>
-                <span style="font-size:12px; color:var(--text-secondary); font-weight:600;">Minutes</span>
-                <span style="font-size:12px; color:var(--text-secondary); font-weight:600;">Seconds</span>
+                <div class="timer-wheel-row">
+                    <span class="timer-wheel-left-label">H</span>
+                    <div class="wheel wheel-horizontal" id="timer-hour-wheel"></div>
+                </div>
+                <div class="timer-wheel-row">
+                    <span class="timer-wheel-left-label">M</span>
+                    <div class="wheel wheel-horizontal" id="timer-min-wheel"></div>
+                </div>
+                <div class="timer-wheel-row">
+                    <span class="timer-wheel-left-label">S</span>
+                    <div class="wheel wheel-horizontal" id="timer-sec-wheel"></div>
+                </div>
             </div>
             <div id="timers-list" style="display:flex; flex-direction:column; gap:10px;"></div>
             <div style="margin-top:14px;">
@@ -2590,7 +2701,7 @@
             </div>
         </div>
         
-        <div id="screen-sounds" class="glass-card hidden aux" style="max-width:568px;">
+        <div id="screen-sounds" class="glass-card hidden aux" style="max-width:var(--app-shell-width);">
             <h2 style="font-size:28px; margin-bottom:18px;">Settings</h2>
             <div class="settings-stack">
                 <div class="settings-block">
@@ -2599,6 +2710,7 @@
                 </div>
                 <div class="settings-block">
                     <p class="settings-title">Background</p>
+                    <div id="sky-mode-switch"></div>
                     <div id="background-options" class="background-options"></div>
                 </div>
             </div>
@@ -2741,12 +2853,14 @@
 
         let selectedSound = DEFAULT_SOUND_ID; // default sound
         const DEFAULT_BACKGROUND_ID = 'black-bg';
+        const DEFAULT_SKY_MODE = 'night';
         const BACKGROUND_OPTIONS = [
             { id: 'black-bg', name: 'Black With Background', type: 'stage-night', theme: 'dark' },
             { id: 'white-bg', name: 'White With Background', type: 'stage-day', theme: 'light' },
             { id: 'no-bg', name: 'No Background', type: 'fullscreen-none', theme: 'dark' }
         ];
         let selectedBackground = DEFAULT_BACKGROUND_ID;
+        let selectedSkyMode = DEFAULT_SKY_MODE;
         let _backgroundAnimationsEnabled = true;
         let _birdsLoopTimeout = null;
         let _cloudRafId = null;
@@ -2772,6 +2886,9 @@
         let _lastAlarmCommitAt = 0;
         let _lastAlarmCommitPayload = '';
         let _setAlarmLocked = false;
+        let _nativeNotificationSyncTimer = null;
+        let _nativeNotificationsPermissionRequested = false;
+        const NATIVE_ALARM_NOTIFICATION_ID_BASE = 910000;
         const MAX_ALARMS = 10;
         const MAX_ACTIVE_TIMERS = 5;
         const MAX_TIMER_HISTORY = 10;
@@ -3197,6 +3314,92 @@
             textEl.textContent = `${_formatNextAlarmRemaining(minMs)} until ${alarms[minIdx]}`;
         }
 
+        function _getLocalNotificationsPlugin() {
+            try {
+                if (!window.Capacitor || typeof window.Capacitor.isNativePlatform !== 'function') return null;
+                if (!window.Capacitor.isNativePlatform()) return null;
+                const plugin = window.Capacitor?.Plugins?.LocalNotifications || null;
+                return plugin;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        async function _ensureNativeNotificationPermission() {
+            const plugin = _getLocalNotificationsPlugin();
+            if (!plugin) return false;
+            try {
+                if (!_nativeNotificationsPermissionRequested) {
+                    _nativeNotificationsPermissionRequested = true;
+                    await plugin.requestPermissions();
+                }
+                return true;
+            } catch (e) {
+                console.warn('LocalNotifications permission request failed', e);
+                return false;
+            }
+        }
+
+        function _buildNextNativeAlarmNotifications() {
+            const notifications = [];
+            for (let i = 0; i < alarms.length; i += 1) {
+                if (Array.isArray(alarmEnabled) && alarmEnabled[i] === false) continue;
+                const ms = _timeUntilAlarm(alarms[i], i);
+                if (!Number.isFinite(ms) || ms <= 0) continue;
+                const when = new Date(Date.now() + ms);
+                const alarmName = _normalizeAlarmName(alarmNames[i], i);
+                notifications.push({
+                    id: NATIVE_ALARM_NOTIFICATION_ID_BASE + i,
+                    title: alarmName || 'Alarm',
+                    body: `It's ${alarms[i]} now.`,
+                    schedule: { at: when },
+                    sound: 'alarm.wav',
+                    extra: {
+                        type: 'alarm',
+                        alarmIndex: i,
+                        alarmTime: alarms[i],
+                        alarmType: (alarmTypes && alarmTypes[i]) ? alarmTypes[i] : 'routine'
+                    }
+                });
+            }
+            return notifications;
+        }
+
+        async function syncNativeAlarmNotifications() {
+            const plugin = _getLocalNotificationsPlugin();
+            if (!plugin) return;
+            const allowed = await _ensureNativeNotificationPermission();
+            if (!allowed) return;
+            try {
+                await plugin.cancel({
+                    notifications: Array.from({ length: Math.max(alarms.length, MAX_ALARMS) }, (_, i) => ({
+                        id: NATIVE_ALARM_NOTIFICATION_ID_BASE + i
+                    }))
+                });
+                const notifications = _buildNextNativeAlarmNotifications();
+                if (notifications.length) {
+                    await plugin.schedule({ notifications });
+                }
+            } catch (e) {
+                console.warn('syncNativeAlarmNotifications failed', e);
+            }
+        }
+
+        function queueNativeAlarmNotificationSync() {
+            if (_nativeNotificationSyncTimer) {
+                clearTimeout(_nativeNotificationSyncTimer);
+                _nativeNotificationSyncTimer = null;
+            }
+            _nativeNotificationSyncTimer = setTimeout(() => {
+                _nativeNotificationSyncTimer = null;
+                syncNativeAlarmNotifications();
+            }, 220);
+        }
+
+        function initializeNativeAlarmNotifications() {
+            queueNativeAlarmNotificationSync();
+        }
+
         function queueAlarmMutation(mutator, opts = {}) {
             const { render = true, save = true, renderReason = 'queued-mutation' } = opts;
             _alarmMutationPendingCount += 1;
@@ -3319,6 +3522,7 @@
                     maxRoutineAlarms: _normalizeRoutineAlarmLimit(maxRoutineAlarms),
                     selectedSound: String(selectedSound || DEFAULT_SOUND_ID),
                     selectedBackground: String(selectedBackground || DEFAULT_BACKGROUND_ID),
+                    selectedSkyMode: selectedSkyMode === 'day' ? 'day' : DEFAULT_SKY_MODE,
                     customSounds,
                     timers: _serializeTimersForState(),
                     previousTimerHistory: Array.isArray(previousTimerHistory)
@@ -3371,6 +3575,7 @@
                 const swBtn = document.getElementById('sw-start');
                 if (swBtn) swBtn.textContent = 'Start';
                 selectedBackground = DEFAULT_BACKGROUND_ID;
+                selectedSkyMode = DEFAULT_SKY_MODE;
                 applyBackground(selectedBackground, false);
                 return;
             }
@@ -3431,6 +3636,7 @@
             selectedSound = soundExists ? state.selectedSound : DEFAULT_SOUND_ID;
             const bgExists = BACKGROUND_OPTIONS.some(bg => bg.id === state.selectedBackground);
             selectedBackground = bgExists ? state.selectedBackground : DEFAULT_BACKGROUND_ID;
+            selectedSkyMode = state.selectedSkyMode === 'day' ? 'day' : DEFAULT_SKY_MODE;
             applyBackground(selectedBackground, false);
 
             _timers.splice(0, _timers.length);
@@ -3499,6 +3705,7 @@
             renderBackgroundOptions();
             _renderTimers();
             _renderPreviousTimers();
+            initializeNativeAlarmNotifications();
             _sw_render();
             attachScrollSnapping();
             initNightSky();
@@ -4862,6 +5069,7 @@
             }
             setAlarmType(selectedAlarmType, { save: false });
             _updateNextAlarmSummary();
+            queueNativeAlarmNotificationSync();
         }
 
         function toggleAlarmDetails(index) {
@@ -5232,6 +5440,7 @@
         }
 
         function renderBackgroundOptions() {
+            renderSkyModeSwitch();
             const container = document.getElementById('background-options');
             if (!container) return;
 
@@ -5242,9 +5451,61 @@
             `).join('');
         }
 
+        function renderSkyModeSwitch() {
+            const container = document.getElementById('sky-mode-switch');
+            if (!container) return;
+
+            container.innerHTML = `
+                <div class="sky-mode-switch">
+                    <span class="sky-mode-switch-label">Scene</span>
+                    <div class="sky-mode-switch-track" role="tablist" aria-label="Background scene">
+                        <button
+                            class="sky-mode-switch-btn ${selectedSkyMode === 'night' ? 'active' : ''}"
+                            type="button"
+                            role="tab"
+                            aria-selected="${selectedSkyMode === 'night'}"
+                            onclick="selectSkyMode('night')"
+                        >
+                            <svg class="sky-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M19 14.5A7.5 7.5 0 1 1 9.5 5a6 6 0 0 0 9.5 9.5Z"></path>
+                            </svg>
+                            <span>Moon</span>
+                        </button>
+                        <button
+                            class="sky-mode-switch-btn ${selectedSkyMode === 'day' ? 'active' : ''}"
+                            type="button"
+                            role="tab"
+                            aria-selected="${selectedSkyMode === 'day'}"
+                            onclick="selectSkyMode('day')"
+                        >
+                            <svg class="sky-icon" viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="12" r="4.5"></circle>
+                                <path d="M12 2.5v2.5"></path>
+                                <path d="M12 19v2.5"></path>
+                                <path d="m4.9 4.9 1.8 1.8"></path>
+                                <path d="m17.3 17.3 1.8 1.8"></path>
+                                <path d="M2.5 12H5"></path>
+                                <path d="M19 12h2.5"></path>
+                                <path d="m4.9 19.1 1.8-1.8"></path>
+                                <path d="m17.3 6.7 1.8-1.8"></path>
+                            </svg>
+                            <span>Sun</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
         function selectBackground(backgroundId) {
             applyBackground(backgroundId, true);
             renderBackgroundOptions();
+        }
+
+        function selectSkyMode(mode, persist = true) {
+            selectedSkyMode = mode === 'day' ? 'day' : DEFAULT_SKY_MODE;
+            _syncSkyMode();
+            renderSkyModeSwitch();
+            if (persist) saveState();
         }
 
         function renderSoundOptions() {
@@ -5424,7 +5685,7 @@
         }
 
         function _syncSkyMode() {
-            if (_routineDayModeActive || _inRoutineSession) {
+            if (selectedSkyMode === 'day') {
                 setSunUp({ force: true });
             } else {
                 setSunDown();
@@ -6512,6 +6773,7 @@
                 try { renderAlarms(); } catch (e) {}
                 try { saveState(); } catch (e) {}
             }
+            queueNativeAlarmNotificationSync();
 
             _currentRingingIndexes.push(index);
             _scheduleAlarmAutoStop(index);
