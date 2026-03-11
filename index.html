@@ -48,11 +48,11 @@
         }
 
         
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -64,14 +64,14 @@
             overflow: hidden;
         }
 
-        body { 
-            height: 100vh; 
+        body {
+            height: 100vh;
             min-height: 100dvh;
             max-height: 100dvh;
             width: 100vw;
-            overflow: hidden; 
-            background: #000; 
-            color: var(--text-primary); 
+            overflow: hidden;
+            background: #000;
+            color: var(--text-primary);
             display: flex;
             justify-content: center;
             position: fixed;
@@ -500,7 +500,7 @@
             padding: 0 0 calc(140px + env(safe-area-inset-bottom));
             overflow-y: auto;
             overflow-x: hidden;
-            z-index: 100; 
+            z-index: 100;
             scrollbar-width: none;
             -webkit-overflow-scrolling: touch;
             overscroll-behavior-y: contain;
@@ -641,10 +641,10 @@
             border-color: rgba(255, 255, 255, 0.2) !important;
         }
 
-        h2 { 
-            font-size: 42px; 
-            font-weight: 900; 
-            margin-bottom: 28px; 
+        h2 {
+            font-size: 42px;
+            font-weight: 900;
+            margin-bottom: 28px;
             letter-spacing: -2px;
             color: var(--text-primary);
             line-height: 1;
@@ -708,13 +708,13 @@
             border: 1px solid rgba(255,255,255,0.03);
             position: relative;
         }
-        .item:hover { 
-            background: rgba(255,255,255,0.09); 
-            transform: scale(1.03) translateX(5px); 
+        .item:hover {
+            background: rgba(255,255,255,0.09);
+            transform: scale(1.03) translateX(5px);
             border-color: rgba(255,255,255,0.15);
         }
-        .item.checked { 
-            background: rgba(48, 209, 88, 0.15); 
+        .item.checked {
+            background: rgba(48, 209, 88, 0.15);
             border-color: rgba(48, 209, 88, 0.3);
         }
         .item.completing {
@@ -909,10 +909,10 @@
             cursor: ew-resize;
         }
         .wheel::-webkit-scrollbar { display: none; }
-        .wheel div { 
-            height: 40px; 
-            line-height: 40px; 
-            text-align: center; 
+        .wheel div {
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
             font-size: 24px;
             color: var(--text-secondary);
             transition: color 0.12s ease, transform 0.12s ease;
@@ -1515,17 +1515,17 @@
         @keyframes bird-flap-seq {
             
             0%, 2% { transform: rotate(-6deg) translateY(0); }
-            4% { transform: rotate(34deg) translateY(-0.6px); }   
+            4% { transform: rotate(34deg) translateY(-0.6px); }
             8% { transform: rotate(-6deg) translateY(0.3px); }
-            12% { transform: rotate(34deg) translateY(-0.6px); }  
+            12% { transform: rotate(34deg) translateY(-0.6px); }
             16% { transform: rotate(-6deg) translateY(0.3px); }
-            20% { transform: rotate(34deg) translateY(-0.6px); }  
-            24%, 41% { transform: rotate(-2deg) translateY(0); }  
-            45% { transform: rotate(34deg) translateY(-0.6px); }  
-            49%, 66% { transform: rotate(-2deg) translateY(0); }  
-            72% { transform: rotate(34deg) translateY(-0.6px); }  
+            20% { transform: rotate(34deg) translateY(-0.6px); }
+            24%, 41% { transform: rotate(-2deg) translateY(0); }
+            45% { transform: rotate(34deg) translateY(-0.6px); }
+            49%, 66% { transform: rotate(-2deg) translateY(0); }
+            72% { transform: rotate(34deg) translateY(-0.6px); }
             78% { transform: rotate(-6deg) translateY(0.3px); }
-            84% { transform: rotate(34deg) translateY(-0.6px); }  
+            84% { transform: rotate(34deg) translateY(-0.6px); }
             90%, 100% { transform: rotate(-6deg) translateY(0); }
         }
 
@@ -2888,7 +2888,9 @@
         let _setAlarmLocked = false;
         let _nativeNotificationSyncTimer = null;
         let _nativeNotificationsPermissionRequested = false;
+        let _nativeNotificationListenersBound = false;
         const NATIVE_ALARM_NOTIFICATION_ID_BASE = 910000;
+        const NATIVE_ALARM_SOUND_FILE = 'alarm.wav';
         const MAX_ALARMS = 10;
         const MAX_ACTIVE_TIMERS = 5;
         const MAX_TIMER_HISTORY = 10;
@@ -3329,11 +3331,18 @@
             const plugin = _getLocalNotificationsPlugin();
             if (!plugin) return false;
             try {
-                if (!_nativeNotificationsPermissionRequested) {
+                const current = typeof plugin.checkPermissions === 'function'
+                    ? await plugin.checkPermissions()
+                    : null;
+                if (current?.display === 'granted') return true;
+
+                if (!_nativeNotificationsPermissionRequested || current?.display !== 'granted') {
                     _nativeNotificationsPermissionRequested = true;
-                    await plugin.requestPermissions();
+                    const requested = await plugin.requestPermissions();
+                    return requested?.display === 'granted';
                 }
-                return true;
+
+                return false;
             } catch (e) {
                 console.warn('LocalNotifications permission request failed', e);
                 return false;
@@ -3351,9 +3360,9 @@
                 notifications.push({
                     id: NATIVE_ALARM_NOTIFICATION_ID_BASE + i,
                     title: alarmName || 'Alarm',
-                    body: `It's ${alarms[i]} now.`,
+                    body: `It is ${alarms[i]}`,
                     schedule: { at: when },
-                    sound: 'alarm.wav',
+                    sound: NATIVE_ALARM_SOUND_FILE,
                     extra: {
                         type: 'alarm',
                         alarmIndex: i,
@@ -3363,6 +3372,30 @@
                 });
             }
             return notifications;
+        }
+
+        async function registerNativeAlarmNotificationListeners() {
+            const plugin = _getLocalNotificationsPlugin();
+            if (!plugin || _nativeNotificationListenersBound || typeof plugin.addListener !== 'function') return;
+
+            _nativeNotificationListenersBound = true;
+
+            try {
+                await plugin.addListener('localNotificationReceived', (notification) => {
+                    const extra = notification?.extra || {};
+                    if (extra?.type !== 'alarm') return;
+                    queueNativeAlarmNotificationSync();
+                });
+
+                await plugin.addListener('localNotificationActionPerformed', (event) => {
+                    const extra = event?.notification?.extra || {};
+                    if (extra?.type !== 'alarm') return;
+                    queueNativeAlarmNotificationSync();
+                });
+            } catch (e) {
+                _nativeNotificationListenersBound = false;
+                console.warn('Failed to register native notification listeners', e);
+            }
         }
 
         async function syncNativeAlarmNotifications() {
@@ -3393,10 +3426,15 @@
             _nativeNotificationSyncTimer = setTimeout(() => {
                 _nativeNotificationSyncTimer = null;
                 syncNativeAlarmNotifications();
+                const plugin = _getLocalNotificationsPlugin();
+                if (plugin && plugin.getPending) {
+                    plugin.getPending().then(console.log).catch(console.warn);
+                }
             }, 220);
         }
 
         function initializeNativeAlarmNotifications() {
+            registerNativeAlarmNotificationListeners();
             queueNativeAlarmNotificationSync();
         }
 
@@ -3825,8 +3863,8 @@
             const video = document.getElementById('video');
             
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } 
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
                 });
                 video.srcObject = stream;
             } catch (err) {
@@ -6767,12 +6805,6 @@
 
         function _ringAlarm(index) {
             const repeatDays = _getRepeatDaysForAlarm(index);
-            const shouldAutoDisableAfterRing = !Array.isArray(repeatDays) || repeatDays.length === 0;
-            if (shouldAutoDisableAfterRing && Array.isArray(alarmEnabled) && index >= 0 && index < alarmEnabled.length && alarmEnabled[index] !== false) {
-                alarmEnabled[index] = false;
-                try { renderAlarms(); } catch (e) {}
-                try { saveState(); } catch (e) {}
-            }
             queueNativeAlarmNotificationSync();
 
             _currentRingingIndexes.push(index);
@@ -7024,7 +7056,7 @@
             try { _checkAlarms(); } catch (e) { console.warn(e); }
             setInterval(() => {
                 try { _checkAlarms(); } catch (e) { console.warn(e); }
-            }, 10000); // 10s granularity is sufficient (alarms match minute)
+            }, 1000); // 1s granularity is sufficient (alarms match minute)
         }
 
         if (document.readyState === 'complete') {
