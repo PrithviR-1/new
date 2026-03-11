@@ -48,11 +48,11 @@
         }
 
         
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -64,14 +64,14 @@
             overflow: hidden;
         }
 
-        body {
-            height: 100vh;
+        body { 
+            height: 100vh; 
             min-height: 100dvh;
             max-height: 100dvh;
             width: 100vw;
-            overflow: hidden;
-            background: #000;
-            color: var(--text-primary);
+            overflow: hidden; 
+            background: #000; 
+            color: var(--text-primary); 
             display: flex;
             justify-content: center;
             position: fixed;
@@ -500,7 +500,7 @@
             padding: 0 0 calc(140px + env(safe-area-inset-bottom));
             overflow-y: auto;
             overflow-x: hidden;
-            z-index: 100;
+            z-index: 100; 
             scrollbar-width: none;
             -webkit-overflow-scrolling: touch;
             overscroll-behavior-y: contain;
@@ -641,10 +641,10 @@
             border-color: rgba(255, 255, 255, 0.2) !important;
         }
 
-        h2 {
-            font-size: 42px;
-            font-weight: 900;
-            margin-bottom: 28px;
+        h2 { 
+            font-size: 42px; 
+            font-weight: 900; 
+            margin-bottom: 28px; 
             letter-spacing: -2px;
             color: var(--text-primary);
             line-height: 1;
@@ -708,13 +708,13 @@
             border: 1px solid rgba(255,255,255,0.03);
             position: relative;
         }
-        .item:hover {
-            background: rgba(255,255,255,0.09);
-            transform: scale(1.03) translateX(5px);
+        .item:hover { 
+            background: rgba(255,255,255,0.09); 
+            transform: scale(1.03) translateX(5px); 
             border-color: rgba(255,255,255,0.15);
         }
-        .item.checked {
-            background: rgba(48, 209, 88, 0.15);
+        .item.checked { 
+            background: rgba(48, 209, 88, 0.15); 
             border-color: rgba(48, 209, 88, 0.3);
         }
         .item.completing {
@@ -909,10 +909,10 @@
             cursor: ew-resize;
         }
         .wheel::-webkit-scrollbar { display: none; }
-        .wheel div {
-            height: 40px;
-            line-height: 40px;
-            text-align: center;
+        .wheel div { 
+            height: 40px; 
+            line-height: 40px; 
+            text-align: center; 
             font-size: 24px;
             color: var(--text-secondary);
             transition: color 0.12s ease, transform 0.12s ease;
@@ -1422,7 +1422,6 @@
             animation: routine-strike-sweep 640ms cubic-bezier(0.22, 0.8, 0.3, 1) forwards;
             box-shadow: 0 0 10px rgba(255, 69, 58, 0.5);
         }
-
         input[type="text"] {
             flex: 1;
             background: rgba(255,255,255,0.08);
@@ -1439,6 +1438,11 @@
         
         @keyframes rotate-sun { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes rotate-sun-reverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
+        @keyframes button-bounce-click {
+            0% { transform: scale(1); }
+            45% { transform: scale(1.12); }
+            100% { transform: scale(1); }
+        }
         @keyframes sun-pulse {
             0% { transform: scale(1); opacity: 0.6; }
             100% { transform: scale(1.4); opacity: 0.9; }
@@ -1515,17 +1519,17 @@
         @keyframes bird-flap-seq {
             
             0%, 2% { transform: rotate(-6deg) translateY(0); }
-            4% { transform: rotate(34deg) translateY(-0.6px); }
+            4% { transform: rotate(34deg) translateY(-0.6px); }   
             8% { transform: rotate(-6deg) translateY(0.3px); }
-            12% { transform: rotate(34deg) translateY(-0.6px); }
+            12% { transform: rotate(34deg) translateY(-0.6px); }  
             16% { transform: rotate(-6deg) translateY(0.3px); }
-            20% { transform: rotate(34deg) translateY(-0.6px); }
-            24%, 41% { transform: rotate(-2deg) translateY(0); }
-            45% { transform: rotate(34deg) translateY(-0.6px); }
-            49%, 66% { transform: rotate(-2deg) translateY(0); }
-            72% { transform: rotate(34deg) translateY(-0.6px); }
+            20% { transform: rotate(34deg) translateY(-0.6px); }  
+            24%, 41% { transform: rotate(-2deg) translateY(0); }  
+            45% { transform: rotate(34deg) translateY(-0.6px); }  
+            49%, 66% { transform: rotate(-2deg) translateY(0); }  
+            72% { transform: rotate(34deg) translateY(-0.6px); }  
             78% { transform: rotate(-6deg) translateY(0.3px); }
-            84% { transform: rotate(34deg) translateY(-0.6px); }
+            84% { transform: rotate(34deg) translateY(-0.6px); }  
             90%, 100% { transform: rotate(-6deg) translateY(0); }
         }
 
@@ -1755,6 +1759,11 @@
         }
         button:active {
             filter: brightness(0.92);
+        }
+        .btn-bounce-click {
+            animation: button-bounce-click 650ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform-origin: center;
+            will-change: transform;
         }
         
         .glass-card.aux { padding: 22px; max-width: 640px; }
@@ -2110,14 +2119,24 @@
             width: var(--clock-size);
             height: var(--clock-size);
             border-radius: 50%;
-            border: 5px solid rgba(186, 218, 248, 0.95);
+            border: 5px solid transparent;
             background: transparent;
             box-shadow: 0 2px 10px rgba(0,0,0,0.18), inset 0 0 0 1px rgba(255,255,255,0.22);
             overflow: visible;
             transform: translateY(11px);
         }
         .home-analog-clock::before {
-            display: none;
+            content: "";
+            position: absolute;
+            inset: 0;
+            padding: 5px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #fff7b8 0%, #f2cf58 52%, #9d6b00 100%);
+            pointer-events: none;
+            -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+            mask-composite: exclude;
         }
         .home-analog-orbit {
             display: none;
@@ -2147,16 +2166,19 @@
             position: absolute;
             left: 50%;
             top: 50%;
-            transform: translate(-50%, -50%);
-            color: transparent;
-            background: linear-gradient(145deg, var(--sun-grad-start) 0%, var(--sun-grad-end) 100%);
-            -webkit-background-clip: text;
-            background-clip: text;
-            font-size: clamp(38px, 8vw, 52px);
-            font-weight: 800;
-            letter-spacing: -1px;
-            text-shadow: 0 1px 0 rgba(255,255,255,0.35), 0 2px 4px rgba(0,0,0,0.16);
+            width: clamp(26px, 7vw, 38px);
+            height: clamp(14px, 3.8vw, 20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transform: translate(-50%, -50%) rotate(var(--a, 0deg)) translateY(calc(-1 * var(--num-radius))) rotate(calc(-1 * var(--a, 0deg)));
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.14));
+        }
+        .home-analog-num svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            overflow: visible;
         }
         .home-analog-num.n12 { --a: 0deg; }
         .home-analog-num.n3 { --a: 90deg; }
@@ -2575,10 +2597,54 @@
                     <span class="home-analog-mark major" style="--a:270deg;"></span>
                     <span class="home-analog-mark" style="--a:300deg;"></span>
                     <span class="home-analog-mark" style="--a:330deg;"></span>
-                    <span class="home-analog-num n12">12</span>
-                    <span class="home-analog-num n3">3</span>
-                    <span class="home-analog-num n6">6</span>
-                    <span class="home-analog-num n9">9</span>
+                    <span class="home-analog-num n12" aria-hidden="true">
+                        <svg viewBox="0 0 26 18" focusable="false">
+                            <defs>
+                                <linearGradient id="clock-num-grad-xii" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fff7b8"></stop>
+                                    <stop offset="52%" stop-color="#f2cf58"></stop>
+                                    <stop offset="100%" stop-color="#9d6b00"></stop>
+                                </linearGradient>
+                            </defs>
+                            <path d="M4 3L10 15M10 3L4 15M16 3V15M22 3V15" fill="none" stroke="url(#clock-num-grad-xii)" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </span>
+                    <span class="home-analog-num n3" aria-hidden="true">
+                        <svg viewBox="0 0 24 18" focusable="false">
+                            <defs>
+                                <linearGradient id="clock-num-grad-iii" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fff7b8"></stop>
+                                    <stop offset="52%" stop-color="#f2cf58"></stop>
+                                    <stop offset="100%" stop-color="#9d6b00"></stop>
+                                </linearGradient>
+                            </defs>
+                            <path d="M6 3V15M12 3V15M18 3V15" fill="none" stroke="url(#clock-num-grad-iii)" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </span>
+                    <span class="home-analog-num n6" aria-hidden="true">
+                        <svg viewBox="0 0 26 18" focusable="false">
+                            <defs>
+                                <linearGradient id="clock-num-grad-vi" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fff7b8"></stop>
+                                    <stop offset="52%" stop-color="#f2cf58"></stop>
+                                    <stop offset="100%" stop-color="#9d6b00"></stop>
+                                </linearGradient>
+                            </defs>
+                            <path d="M4 3L10 15L16 3M22 3V15" fill="none" stroke="url(#clock-num-grad-vi)" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </span>
+                    <span class="home-analog-num n9" aria-hidden="true">
+                        <svg viewBox="0 0 24 18" focusable="false">
+                            <defs>
+                                <linearGradient id="clock-num-grad-ix" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fff7b8"></stop>
+                                    <stop offset="52%" stop-color="#f2cf58"></stop>
+                                    <stop offset="100%" stop-color="#9d6b00"></stop>
+                                </linearGradient>
+                            </defs>
+                            <path d="M6 3V15M12 3L18 15M18 3L12 15" fill="none" stroke="url(#clock-num-grad-ix)" stroke-width="1.45" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </span>
                     <span class="home-analog-hand hour" id="home-clock-hour"></span>
                     <span class="home-analog-hand minute" id="home-clock-minute"></span>
                     <span class="home-analog-hand second" id="home-clock-second"></span>
@@ -2763,10 +2829,10 @@
         const DEFAULT_SOUND_ID = 'sunrise-chimes';
         const BASE_SOUND_OPTIONS = [
             { id: 'sunrise-chimes', name: 'Default', description: 'Fast wake groove with bright marimba lead and clean pulse.' },
-            { id: 'pop-bright', name: 'Pop', description: 'Catchy pop groove — clean, upbeat, and distinct', audioUrl: 'sounds/pop-bright.m4r' },
-            { id: 'smooth-jazz', name: 'Jazz', description: 'Warm jazz groove — upright bass and soft electric piano', audioUrl: 'sounds/smooth-jazz.m4r' },
-            { id: 'electric-drive', name: 'Classical', description: 'Energetic electronic pulse with sharp synth hits', audioUrl: 'sounds/electric-drive.m4r' },
-            { id: 'lofi-sunrise', name: 'Lo-Fi', description: 'Warm lo-fi chords, soft vinyl texture, gentle beat', audioUrl: 'sounds/lofi-sunrise.m4r' }
+            { id: 'pop-bright', name: 'Neon Pulse', description: 'Bright electronic pulse with a sharper modern edge.', audioUrl: 'sounds/Neon_Pulse.mp3' },
+            { id: 'smooth-jazz', name: 'Grand Ballroom Strut', description: 'A lively ballroom groove with a swinging feel.', audioUrl: 'sounds/Grand_Ballroom_Strut.mp3' },
+            { id: 'electric-drive', name: 'The Gilded Minuet', description: 'A polished classical march with ornate movement.', audioUrl: 'sounds/The_Gilded_Minuet.mp3' },
+            { id: 'lofi-sunrise', name: 'Cobblestone Dreams', description: 'A softer drifting track with a relaxed late-night tone.', audioUrl: 'sounds/Cobblestone_Dreams.mp3' }
         ];
         const ALARM_SOUND_PROFILES = {
             'sunrise-chimes': {
@@ -3783,6 +3849,14 @@
 
         };
 
+        document.addEventListener('click', (event) => {
+            const button = event.target.closest('button, [role="button"]');
+            if (!button) return;
+            button.classList.remove('btn-bounce-click');
+            void button.offsetWidth;
+            button.classList.add('btn-bounce-click');
+        }, true);
+
         window.addEventListener('beforeunload', () => {
             saveState();
         });
@@ -3863,8 +3937,8 @@
             const video = document.getElementById('video');
             
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } }
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } 
                 });
                 video.srcObject = stream;
             } catch (err) {
@@ -5363,6 +5437,7 @@
 
                 const del = document.createElement('button');
                 del.type = 'button';
+                del.className = 'routine-delete-btn';
                 del.textContent = '✕';
                 del.setAttribute('aria-label', 'Delete routine item');
                 del.style.color = 'var(--accent-red)';
@@ -5551,8 +5626,8 @@
             container.innerHTML = `
                 <div style="display:flex; gap:10px; margin-bottom:12px; align-items:center;">
                     <button class="btn-add" onclick="importSoundPrompt()">Import Sound</button>
-                    <small style="color:var(--text-secondary);">Import an audio file (.m4r)</small>
-                    <input id="sound-file-input" type="file" accept=".m4r" style="display:none" onchange="handleSoundFileInput(event)">
+                    <small style="color:var(--text-secondary);">Import an audio file (.mp3 or .m4r)</small>
+                    <input id="sound-file-input" type="file" accept=".mp3,.m4r,audio/mpeg,audio/mp4" style="display:none" onchange="handleSoundFileInput(event)">
                 </div>
             `;
 
@@ -5585,8 +5660,8 @@
             if (!file) return;
             const name = file.name || '';
             const lc = name.toLowerCase();
-            if (!lc.endsWith('.m4r')) {
-                alert('Only .m4r files are allowed. Please select a .m4r ringtone file.');
+            if (!lc.endsWith('.m4r') && !lc.endsWith('.mp3')) {
+                alert('Only .mp3 and .m4r files are allowed. Please select a supported audio file.');
                 try { evt.target.value = ''; } catch (e) {}
                 return;
             }
@@ -7534,6 +7609,12 @@
                 _currentRingingTimerSnapshot = null;
             }
         }
+
+        document.addEventListener('animationend', (event) => {
+            if (!(event.target instanceof Element) || !event.target.classList.contains('btn-bounce-click')) return;
+            event.target.classList.remove('btn-bounce-click');
+        });
+
         document.getElementById('create-timer-btn')?.addEventListener('click', createTimer);
         
         let _sw_running = false, _sw_start=0, _sw_elapsed=0, _sw_tick=null;
