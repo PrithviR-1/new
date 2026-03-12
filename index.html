@@ -3300,13 +3300,13 @@
         
 
         const APP_STATE_STORAGE_KEY = 'atmospherePro.appState.v1';
-        const DEFAULT_SOUND_ID = 'sunrise-chimes';
+        const ALARM_VOLUME_MULTIPLIER = 2;
+        const DEFAULT_SOUND_ID = 'electric-drive';
         const BASE_SOUND_OPTIONS = [
-            { id: 'sunrise-chimes', name: 'Default', description: 'Fast wake groove with bright marimba lead and clean pulse.' },
-            { id: 'pop-bright', name: 'Neon Pulse', description: 'Bright electronic pulse with a sharper modern edge.', audioUrl: 'sounds/Neon_Pulse.mp3' },
-            { id: 'smooth-jazz', name: 'Grand Ballroom Strut', description: 'A lively ballroom groove with a swinging feel.', audioUrl: 'sounds/Grand_Ballroom_Strut.mp3' },
-            { id: 'electric-drive', name: 'The Gilded Minuet', description: 'A polished classical march with ornate movement.', audioUrl: 'sounds/The_Gilded_Minuet.mp3' },
-            { id: 'lofi-sunrise', name: 'Cobblestone Dreams', description: 'A softer drifting track with a relaxed late-night tone.', audioUrl: 'sounds/Cobblestone_Dreams.mp3' }
+            { id: 'electric-drive', name: 'Classical', description: 'A polished classical march with ornate movement.', audioUrl: 'sounds/The_Gilded_Minuet.mp3' },
+            { id: 'pop-bright', name: 'Pop', description: 'Bright electronic pulse with a sharper modern edge.', audioUrl: 'sounds/Neon_Pulse.mp3' },
+            { id: 'smooth-jazz', name: 'Jazz', description: 'A lively ballroom groove with a swinging feel.', audioUrl: 'sounds/Grand_Ballroom_Strut.mp3' },
+            { id: 'lofi-sunrise', name: 'Calm', description: 'A softer drifting track with a relaxed late-night tone.', audioUrl: 'sounds/Cobblestone_Dreams.mp3' }
         ];
         const ALARM_SOUND_PROFILES = {
             'sunrise-chimes': {
@@ -3527,7 +3527,7 @@
         function _getSoundNameById(soundId) {
             const normalized = _normalizeAlarmSoundId(soundId);
             const match = Array.isArray(SOUND_OPTIONS) ? SOUND_OPTIONS.find(s => s && s.id === normalized) : null;
-            return match ? String(match.name || 'Default') : 'Default';
+            return match ? String(match.name || 'Classical') : 'Classical';
         }
 
         function showAppTopToast(message, durationMs = 2000) {
@@ -4811,13 +4811,27 @@
             for (let i = 0; i < shootingCount; i++) {
                 const streak = document.createElement('span');
                 streak.className = 'shooting-star';
+                const tintRoll = Math.random();
+                let trailStart = 'rgba(255,255,255,0)';
+                let trailEnd = 'rgba(255,255,255,0.95)';
+                let glow = 'rgba(255,255,255,0.8)';
+                if (i === 0 || tintRoll < 0.18) {
+                    trailStart = 'rgba(126, 198, 255, 0)';
+                    trailEnd = 'rgba(126, 198, 255, 0.96)';
+                    glow = 'rgba(126, 198, 255, 0.84)';
+                }
 
                 const w = Math.max(window.innerWidth, 320);
                 const h = Math.max(window.innerHeight, 480);
-                const side = Math.floor(Math.random() * 4); // 0=top,1=right,2=bottom,3=left
+                const side = (i === 0) ? 0 : Math.floor(Math.random() * 4); // 0=top,1=right,2=bottom,3=left
                 let sx = 0, sy = 0, ex = 0, ey = 0;
 
-                if (side === 0) {
+                if (i === 0) {
+                    sx = w * 0.34;
+                    sy = -70;
+                    ex = w * 0.7;
+                    ey = h * 0.46;
+                } else if (side === 0) {
                     sx = Math.random() * w;
                     sy = -120;
                     ex = sx + (Math.random() - 0.5) * (w * 0.7);
@@ -4849,6 +4863,8 @@
                 // One shooting star begins every 3 seconds.
                 streak.style.setProperty('--shoot-duration', '12s');
                 streak.style.setProperty('--shoot-delay', `${i * 3}s`);
+                streak.style.background = `linear-gradient(90deg, ${trailStart}, ${trailEnd})`;
+                streak.style.filter = `drop-shadow(0 0 10px ${glow})`;
                 shootingField.appendChild(streak);
             }
         }
@@ -6955,7 +6971,7 @@
                         if (playPromise && typeof playPromise.catch === 'function') {
                             playPromise.catch(() => {});
                         }
-                        const target = 0.8;
+                        const target = Math.min(1, 0.8 * ALARM_VOLUME_MULTIPLIER);
                         const rampMs = 10000;
                         const started = Date.now();
                         const ramp = setInterval(() => {
@@ -7133,7 +7149,7 @@
 
                 const baseLevel = Math.max(0.11, Math.min(0.26, Number(design.level) || Number(legacyProfile.level) || 0.2));
                 const loudnessMultiplier = Math.max(0.1, Math.min(10, Number(design.loudnessMultiplier) || 1));
-                const safeLevel = baseLevel * loudnessMultiplier;
+                const safeLevel = Math.min(0.98, baseLevel * loudnessMultiplier * ALARM_VOLUME_MULTIPLIER);
                 const rampSeconds = Math.max(4, Math.min(13, Number(design.rampSeconds) || Number(legacyProfile.rampSeconds) || 9));
                 const loopSeconds = Math.max(6, Math.min(30, Number(design.loopSeconds) || Number(legacyProfile.cycleLength) || ALARM_SONG_LOOP_SECONDS));
                 master.gain.linearRampToValueAtTime(safeLevel, now + rampSeconds);
